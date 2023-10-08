@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.CloudVolumeMapper">
+    <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.CloudVolume">
+        <id column="resId" property="resId" jdbcType="VARCHAR"/>
+        <result column="nativeId" property="nativeid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="imageId" property="imageid" jdbcType="VARCHAR"/>
+        <result column="projectId" property="projectid" jdbcType="VARCHAR"/>
+        <result column="userId" property="userid" jdbcType="VARCHAR"/>
+        <result column="size" property="size" jdbcType="INTEGER"/>
+        <result column="encrypted" property="encrypted" jdbcType="BIT"/>
+        <result column="bootable" property="bootable" jdbcType="BIT"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="createdAt" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="azoneId" property="azoneid" jdbcType="VARCHAR"/>
+        <result column="azoneName" property="azoneName" jdbcType="VARCHAR"/>
+        <result column="shareType" property="sharetype" jdbcType="VARCHAR"/>
+        <result column="sanpshotId" property="sanpshotid" jdbcType="VARCHAR"/>
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="bizRegionId" property="bizRegionId" jdbcType="VARCHAR"/>
+        <result column="bizRegionName" property="bizRegionName" jdbcType="VARCHAR"/>
+        <result column="lastModified" property="lastmodified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        resId, nativeId, `name`, `status`, imageId, projectId, userId, `size`, `encrypted`,
+        bootable, description, createdAt, azoneId, azoneName, shareType, sanpshotId, id,
+        bizRegionId, bizRegionName, lastModified
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.CloudVolumeExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from t_cloud_volume
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_cloud_volume
+        where resId = #{resId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from t_cloud_volume
+        where resId = #{resId,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.CloudVolumeExample">
+        delete from t_cloud_volume
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.clic.ccdbaas.entity.CloudVolume">
+        insert into t_cloud_volume (resId, nativeId, `name`,
+        `status`, imageId, projectId,
+        userId, `size`, `encrypted`,
+        bootable, description, createdAt,
+        azoneId, azoneName, shareType,
+        sanpshotId, id, bizRegionId,
+        bizRegionName, lastModified)
+        values (#{resId,jdbcType=VARCHAR}, #{nativeid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR}, #{imageid,jdbcType=VARCHAR}, #{projectid,jdbcType=VARCHAR},
+        #{userid,jdbcType=VARCHAR}, #{size,jdbcType=INTEGER}, #{encrypted,jdbcType=BIT},
+        #{bootable,jdbcType=BIT}, #{description,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},
+        #{azoneid,jdbcType=VARCHAR}, #{azoneName,jdbcType=VARCHAR}, #{sharetype,jdbcType=VARCHAR},
+        #{sanpshotid,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{bizRegionId,jdbcType=VARCHAR},
+        #{bizRegionName,jdbcType=VARCHAR}, #{lastmodified,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.CloudVolume">
+        insert into t_cloud_volume
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                resId,
+            </if>
+            <if test="nativeid != null">
+                nativeId,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="imageid != null">
+                imageId,
+            </if>
+            <if test="projectid != null">
+                projectId,
+            </if>
+            <if test="userid != null">
+                userId,
+            </if>
+            <if test="size != null">
+                `size`,
+            </if>
+            <if test="encrypted != null">
+                `encrypted`,
+            </if>
+            <if test="bootable != null">
+                bootable,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="createdAt != null">
+                createdAt,
+            </if>
+            <if test="azoneid != null">
+                azoneId,
+            </if>
+            <if test="azoneName != null">
+                azoneName,
+            </if>
+            <if test="sharetype != null">
+                shareType,
+            </if>
+            <if test="sanpshotid != null">
+                sanpshotId,
+            </if>
+            <if test="id != null">
+                id,
+            </if>
+            <if test="bizRegionId != null">
+                bizRegionId,
+            </if>
+            <if test="bizRegionName != null">
+                bizRegionName,
+            </if>
+            <if test="lastmodified != null">
+                lastModified,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                #{resId,jdbcType=VARCHAR},
+            </if>
+            <if test="nativeid != null">
+                #{nativeid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="imageid != null">
+                #{imageid,jdbcType=VARCHAR},
+            </if>
+            <if test="projectid != null">
+                #{projectid,jdbcType=VARCHAR},
+            </if>
+            <if test="userid != null">
+                #{userid,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null">
+                #{size,jdbcType=INTEGER},
+            </if>
+            <if test="encrypted != null">
+                #{encrypted,jdbcType=BIT},
+            </if>
+            <if test="bootable != null">
+                #{bootable,jdbcType=BIT},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=DATE},
+            </if>
+            <if test="azoneid != null">
+                #{azoneid,jdbcType=VARCHAR},
+            </if>
+            <if test="azoneName != null">
+                #{azoneName,jdbcType=VARCHAR},
+            </if>
+            <if test="sharetype != null">
+                #{sharetype,jdbcType=VARCHAR},
+            </if>
+            <if test="sanpshotid != null">
+                #{sanpshotid,jdbcType=VARCHAR},
+            </if>
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="bizRegionId != null">
+                #{bizRegionId,jdbcType=VARCHAR},
+            </if>
+            <if test="bizRegionName != null">
+                #{bizRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="lastmodified != null">
+                #{lastmodified,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.clic.ccdbaas.entity.CloudVolumeExample"
+            resultType="java.lang.Integer">
+        select count(*) from t_cloud_volume
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_cloud_volume
+        <set>
+            <if test="record.resId != null">
+                resId = #{record.resId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.nativeid != null">
+                nativeId = #{record.nativeid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null">
+                `name` = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                `status` = #{record.status,jdbcType=VARCHAR},
+            </if>
+            <if test="record.imageid != null">
+                imageId = #{record.imageid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.projectid != null">
+                projectId = #{record.projectid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userid != null">
+                userId = #{record.userid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.size != null">
+                `size` = #{record.size,jdbcType=INTEGER},
+            </if>
+            <if test="record.encrypted != null">
+                `encrypted` = #{record.encrypted,jdbcType=BIT},
+            </if>
+            <if test="record.bootable != null">
+                bootable = #{record.bootable,jdbcType=BIT},
+            </if>
+            <if test="record.description != null">
+                description = #{record.description,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createdAt != null">
+                createdAt = #{record.createdAt,jdbcType=DATE},
+            </if>
+            <if test="record.azoneid != null">
+                azoneId = #{record.azoneid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.azoneName != null">
+                azoneName = #{record.azoneName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sharetype != null">
+                shareType = #{record.sharetype,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sanpshotid != null">
+                sanpshotId = #{record.sanpshotid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.bizRegionId != null">
+                bizRegionId = #{record.bizRegionId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.bizRegionName != null">
+                bizRegionName = #{record.bizRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.lastmodified != null">
+                lastModified = #{record.lastmodified,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_cloud_volume
+        set resId = #{record.resId,jdbcType=VARCHAR},
+        nativeId = #{record.nativeid,jdbcType=VARCHAR},
+        `name` = #{record.name,jdbcType=VARCHAR},
+        `status` = #{record.status,jdbcType=VARCHAR},
+        imageId = #{record.imageid,jdbcType=VARCHAR},
+        projectId = #{record.projectid,jdbcType=VARCHAR},
+        userId = #{record.userid,jdbcType=VARCHAR},
+        `size` = #{record.size,jdbcType=INTEGER},
+        `encrypted` = #{record.encrypted,jdbcType=BIT},
+        bootable = #{record.bootable,jdbcType=BIT},
+        description = #{record.description,jdbcType=VARCHAR},
+        createdAt = #{record.createdAt,jdbcType=DATE},
+        azoneId = #{record.azoneid,jdbcType=VARCHAR},
+        azoneName = #{record.azoneName,jdbcType=VARCHAR},
+        shareType = #{record.sharetype,jdbcType=VARCHAR},
+        sanpshotId = #{record.sanpshotid,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=VARCHAR},
+        bizRegionId = #{record.bizRegionId,jdbcType=VARCHAR},
+        bizRegionName = #{record.bizRegionName,jdbcType=VARCHAR},
+        lastModified = #{record.lastmodified,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.CloudVolume">
+        update t_cloud_volume
+        <set>
+            <if test="nativeid != null">
+                nativeId = #{nativeid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="imageid != null">
+                imageId = #{imageid,jdbcType=VARCHAR},
+            </if>
+            <if test="projectid != null">
+                projectId = #{projectid,jdbcType=VARCHAR},
+            </if>
+            <if test="userid != null">
+                userId = #{userid,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null">
+                `size` = #{size,jdbcType=INTEGER},
+            </if>
+            <if test="encrypted != null">
+                `encrypted` = #{encrypted,jdbcType=BIT},
+            </if>
+            <if test="bootable != null">
+                bootable = #{bootable,jdbcType=BIT},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                createdAt = #{createdAt,jdbcType=DATE},
+            </if>
+            <if test="azoneid != null">
+                azoneId = #{azoneid,jdbcType=VARCHAR},
+            </if>
+            <if test="azoneName != null">
+                azoneName = #{azoneName,jdbcType=VARCHAR},
+            </if>
+            <if test="sharetype != null">
+                shareType = #{sharetype,jdbcType=VARCHAR},
+            </if>
+            <if test="sanpshotid != null">
+                sanpshotId = #{sanpshotid,jdbcType=VARCHAR},
+            </if>
+            <if test="id != null">
+                id = #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="bizRegionId != null">
+                bizRegionId = #{bizRegionId,jdbcType=VARCHAR},
+            </if>
+            <if test="bizRegionName != null">
+                bizRegionName = #{bizRegionName,jdbcType=VARCHAR},
+            </if>
+            <if test="lastmodified != null">
+                lastModified = #{lastmodified,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.CloudVolume">
+        update t_cloud_volume
+        set nativeId = #{nativeid,jdbcType=VARCHAR},
+        `name` = #{name,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=VARCHAR},
+        imageId = #{imageid,jdbcType=VARCHAR},
+        projectId = #{projectid,jdbcType=VARCHAR},
+        userId = #{userid,jdbcType=VARCHAR},
+        `size` = #{size,jdbcType=INTEGER},
+        `encrypted` = #{encrypted,jdbcType=BIT},
+        bootable = #{bootable,jdbcType=BIT},
+        description = #{description,jdbcType=VARCHAR},
+        createdAt = #{createdAt,jdbcType=TIMESTAMP},
+        azoneId = #{azoneid,jdbcType=VARCHAR},
+        azoneName = #{azoneName,jdbcType=VARCHAR},
+        shareType = #{sharetype,jdbcType=VARCHAR},
+        sanpshotId = #{sanpshotid,jdbcType=VARCHAR},
+        id = #{id,jdbcType=VARCHAR},
+        bizRegionId = #{bizRegionId,jdbcType=VARCHAR},
+        bizRegionName = #{bizRegionName,jdbcType=VARCHAR},
+        lastModified = #{lastmodified,jdbcType=TIMESTAMP}
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.CloudVolume">
+        select
+        <include refid="Base_Column_List"/>
+        from t_cloud_volume
+        <where>
+            <if test="paramValue !=null and paramValue !=''">
+                and CONCAT(IFNULL(name,'')) like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="resId !=null and resId !=''">
+                and resId = #{resId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getVolumeRelatedVm" resultType="com.clic.ccdbaas.entity.CloudVmare" parameterType="string">
+        select
+        resId,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        osAdminUser,
+        osNormalUser,
+        azoneId,
+        name,
+        status,
+        azoneName,
+        sysAdminTeam,
+        belongProduct,
+        productToken,
+        deployEnv,
+        memorySize,
+        memorySize as memoryCapacity,
+        last_Modified,
+        regionId,
+        regionName,
+        networkArea,
+        diskSize as diskCapacity,
+        nativeId,
+        cpuCoreNum,
+        mainIp,
+        bizRegionName,
+        projectName,
+        createUser,
+        relatedIp as relateIp,
+        virtualIp,
+        resourceCode,
+        clusterName,
+        physicalHostId,
+        stakeholder
+
+        from t_cloudvm where resId in (select ins.targetInstanceId from t_relation_instance ins
+        INNER JOIN t_relation relation on
+        ins.relationId = relation.resId
+        where relation.name = 'R_VOLUME_MOUNTON_VM' and ins.sourceInstanceId = #{resId,jdbcType=VARCHAR})
+
+
+    </select>
+
+
+    <select id="getVmVolumes" resultType="com.clic.ccdbaas.entity.CloudVolume" parameterType="string">
+        select
+        <include refid="Base_Column_List"/>
+
+        from t_cloud_volume where resId in (select ins.sourceInstanceId from t_relation_instance ins
+        INNER JOIN t_relation relation on
+        ins.relationId = relation.resId
+        where relation.name = 'R_VOLUME_MOUNTON_VM' and ins.targetInstanceId = #{resId,jdbcType=VARCHAR})
+
+
+    </select>
+</mapper>

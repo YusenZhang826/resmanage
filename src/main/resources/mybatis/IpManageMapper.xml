@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.IpManageMapper">
+
+    <select id="getIpsFromVm" resultType="hashmap" parameterType="string" useCache="false">
+        select resId,relatedIp,virtualIp,mainIp,belongProduct from t_cloudvm where relatedIp like concat('%',#{ip},'%')
+        or virtualIp
+        like concat('%',#{ip},'%') or mainIp = #{ip}
+    </select>
+
+    <select id="getIpsFromPhysicalMachine" resultType="hashmap" parameterType="string" useCache="false">
+        select resId,relateIp,virtualIp,mainIp,belongProduct from t_physicalserver where relateIp like
+        concat('%',#{ip},'%') or
+        virtualIp like concat('%',#{ip},'%') or mainIp=#{ip}
+    </select>
+
+    <select id="getIpsFromHost" resultType="hashmap" parameterType="string" useCache="false">
+        select resId,relatedIp,virtualIp,mainIp,belongProduct from t_physicalhost where relatedIp like
+        concat('%',#{ip},'%') or virtualIp like concat('%',#{ip},'%') or mainIp=#{ip}
+    </select>
+
+    <select id="selectIpsFromVm" resultType="hashmap" useCache="false">
+        select resId,relatedIp,virtualIp,mainIp,belongProduct from t_cloudvm
+    </select>
+
+    <select id="selectIpsFromHost" resultType="hashmap" useCache="false">
+        select resId,relatedIp,virtualIp,mainIp,belongProduct from t_physicalhost
+    </select>
+
+    <select id="selectIpsFromPhysicalMachine" resultType="hashmap">
+        select resId,relateIp,virtualIp,mainIp,belongProduct from t_physicalserver
+    </select>
+    <cache/>
+    <select id="getAllInstance" parameterType="ipManage" resultType="hashmap">
+        select T.resId,T.vlanName,T.ip,T.allocateStatus,T.exploratoryState,T.exploratoryDate,T.applicationInfo,
+        T.belongProduct,T.applicant,T.allocator,T.allocateDate,T.recycleDate,T.lastModified,T.remark,T.applicationOrder,
+        T.recycleOrder,T.recycleApplicant,V.gatewayIp,N.userOrg,N.name as areaName from t_ip_manage T left join
+        t_vlan_plan V on
+        T.vlanName=V.name
+        left join t_network_logic_area N on N.name = V.areaName
+        <where>
+            <if test="resIdArr !=null">T.resId in
+                <foreach collection="resIdArr" item="resId"
+                         open="(" close=")" separator=",">
+                    #{resId}
+                </foreach>
+            </if>
+            <if test="allocateStatuss !=null">and T.allocateStatus in
+                <foreach collection="allocateStatuss" item="allocateStatus"
+                         open="(" close=")" separator=",">
+                    #{allocateStatus}
+                </foreach>
+            </if>
+            <if test="userOrgArr !=null">and N.userOrg in
+                <foreach collection="userOrgArr" item="userOrg"
+                         open="(" close=")" separator=",">
+                    #{userOrg}
+                </foreach>
+            </if>
+            <if test="exploratoryStateNullFlag==0">
+                and
+                (T.exploratoryState is null or
+                T.exploratoryState='')
+            </if>
+            <if test="exploratoryStateNullFlag==1">
+                and
+                (T.exploratoryState is null or
+                T.exploratoryState='' or T.exploratoryState in
+                <foreach collection="exploratoryStates" item="exploratoryState"
+                         open="(" close="))" separator=",">
+                    #{exploratoryState}
+                </foreach>
+            </if>
+            <if test="exploratoryStateNullFlag==2">
+                and
+                T.exploratoryState in
+                <foreach collection="exploratoryStates" item="exploratoryState"
+                         open="(" close=")" separator=",">
+                    #{exploratoryState}
+                </foreach>
+            </if>
+            <if test="ip!=null and ip !=''">and T.ip like concat('%',#{ip},'%')</if>
+            <if test="vlanName!=null and vlanName !=''">and T.vlanName like concat('%',#{vlanName},'%')</if>
+            <if test="belongProduct!=null and belongProduct !=''">and T.belongProduct like
+                concat('%',#{belongProduct},'%')
+            </if>
+            <if test="applicant!=null and applicant !=''">and T.applicant like concat('%',#{applicant},'%')</if>
+            <if test="remark!=null and remark !=''">and T.remark like concat('%',#{remark},'%')</if>
+            <if test="applicationInfo!=null and applicationInfo !=''">and T.applicationInfo like
+                concat('%',#{applicationInfo},'%')
+            </if>
+            <if test="applicationOrder!=null and applicationOrder !=''">and T.applicationOrder = #{applicationOrder}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectIpByResId" parameterType="string" resultType="hashmap">
+        select I.resId,I.vlanName,I.ip,I.allocateStatus,I.exploratoryState,I.exploratoryDate,I.applicationInfo,
+        I.belongProduct,I.applicant,I.allocator,I.allocateDate,I.recycleDate,I.lastModified,I.remark,I.applicationOrder,
+        I.recycleOrder,I.recycleApplicant,
+        V.areaName, V.ipSegment, V.startIp, V.endIp, V.gatewayIp, V.remarks, V.userParType,
+        V.userchiType, V.vlanId, V.subnetMask, V.last_Modified,
+        N.purposeDesc, N.location,N.deployEnv, N.netAdministrator,N.category,N.userOrg
+        from (select resId,vlanname,ip,allocatestatus,exploratorystate,exploratorydate,applicationinfo,
+        belongproduct,applicant,allocator,allocatedate,recycledate,lastmodified,remark,applicationorder,
+        recycleorder,recycleapplicant from t_ip_manage where resId=#{resId}) I
+        left join t_vlan_plan V on I.vlanname=V.name
+        left join t_network_logic_area N on V.areaName=N.name
+    </select>
+
+    <delete id="deleteIp" parameterType="string">
+        delete from t_ip_manage where resId=#{resId}
+    </delete>
+
+    <update id="updateIp" parameterType="ipManage">
+        update t_ip_manage
+        <trim prefix="set" suffixOverrides=",">
+            <if test="vlanName!=null and vlanName!=''">
+                vlanname = #{vlanName},
+            </if>
+            <if test="ip!=null and ip !=''">
+                ip = #{ip},
+            </if>
+            <if test="allocateStatus!=null and allocateStatus!=''">
+                allocatestatus = #{allocateStatus},
+            </if>
+            <if test="exploratoryState!=null and exploratoryState!=''">
+                exploratorystate = #{exploratoryState},
+            </if>
+            <if test="exploratoryDate!=null">
+                exploratorydate = #{exploratoryDate},
+            </if>
+            <if test="applicationInfo!=null and applicationInfo!=''">
+                applicationinfo = #{applicationInfo},
+            </if>
+            <if test="belongProduct!=null and belongProduct !=''">
+                belongproduct = #{belongProduct},
+            </if>
+            <if test="applicant!=null and applicant!=''">
+                applicant = #{applicant},
+            </if>
+            <if test="allocator!=null and allocator!=''">
+                allocator = #{allocator},
+            </if>
+            <if test="allocateDate!=null">
+                allocatedate = #{allocateDate},
+            </if>
+            <if test="recycleDate!=null">
+                recycledate = #{recycleDate},
+            </if>
+            <if test="lastModified!=null">
+                lastmodified = #{lastModified},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark = #{remark},
+            </if>
+            <if test="applicationOrder!=null and applicationOrder!=''">
+                applicationorder = #{applicationOrder},
+            </if>
+            <if test="recycleOrder!=null and recycleOrder!=''">
+                recycleorder = #{recycleOrder},
+            </if>
+            <if test="recycleApplicant!=null and recycleApplicant!=''">
+                recycleapplicant = #{recycleApplicant},
+            </if>
+        </trim>
+        where resId=#{resId}
+    </update>
+
+    <insert id="addIp" parameterType="ipManage">
+        insert into t_ip_manage(resId,vlanname,ip,allocatestatus,exploratorystate,exploratorydate,applicationinfo,
+        belongproduct,applicant,allocator,allocatedate,recycledate,lastmodified,remark,applicationorder,
+        recycleorder,recycleapplicant) values(#{resId},#{vlanName},#{ip},#{allocateStatus},#{exploratoryState},
+        #{exploratoryDate},#{applicationInfo},
+        #{belongProduct},#{applicant},#{allocator},#{allocateDate},#{recycleDate},
+        #{lastModified},#{remark},#{applicationOrder}, #{recycleOrder},#{recycleApplicant})
+    </insert>
+
+    <select id="getIpCount" resultType="int">
+        select count(resId) from t_ip_manage
+    </select>
+
+    <update id="updateByIp" parameterType="ipManage">
+        update t_ip_manage
+        <trim prefix="set" suffixOverrides=",">
+            <if test="vlanName!=null and vlanName!=''">
+                vlanname = #{vlanName},
+            </if>
+            <if test="allocateStatus!=null and allocateStatus!=''">
+                allocatestatus = #{allocateStatus},
+            </if>
+            <if test="exploratoryState!=null and exploratoryState!=''">
+                exploratorystate = #{exploratoryState},
+            </if>
+            <if test="exploratoryDate!=null">
+                exploratorydate = #{exploratoryDate},
+            </if>
+            <if test="applicationInfo!=null and applicationInfo!=''">
+                applicationinfo = #{applicationInfo},
+            </if>
+            <if test="belongProduct!=null and belongProduct !=''">
+                belongproduct = #{belongProduct},
+            </if>
+            <if test="applicant!=null and applicant!=''">
+                applicant = #{applicant},
+            </if>
+            <if test="allocator!=null and allocator!=''">
+                allocator = #{allocator},
+            </if>
+            <if test="allocateDate!=null">
+                allocatedate = #{allocateDate},
+            </if>
+            <if test="recycleDate!=null">
+                recycledate = #{recycleDate},
+            </if>
+            <if test="lastModified!=null">
+                lastmodified = #{lastModified},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark = #{remark},
+            </if>
+            <if test="applicationOrder!=null and applicationOrder!=''">
+                applicationorder = #{applicationOrder},
+            </if>
+            <if test="recycleOrder!=null and recycleOrder!=''">
+                recycleorder = #{recycleOrder},
+            </if>
+            <if test="recycleApplicant!=null and recycleApplicant!=''">
+                recycleapplicant = #{recycleApplicant},
+            </if>
+        </trim>
+        where ip=#{ip}
+    </update>
+
+    <select id="getAllIp" parameterType="ipManage" resultType="ipManage">
+        select T.resId,T.vlanName,T.ip,T.allocateStatus,T.exploratoryState,T.exploratoryDate,T.applicationInfo,
+        T.belongProduct,T.applicant,T.allocator,T.allocateDate,T.recycleDate,T.lastModified,T.remark,T.applicationOrder,
+        T.recycleOrder,T.recycleApplicant,N.userOrg,N.name as areaName from t_ip_manage T left join t_vlan_plan V on
+        T.vlanName=V.name
+        left join t_network_logic_area N on N.name = V.areaName
+        <where>
+            <if test="resIdArr !=null">T.resId in
+                <foreach collection="resIdArr" item="resId"
+                         open="(" close=")" separator=",">
+                    #{resId}
+                </foreach>
+            </if>
+            <if test="allocateStatuss !=null">and T.allocateStatus in
+                <foreach collection="allocateStatuss" item="allocateStatus"
+                         open="(" close=")" separator=",">
+                    #{allocateStatus}
+                </foreach>
+            </if>
+            <if test="userOrgArr !=null">and N.userOrg in
+                <foreach collection="userOrgArr" item="userOrg"
+                         open="(" close=")" separator=",">
+                    #{userOrg}
+                </foreach>
+            </if>
+            <if test="exploratoryStateNullFlag==0">
+                and
+                (T.exploratoryState is null or
+                T.exploratoryState='')
+            </if>
+            <if test="exploratoryStateNullFlag==1">
+                and
+                (T.exploratoryState is null or
+                T.exploratoryState='' or T.exploratoryState in
+                <foreach collection="exploratoryStates" item="exploratoryState"
+                         open="(" close="))" separator=",">
+                    #{exploratoryState}
+                </foreach>
+            </if>
+            <if test="exploratoryStateNullFlag==2">
+                and
+                T.exploratoryState in
+                <foreach collection="exploratoryStates" item="exploratoryState"
+                         open="(" close=")" separator=",">
+                    #{exploratoryState}
+                </foreach>
+            </if>
+            <if test="ip!=null and ip !=''">and T.ip like concat('%',#{ip},'%')</if>
+            <if test="vlanName!=null and vlanName !=''">and T.vlanName like concat('%',#{vlanName},'%')</if>
+            <if test="belongProduct!=null and belongProduct !=''">and T.belongProduct like
+                concat('%',#{belongProduct},'%')
+            </if>
+            <if test="applicant!=null and applicant !=''">and T.applicant like concat('%',#{applicant},'%')</if>
+            <if test="remark!=null and remark !=''">and T.remark like concat('%',#{remark},'%')</if>
+            <if test="applicationInfo!=null and applicationInfo !=''">and T.applicationInfo like
+                concat('%',#{applicationInfo},'%')
+            </if>
+            <if test="applicationOrder!=null and applicationOrder !=''">and T.applicationOrder = #{applicationOrder}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllocateStatusCount" resultType="hashmap">
+        select count(resId) as num,allocateStatus from t_ip_manage GROUP BY allocateStatus
+    </select>
+
+    <select id="getExploratoryStateCount" resultType="hashmap">
+        select count(resId) as num,exploratoryState from t_ip_manage GROUP BY exploratoryState
+    </select>
+
+    <select id="getUseOrgCount" resultType="hashmap">
+        select count(T.resId) as num,N.userOrg as userOrg from t_ip_manage T left join t_vlan_plan V on
+        T.vlanName=V.name
+        left join t_network_logic_area N on N.name = V.areaName
+        group by N.userOrg
+    </select>
+</mapper>

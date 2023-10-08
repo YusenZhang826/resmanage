@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.ResourceTypeMapper">
+
+    <select id="selectAllResourceType" resultType="map">
+        select resId, name, className, path, typeId, dbTableName from t_resource_type where typeId is not null
+    </select>
+
+    <select id="selectEntityClassName" parameterType="string" resultType="string">
+        select path from t_resource_type where resId=#{resourceId}
+    </select>
+
+    <select id="getDBTableNameById" parameterType="string" resultType="string">
+        select dbTableName from t_resource_type where resId=#{resourceTypeId}
+    </select>
+
+    <insert id="insertResourceType" parameterType="map">
+        insert into t_resource_type(resId, name, className)
+        values(#{resId}, #{name}, #{className})
+    </insert>
+
+    <select id="selectNameByClassName" resultType="string" parameterType="string">
+        select name from t_resource_type where className=#{className}
+    </select>
+
+    <select id="selectOcClassName" parameterType="string" resultType="string">
+        select className from t_resource_type where resId=#{resourceId}
+    </select>
+
+    <select id="selectEntityByRId" parameterType="string" resultType="map">
+        select name, path from t_resource_type where resId=#{resId}
+    </select>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.DockerStackMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.DockerStack" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="cloudName" property="cloudName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="serviceCount" property="serviceCount" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="projectId" property="projectId" jdbcType="VARCHAR" />
+    <result column="delFlag" property="delFlag" jdbcType="VARCHAR" />
+
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, id, `name`, cloudName, description, serviceCount, `state`,projectId,delFlag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_docker_stack
+    where resId = #{resId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_docker_stack
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.DockerStack" >
+    insert into t_docker_stack (resId, id, `name`, 
+      cloudName, description, serviceCount, 
+      `state`,projectId,delFlag)
+    values (#{resId,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{cloudName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{serviceCount,jdbcType=INTEGER}, 
+      #{state,jdbcType=VARCHAR},#{projectId,jdbcType=VARCHAR},#{delFlag,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="getAllInstance" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from t_docker_stack
+  </select>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.DockerStack" >
+    insert into t_docker_stack
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="cloudName != null" >
+        cloudName,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="serviceCount != null" >
+        serviceCount,
+      </if>
+      <if test="state != null" >
+        `state`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cloudName != null" >
+        #{cloudName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCount != null" >
+        #{serviceCount,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.DockerStack" >
+    update t_docker_stack
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cloudName != null" >
+        cloudName = #{cloudName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCount != null" >
+        serviceCount = #{serviceCount,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        projectId = #{projectId,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        `state` = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.DockerStack" >
+    update t_docker_stack
+    set id = #{id,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      cloudName = #{cloudName,jdbcType=VARCHAR},
+      delFlag = #{delFlag,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      serviceCount = #{serviceCount,jdbcType=INTEGER},
+      `state` = #{state,jdbcType=VARCHAR},
+       projectId = #{projectId,jdbcType=VARCHAR}
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+</mapper>

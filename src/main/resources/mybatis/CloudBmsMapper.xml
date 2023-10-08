@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.CloudBmsMapper" >
+
+  <select id="getAllCloudBmsInstance" parameterType="CloudBms" resultType="CloudBms">
+    select resId, mainIp, relateIp, virtualIp, networkArea, `name`, deployEnv, usageDes, class_Name,
+    deployOs, resourceCode, cpuCores, memoryCapacity, diskCapacity, boardType, `status`,
+    belongProduct, belongCompany, sysAdministrator, sysAdminBackup, stakeholder, pingStatus,
+    hidsStatus, zabbixStatus, cpuArch, nativeId, sysAdminTeam, last_Modified, productToken,
+    locationCode, bmcIp, sn, assetStatus, bizRegionId, bizregionName, azoneId, azoneName,
+    ownerId, ownerName, ownerType, regionId, regionName, resourcePoolId, resourcePoolName,
+    resourcePoolType, podId, podName, vmId, physicalServerId, bmsgwClusterId, instanceUuid,
+    deployAdminA, deployAdminB, fourA, antivirusSoftware, osAdminUser, osNormalUser from t_cloud_bms
+  </select>
+
+</mapper>

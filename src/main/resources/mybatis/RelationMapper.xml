@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.RelationMapper">
+    <select id="getResIdByClassName" parameterType="hashmap" resultType="string">
+        select resId from t_relation
+        where sourceClassName=#{source} and targetClassName=#{target}
+    </select>
+
+    <insert id="addRelation" parameterType="hashmap">
+        insert into t_relation(resId,name,sourceClassName,targetClassName,cardinality,remark)
+        values(#{resId}, #{name},#{sourceClassName},#{targetClassName},#{cardinality},#{remark})
+    </insert>
+
+    <insert id="addRelationInstance" parameterType="hashmap">
+        insert into t_relation_instance(resId,sourceInstanceId,targetInstanceId,relationId,lastModified,extraSpec)
+        values(#{resId}, #{sourceInstanceId},#{targetInstanceId},#{relationId},#{lastModified},#{extraSpec})
+    </insert>
+
+    <update id="updateRelation" parameterType="hashmap">
+        update t_relation set
+        name=#{name},cardinality=#{cardinality},remark=#{remark}
+        where resId=#{resId}
+    </update>
+
+    <select id="getResIdByInstanceId" parameterType="hashmap" resultType="string">
+        select resId from t_relation_instance
+        where sourceInstanceId=#{sourceInstanceId} and targetInstanceId=#{targetInstanceId} and relationId=#{relationId}
+    </select>
+
+    <update id="updateRelationInstance" parameterType="hashmap">
+        update t_relation_instance set
+        <if test="sourceInstanceId!=null and sourceInstanceId!=''">
+            sourceInstanceId = #{sourceInstanceId},
+        </if>
+        <if test="targetInstanceId!=null and targetInstanceId!=''">
+            targetInstanceId = #{targetInstanceId},
+        </if>
+        lastModified=#{lastModified},extraSpec=#{extraSpec}
+        where resId=#{resId}
+    </update>
+
+    <select id="getRemarkByResourceInstance" parameterType="string" resultType="string">
+        select remark from t_relation_instance where sourceInstanceId=#{sourceInstanceId}
+    </select>
+
+    <select id="getRelationBySingleClassName" parameterType="string" resultType="hashmap">
+        select resId,name,sourceClassName,targetClassName,cardinality,remark from t_relation
+        where sourceClassName=#{className} or targetClassName=#{className}
+    </select>
+
+    <select id="getRelationByClassName" parameterType="hashmap" resultType="hashmap">
+        select resId,name,sourceClassName,targetClassName,cardinality,remark from t_relation
+        where sourceClassName=#{source} and targetClassName=#{target}
+    </select>
+
+    <select id="getRelationResIdByClassName" parameterType="string" resultType="string">
+        select resId rom t_relation
+        where sourceClassName=#{className} or targetClassName=#{className}
+    </select>
+
+    <select id="getInstanceByTarget" parameterType="hashmap" resultType="hashmap">
+        select resId, sourceInstanceId,lastModified,extraSpec
+        from t_relation_instance
+        where targetInstanceId=#{targetInstanceId} and relationId=#{relationId}
+    </select>
+
+    <select id="getInstanceBySource" parameterType="hashmap" resultType="hashmap">
+        select resId, targetInstanceId,lastModified,extraSpec
+        from t_relation_instance
+        where sourceInstanceId=#{sourceInstanceId} and relationId=#{relationId}
+    </select>
+
+    <select id="getExtraSpecBySourceIdAndTargetClassName" parameterType="hashmap" resultType="string">
+        select extraSpec from t_relation_instance
+        where sourceInstanceId = #{sourceInstanceId}
+        and
+        relationId in
+        (select resId from t_relation where sourceClassName =#{sourceClassName} and targetClassName in
+        <foreach collection="targetClassName" item="item"
+                 open="(" close="))" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getInstancesByRelationId" parameterType="list" resultType="hashmap">
+        select resId,sourceInstanceId,targetInstanceId,extraSpec,relationId from t_relation_instance
+        where relationId in
+        <foreach collection="relationId" item="item"
+                 open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteInstanceByResId" parameterType="string">
+        delete from t_relation_instance where resId=#{resId}
+    </delete>
+
+    <select id="getInstancesByRelationIdAndExtraSpec" parameterType="hashmap" resultType="hashmap">
+        select resId,extraSpec from t_relation_instance
+        where relationId in
+        <foreach collection="relationId" item="item"
+                 open="(" close=") and extraSpec like concat('%',#{extraSpecParam},'%')" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getAllRelationInstance" resultType="hashmap">
+        select resId,sourceInstanceId,targetInstanceId,relationId,lastModified,extraSpec
+        from t_relation_instance
+    </select>
+
+    <select id="getResourceClassName" resultType="string">
+        select ${columnName} from t_relation
+    </select>
+
+    <select id="getResIdByRelationName" parameterType="string" resultType="string">
+        select resId from t_relation where name=#{relationName}
+    </select>
+
+</mapper>

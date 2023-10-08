@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.LocalOperLogMapper">
+
+
+    <resultMap type="LocalOperLog" id="LocalOperLogResult">
+        <id     property="operId"       column="oper_id"      />
+        <result property="businessType"       column="business_type"      />
+        <result property="operName"       column="oper_name"      />
+        <result property="attribute"     column="attribute"    />
+        <result property="originVal"     column="originVal"    />
+        <result property="resVal"        column="resVal"        />
+        <result property="errorMsg"  column="error_msg"  />
+        <result property="operTime"          column="oper_time"          />
+        <result property="resId"       column="resId"       />
+        <result property="resType"       column="class_Name"       />
+        <result property="resName"       column="resName"       />
+    </resultMap>
+
+    <insert id="insertOperlog" parameterType="LocalOperLog">
+		insert into local_oper_log(resId,res_name,res_type,oper_name,attribute, business_type, originVal, resVal,  status, error_msg, oper_time)
+        values (#{resId},#{resName},#{resType},#{operName},#{attribute}, #{businessType}, #{originVal}, #{resVal},   #{status}, #{errorMsg}, sysdate())
+	</insert>
+
+    <!-- 获取所有vm信息 -->
+    <select id="selectLogListByParam" resultMap="LocalOperLogResult" parameterType="com.clic.ccdbaas.entity.LocalOperLog">
+        SELECT
+        log.oper_id,
+        log.business_type,
+        log.oper_name,
+        log.attribute,
+        log.originVal,
+        log.resVal,
+        log.status,
+        log.error_msg,
+        log.oper_time,
+
+        log.res_type as class_Name,
+        log.res_name as resName
+        FROM local_oper_log log
+
+        where 1=1
+        <if test="paramValue !=null and paramValue !=''">
+            and CONCAT(IFNULL(log.res_name,''),IFNULL(log.oper_name,'')) like CONCAT ('%',#{paramValue},'%')
+        </if>
+        <if test="businessType !=null and businessType !=''">
+            and log.business_type =#{businessType}
+        </if>
+        <if test="resId !=null and resId !=''">
+            and log.resId = #{resId}
+        </if>
+        <if test="resType !=null and resType !=''">
+            and log.res_type = #{resType}
+        </if>
+        <if test="beginTime != null and beginTime != ''"><!-- 开始时间检索 -->
+            AND date_format(log.oper_time,'%Y-%m-%d %H:%i:%s') &gt;= date_format(#{beginTime},'%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(log.oper_time,'%Y-%m-%d %H:%i:%s') &lt;= date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        </if>
+        order by oper_time desc
+
+    </select>
+
+
+
+</mapper>

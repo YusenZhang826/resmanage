@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.UserMapper">
+    <!-- 根据用户名获取用户信息 -->
+    <select id="getUserByName" resultType="java.util.HashMap" parameterType="String">
+        select userId,password from t_user where employeeNo = #{employeeNo}
+    </select>
+
+    <select id="getUserId" resultType="long" parameterType="user">
+        select IFNULL(MAX(userId),0) AS userId from t_user where employeeNo = #{employeeNo} and password = #{password}
+    </select>
+
+    <insert id="insertUser" parameterType="user">
+        insert into t_user(employeeNo,password) values(#{employeeNo},#{password})
+    </insert>
+
+    <!-- 根据用户名获取用户信息 -->
+    <select id="getProductUserInfo" resultType="map" parameterType="java.util.List">
+        select employeeNo,user_name from sys_user where employeeNo in
+        <foreach collection="smIds" index="index" item="smId" open="(" separator="," close=")">
+            #{smId}
+        </foreach>
+    </select>
+
+    <insert id="insertUserInfo" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into sys_user(employeeNo, user_name, phonenumber, email, status, del_flag, create_by, create_time,
+        password, newPassword, dept_id, group_id)
+        values(#{employeeNo}, #{userName}, #{phonenumber}, #{email}, #{status}, #{delFlag}, #{createBy},
+        #{createTime},#{password},#{newPassword}, #{deptId}, #{groupId})
+    </insert>
+
+    <insert id="insertUserRole" parameterType="java.util.HashMap">
+        insert into sys_user_role(user_id, role_id) values (#{userId},#{roleId})
+    </insert>
+
+    <select id="selectAllSysUserEmpNo" resultType="string">
+        select employeeNo from sys_user where del_flag=0
+    </select>
+
+    <select id="selectAllSysUserInfo" resultType="map">
+        select employeeNo,user_name from sys_user where del_flag=0
+    </select>
+
+    <select id="selectUserIdByEmpNo" parameterType="string" resultType="long">
+        select user_id from sys_user where employeeNo=#{employeeNo}
+    </select>
+
+    <update id="updateUserByEmpNo" parameterType="SysUser">
+        update sys_user set user_name=#{userName}, phonenumber=#{phonenumber}, email=#{email}, password=#{password},
+        status=#{status}, del_flag=#{delFlag}, group_id=#{groupId}, dept_id=#{deptId}, create_by=#{createBy},
+        create_time=#{createTime}, newPassword=#{newPassword}
+        where employeeNo=#{employeeNo}
+    </update>
+
+    <select id="selectUserByEmpNo" parameterType="string" resultType="map">
+        select u.user_name as userName, u.employeeNo, d.dept_name as groupName, u.email, u.phonenumber,
+        u.sex, u.avatar, u.status as ustatus, u.del_flag as udeleteFlag, u.remark, u.nick_name as nickName,
+        d.ancestors, d.leader, d.phone, d.email, d.status as dstatus, d.del_flag as ddeleteFlag
+        from sys_user u, sys_dept d
+        where u.group_id=d.dept_id and u.employeeNo=#{empNo}
+    </select>
+
+    <select id="getSysUserEmpNoByUserName" parameterType="string" resultType="string">
+        select employeeNo from sys_user where user_name = #{userName}
+    </select>
+</mapper>

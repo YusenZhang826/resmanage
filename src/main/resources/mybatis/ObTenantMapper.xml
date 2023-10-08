@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clic.ccdbaas.dao.ObTenantMapper">
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.ObTenant">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="regionId" jdbcType="VARCHAR" property="regionId" />
+    <result column="obTenantId" jdbcType="VARCHAR" property="obTenantId" />
+    <result column="clusterId" jdbcType="VARCHAR" property="clusterId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="clusterName" jdbcType="VARCHAR" property="clusterName" />
+    <result column="readOnly" jdbcType="VARCHAR" property="readOnly" />
+    <result column="locked" jdbcType="VARCHAR" property="locked" />
+    <result column="mode" jdbcType="VARCHAR" property="mode" />
+    <result column="tenantZoneNum" jdbcType="INTEGER" property="tenantZoneNum" />
+  <!--  <result column="tenantCpu" jdbcType="VARCHAR" property="tenantCpu" />-->
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  <!--  <result column="tenantMem" jdbcType="VARCHAR" property="tenantMem" />-->
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="primaryZone" jdbcType="VARCHAR" property="primaryZone" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ocpId" jdbcType="VARCHAR" property="ocpId" />
+    <result column="linkUrl" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="minCpuCoreCount" jdbcType="INTEGER" property="minCpuCoreCount" />
+    <result column="maxCpuCoreCount" jdbcType="INTEGER" property="maxCpuCoreCount" />
+    <result column="maxMemorySize" jdbcType="DOUBLE" property="maxMemorySize" />
+    <result column="minMemorySize" jdbcType="DOUBLE" property="minMemorySize" />
+    <result column="obProxyAddress" jdbcType="VARCHAR" property="obProxyAddress" />
+    <result column="obProxyPort" jdbcType="INTEGER" property="obProxyPort" />
+    <result column="obProxyAddress" jdbcType="VARCHAR" property="obProxyAddress" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, regionId, obTenantId, clusterId, `name`, clusterName, readOnly, locked, `mode`,
+    tenantZoneNum,  primaryZone, updateTime, createTime,resId,status,description,minCpuCoreCount,maxCpuCoreCount,maxMemorySize,minMemorySize
+  </sql>
+  <select id="selectByExample" parameterType="com.clic.ccdbaas.entity.ObTenantExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_ob_tenant
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+
+  <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.ObTenant" >
+    select
+    tenant.*,
+    ocp.extraSpec as ocpName,
+    ocp.linkUrl
+   -- ocp.userName,
+   -- ocp.password
+    from t_ob_tenant tenant
+    inner join
+    t_thirdsys_link_info ocp
+    on tenant.ocpId = ocp.id
+    <where>
+      <if test="paramValue !=null and paramValue !=''">
+        and  CONCAT(IFNULL(name,''))   like CONCAT ('%',#{paramValue},'%')
+      </if>
+      <if test="resId !=null and resId !=''">
+        and  resId = #{resId}
+      </if>
+      <if test="statusArr !=null and statusArr.size() > 0 ">
+        and status in
+        <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+          #{statusItem}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="getInstanceByResId" resultType="map" >
+    select
+    tenant.*,
+    ocp.extraSpec as ocpName,
+    ocp.linkUrl,
+    ocp.userName,
+    ocp.password
+    from t_ob_tenant tenant
+    inner join
+    t_thirdsys_link_info ocp
+    on tenant.ocpId = ocp.id
+
+     where  resId = #{resId}
+
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_ob_tenant
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_ob_tenant
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.ObTenantExample">
+    delete from t_ob_tenant
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" keyProperty="id" parameterType="com.clic.ccdbaas.entity.ObTenant">
+    insert into t_ob_tenant (id,regionId, obTenantId, clusterId,
+      `name`, clusterName, readOnly,
+      locked, `mode`, tenantZoneNum,
+    primaryZone,minCpuCoreCount,maxCpuCoreCount,maxMemorySize,minMemorySize,
+      updateTime, createTime,resId,status,description,ocpId,obProxyAddress,connectionString,obProxyPort)
+    values (#{id},#{regionId,jdbcType=VARCHAR}, #{obTenantId,jdbcType=VARCHAR}, #{clusterId,jdbcType=VARCHAR},
+      #{name,jdbcType=VARCHAR}, #{clusterName,jdbcType=VARCHAR}, #{readOnly,jdbcType=VARCHAR},
+      #{locked,jdbcType=VARCHAR}, #{mode,jdbcType=VARCHAR}, #{tenantZoneNum,jdbcType=INTEGER},
+     #{primaryZone,jdbcType=VARCHAR},#{minCpuCoreCount},#{maxCpuCoreCount},#{maxMemorySize},#{minMemorySize},
+      #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},#{resId},#{status},#{description}
+      ,#{ocpId},#{obProxyAddress,jdbcType=VARCHAR},#{connectionString,jdbcType=VARCHAR},#{obProxyPort,jdbcType=INTEGER})
+  </insert>
+ <!-- <insert id="insertSelective" keyProperty="id" parameterType="com.clic.ccdbaas.entity.ObTenant" useGeneratedKeys="true">
+    insert into t_ob_tenant
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="regionId != null">
+        regionId,
+      </if>
+      <if test="obTenantId != null">
+        obTenantId,
+      </if>
+      <if test="clusterId != null">
+        clusterId,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="clusterName != null">
+        clusterName,
+      </if>
+      <if test="readOnly != null">
+        readOnly,
+      </if>
+      <if test="locked != null">
+        locked,
+      </if>
+      <if test="mode != null">
+        `mode`,
+      </if>
+      <if test="tenantZoneNum != null">
+        tenantZoneNum,
+      </if>
+      <if test="tenantCpu != null">
+        tenantCpu,
+      </if>
+      <if test="tenantMem != null">
+        tenantMem,
+      </if>
+      <if test="primaryZone != null">
+        primaryZone,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="regionId != null">
+        #{regionId,jdbcType=VARCHAR},
+      </if>
+      <if test="obTenantId != null">
+        #{obTenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="clusterId != null">
+        #{clusterId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="clusterName != null">
+        #{clusterName,jdbcType=VARCHAR},
+      </if>
+      <if test="readOnly != null">
+        #{readOnly,jdbcType=VARCHAR},
+      </if>
+      <if test="locked != null">
+        #{locked,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null">
+        #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantZoneNum != null">
+        #{tenantZoneNum,jdbcType=INTEGER},
+      </if>
+      <if test="tenantCpu != null">
+        #{tenantCpu,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantMem != null">
+        #{tenantMem,jdbcType=VARCHAR},
+      </if>
+      <if test="primaryZone != null">
+        #{primaryZone,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.clic.ccdbaas.entity.ObTenantExample" resultType="java.lang.Integer">
+    select count(*) from t_ob_tenant
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>-->
+ <!-- <update id="updateByExampleSelective" parameterType="map">
+    update t_ob_tenant
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.regionId != null">
+        regionId = #{record.regionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.obTenantId != null">
+        obTenantId = #{record.obTenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clusterId != null">
+        clusterId = #{record.clusterId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null">
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clusterName != null">
+        clusterName = #{record.clusterName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.readOnly != null">
+        readOnly = #{record.readOnly,jdbcType=VARCHAR},
+      </if>
+      <if test="record.locked != null">
+        locked = #{record.locked,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mode != null">
+        `mode` = #{record.mode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantZoneNum != null">
+        tenantZoneNum = #{record.tenantZoneNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.tenantCpu != null">
+        tenantCpu = #{record.tenantCpu,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantMem != null">
+        tenantMem = #{record.tenantMem,jdbcType=VARCHAR},
+      </if>
+      <if test="record.primaryZone != null">
+        primaryZone = #{record.primaryZone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null">
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_ob_tenant
+    set id = #{record.id,jdbcType=INTEGER},
+    regionId = #{record.regionId,jdbcType=VARCHAR},
+    obTenantId = #{record.obTenantId,jdbcType=VARCHAR},
+    clusterId = #{record.clusterId,jdbcType=VARCHAR},
+    `name` = #{record.name,jdbcType=VARCHAR},
+    clusterName = #{record.clusterName,jdbcType=VARCHAR},
+    readOnly = #{record.readOnly,jdbcType=VARCHAR},
+    locked = #{record.locked,jdbcType=VARCHAR},
+    `mode` = #{record.mode,jdbcType=VARCHAR},
+    tenantZoneNum = #{record.tenantZoneNum,jdbcType=INTEGER},
+    tenantCpu = #{record.tenantCpu,jdbcType=VARCHAR},
+    tenantMem = #{record.tenantMem,jdbcType=VARCHAR},
+    primaryZone = #{record.primaryZone,jdbcType=VARCHAR},
+    updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+    createTime = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.ObTenant">
+    update t_ob_tenant
+    <set>
+      <if test="regionId != null">
+        regionId = #{regionId,jdbcType=VARCHAR},
+      </if>
+      <if test="obTenantId != null">
+        obTenantId = #{obTenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="clusterId != null">
+        clusterId = #{clusterId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="clusterName != null">
+        clusterName = #{clusterName,jdbcType=VARCHAR},
+      </if>
+      <if test="readOnly != null">
+        readOnly = #{readOnly,jdbcType=VARCHAR},
+      </if>
+      <if test="locked != null">
+        locked = #{locked,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null">
+        `mode` = #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantZoneNum != null">
+        tenantZoneNum = #{tenantZoneNum,jdbcType=INTEGER},
+      </if>
+      <if test="tenantCpu != null">
+        tenantCpu = #{tenantCpu,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantMem != null">
+        tenantMem = #{tenantMem,jdbcType=VARCHAR},
+      </if>
+      <if test="primaryZone != null">
+        primaryZone = #{primaryZone,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>-->
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.ObTenant">
+    update t_ob_tenant
+    set regionId = #{regionId,jdbcType=VARCHAR},
+      obTenantId = #{obTenantId,jdbcType=VARCHAR},
+      clusterId = #{clusterId,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      clusterName = #{clusterName,jdbcType=VARCHAR},
+      readOnly = #{readOnly,jdbcType=VARCHAR},
+      locked = #{locked,jdbcType=VARCHAR},
+      obProxyAddress = #{obProxyAddress,jdbcType=VARCHAR},
+      obProxyPort = #{obProxyPort,jdbcType=INTEGER},
+      connectionString = #{connectionString,jdbcType=VARCHAR},
+      `mode` = #{mode,jdbcType=VARCHAR},
+      tenantZoneNum = #{tenantZoneNum,jdbcType=INTEGER},
+      minCpuCoreCount = #{minCpuCoreCount,jdbcType=INTEGER},
+      maxCpuCoreCount = #{maxCpuCoreCount,jdbcType=INTEGER},
+       maxMemorySize = #{maxMemorySize,jdbcType=DOUBLE},
+      minMemorySize = #{minMemorySize,jdbcType=DOUBLE},
+      primaryZone = #{primaryZone,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      ocpId = #{ocpId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>

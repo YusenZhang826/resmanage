@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clic.ccdbaas.dao.ResourceApplicationMapper">
+    <select id="getAllInstance" parameterType="resourceApplication" resultType="resourceApplication">
+        select resId, workOrder, belongProduct, productAbbr, productToken, omUids, smUids, sysAdministrator,
+        mainIp, virtualIp, relatedIp, sn, projectName, projectAbbr, projectToken, machineType, hostSpecs, storageNum,
+        systemType, resourceDetail, databaseType, middlewareType, networkArea, resourceCode, allocOpinion, reviewOpinion,
+        uid, sysAdminTeam, deployEnv, bmsNetAreaNo, bmsWwnNo, last_Modified, isApply from t_resource_application
+        <where>
+            <if test="uid!=null and uid!=''">uid like concat('%',#{uid},'%')</if>
+            <if test="workOrder!=null and workOrder!=''">and workOrder like concat('%',#{workOrder},'%')</if>
+            <if test="resourceCode!=null and resourceCode!=''">and resourceCode like concat('%',#{resourceCode},'%')</if>
+            and isApply = "1"
+        </where>
+    </select>
+
+    <select id="getProducerSendMessage" resultType="map">
+        select belongProduct, productAbbr, productToken, projectName, projectAbbr, projectToken, mainIp
+        from t_resource_application
+        where workOrder = #{workOrder}
+    </select>
+
+    <select id="selectResourceApplicationByWorkOrder" resultType="ResourceApplication" parameterType="String">
+        select resId, workOrder, belongProduct, productAbbr, productToken, omUids, smUids, sysAdministrator,
+        mainIp, virtualIp, relatedIp, sn, projectName, projectAbbr, projectToken, machineType, hostSpecs, storageNum,
+        systemType, resourceDetail, databaseType, middlewareType, networkArea, resourceCode, allocOpinion, reviewOpinion,
+        uid, sysAdminTeam, deployEnv, bmsNetAreaNo, bmsWwnNo
+        from t_resource_application where workOrder = #{workOrder}
+    </select>
+
+    <insert id="insertResourceApplication" parameterType="map">
+        insert into t_resource_application (nativeId, title, moreInfo, belongProduct, productAbbr, productToken, type,
+        projectName, projectAbbr, projectToken, resourceCode, networkArea, allocNum, allocMachineType, allocHostSpecs,
+        allocIsITII, allocStorageType, allocStorageNum, allocOpinion, mainIp, reviewOpinion, createdDate, sysAdministrator,
+        createdUser, status, workOrder, manageNum, lastModified)
+        values (#{nativeId}, #{title}, #{moreInfo}, #{belongProduct}, #{productAbbr}, #{productToken}, #{type}, #{projectName},
+        #{projectAbbr}, #{projectToken}, #{resourceCode}, #{networkArea}, #{allocNum}, #{allocMachineType}, #{allocHostSpecs},
+        #{allocIsITII}, #{allocStorageType}, #{allocStorageNum}, #{allocOpinion}, #{mainIp}, #{reviewOpinion}, #{createdDate},
+        #{sysAdministrator}, #{createdUser}, #{status}, #{workOrder}, #{manageNum}, #{lastModified})
+    </insert>
+
+    <update id="updateResourceApplication" parameterType="map">
+        update t_resource_application set status = 1, mainIp = #{IpList}, lastModified = #{last_Modified} where nativeId = #{nativeId}
+    </update>
+
+    <select id="selectResourceApplicationStatusByNativeId" resultType="String">
+        select status from t_resource_application where nativeId = #{nativeId}
+    </select>
+
+    <update id="updateStatus" parameterType="map">
+        update t_resource_application set mainIp=#{mainIp},lastModified=#{last_Modified},status = 1,manageNum=0 where nativeId = #{nativeId}
+    </update>
+
+    <update id="updateCount" parameterType="map">
+        update t_resource_application set manageNum=#{count},lastModified=#{last_Modified} where nativeId = #{nativeId}
+    </update>
+
+    <select id="checkStatusByworkOrder" resultType="int">
+        select count(nativeId) from t_resource_application where workOrder = #{workOrder} and status = 0;
+    </select>
+
+    <delete id="deleteResourceApplication" parameterType="string">
+        delete from t_resource_application where workOrder = #{workOrder}
+    </delete>
+
+    <insert id="insertSingleResourceApplicationMessage" parameterType="ResourceApplication">
+        insert into t_resource_application (resId, workOrder, belongProduct, productAbbr, productToken, omUids, sysAdministrator,
+        mainIp, virtualIp, relatedIp, sn, projectName, projectAbbr, projectToken, machineType, hostSpecs, storageNum,
+        systemType, resourceDetail, databaseType, middlewareType, networkArea, resourceCode, allocOpinion, reviewOpinion,
+        uid, smUids, sysAdminTeam, deployEnv, bmsNetAreaNo, bmsWwnNo, last_Modified, isApply)
+        values (#{resId}, #{workOrder}, #{belongProduct}, #{productAbbr}, #{productToken}, #{omUids}, #{sysAdministrator}, #{mainIp},
+        #{virtualIp}, #{relatedIp}, #{sn}, #{projectName}, #{projectAbbr}, #{projectToken}, #{machineType}, #{hostSpecs},
+        #{storageNum}, #{systemType}, #{resourceDetail}, #{databaseType}, #{middlewareType}, #{networkArea}, #{resourceCode},
+        #{allocOpinion}, #{reviewOpinion}, #{uid}, #{smUids}, #{sysAdminTeam}, #{deployEnv}, #{bmsNetAreaNo}, #{bmsWwnNo},
+        #{last_Modified}, #{isApply})
+    </insert>
+
+    <insert id="insertSingleResourceRecyclingMessage" parameterType="ResourceRecycling">
+        insert into t_resource_recycling (resId, workOrder, name, mainIp, class_Name, cpuCores, memoryCapacity, diskCapacity,
+        belongProduct, belongCompany, sysAdminTeam, sysAdministrator, deployOs, deployEnv, virtualIp, relatedIp, cpuArch,
+        resourceCode, usageDes, networkArea, last_Modified, sn, locationCode)
+        values (#{resId}, #{workOrder}, #{name}, #{mainIp}, #{class_Name}, #{cpuCores}, #{memoryCapacity}, #{diskCapacity},
+        #{belongProduct}, #{belongCompany}, #{sysAdminTeam}, #{sysAdministrator}, #{deployOs}, #{deployEnv}, #{virtualIp},
+        #{relatedIp}, #{cpuArch}, #{resourceCode}, #{usageDes}, #{networkArea}, #{last_Modified}, #{sn}, #{locationCode})
+    </insert>
+
+    <select id="getResourceApplicationInfoByResId" resultType="ResourceApplication" parameterType="string">
+        select resId, workOrder, belongProduct, productAbbr, productToken, omUids, smUids, sysAdministrator,
+        mainIp, virtualIp, relatedIp, sn, projectName, projectAbbr, projectToken, machineType, hostSpecs, storageNum,
+        systemType, resourceDetail, databaseType, middlewareType, networkArea, resourceCode, allocOpinion, reviewOpinion,
+        uid, sysAdminTeam, deployEnv, bmsNetAreaNo, bmsWwnNo, last_Modified, isApply from t_resource_application
+        where resId = #{resId}
+    </select>
+
+    <select id="getResourceRecyclingInfoByWorkOrder" parameterType="ResourceRecycling" resultType="ResourceRecycling">
+        select resId, workOrder, name, mainIp, class_Name, cpuCores, memoryCapacity, diskCapacity,
+        belongProduct, belongCompany, sysAdminTeam, sysAdministrator, deployOs, deployEnv, virtualIp, relatedIp, cpuArch,
+        resourceCode, usageDes, networkArea, last_Modified, sn, locationCode from t_resource_recycling
+        where workOrder = #{workOrder} and mainIp = #{mainIp}
+    </select>
+
+</mapper>

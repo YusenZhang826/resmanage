@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.DockerProjectMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.DockerProject" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="displayName" property="displayName" jdbcType="VARCHAR" />
+    <result column="cloudName" property="cloudName" jdbcType="VARCHAR" />
+    <result column="environmentId" property="environmentId" jdbcType="VARCHAR" />
+    <result column="ownerStr" property="ownerStr" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="delFlag" property="delFlag" jdbcType="VARCHAR" />
+
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, id, displayName, cloudName, environmentId, ownerStr, `state`
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_docker_project
+    where resId = #{resId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_docker_project
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+
+
+  <select id="getAllInstance" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from t_docker_project
+  </select>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.DockerProject" >
+    insert into t_docker_project (resId, id, displayName, 
+      cloudName, environmentId, ownerStr, 
+      `state`)
+    values (#{resId,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
+      #{cloudName,jdbcType=VARCHAR}, #{environmentId,jdbcType=VARCHAR}, #{ownerStr,jdbcType=VARCHAR}, 
+      #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.DockerProject" >
+    insert into t_docker_project
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="displayName != null" >
+        displayName,
+      </if>
+      <if test="cloudName != null" >
+        cloudName,
+      </if>
+      <if test="environmentId != null" >
+        environmentId,
+      </if>
+      <if test="ownerStr != null" >
+        ownerStr,
+      </if>
+      <if test="state != null" >
+        `state`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="displayName != null" >
+        #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="cloudName != null" >
+        #{cloudName,jdbcType=VARCHAR},
+      </if>
+      <if test="environmentId != null" >
+        #{environmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerStr != null" >
+        #{ownerStr,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.DockerProject" >
+    update t_docker_project
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="displayName != null" >
+        displayName = #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="cloudName != null" >
+        cloudName = #{cloudName,jdbcType=VARCHAR},
+      </if>
+      <if test="environmentId != null" >
+        environmentId = #{environmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerStr != null" >
+        ownerStr = #{ownerStr,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        `state` = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.DockerProject" >
+    update t_docker_project
+    set id = #{id,jdbcType=VARCHAR},
+      displayName = #{displayName,jdbcType=VARCHAR},
+            delFlag = #{delFlag,jdbcType=VARCHAR},
+      cloudName = #{cloudName,jdbcType=VARCHAR},
+      environmentId = #{environmentId,jdbcType=VARCHAR},
+      ownerStr = #{ownerStr,jdbcType=VARCHAR},
+      `state` = #{state,jdbcType=VARCHAR}
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+</mapper>

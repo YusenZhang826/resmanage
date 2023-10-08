@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clic.ccdbaas.dao.VlanMapper">
+    <resultMap type="Vlan" id="VlanResult">
+        <id property="resId" column="resId"/>
+        <result property="lastModified" column="last_Modified"/>
+        <result property="useParType" column="userParType"></result>
+        <result property="useChiType" column="userchiType"></result>
+    </resultMap>
+    <select id="getAllVlan" resultMap="VlanResult">
+        SELECT *
+        from t_vlan_plan
+    </select>
+
+    <select id="getVlanCount" resultType="int">
+        select count(resId)
+        from t_vlan_plan
+    </select>
+
+    <select id="getVlanAndAreaInfoByResId" resultType="hashmap" parameterType="String">
+        select V.resId,
+               V.areaName,
+               V.name,
+               V.ipSegment,
+               V.startIp,
+               V.endIp,
+               V.gatewayIp,
+               V.remarks,
+               V.userParType,
+               V.userchiType,
+               V.vlanId,
+               V.subnetMask,
+               V.last_Modified,
+               N.purposeDesc,
+               N.location,
+               N.deployEnv,
+               N.netAdministrator,
+               N.category,
+               N.userOrg
+        from t_vlan_plan V
+                 left join t_network_logic_area N on V.areaName = N.name
+        where V.resId = #{resId}
+    </select>
+
+    <select id="getVlanInfoByResId" resultType="VlanPlan" parameterType="String">
+        select resId,
+               areaName,
+               name,
+               ipSegment,
+               startIp,
+               endIp,
+               gatewayIp,
+               remarks,
+               userParType,
+               userchiType,
+               vlanId,
+               subnetMask,
+               last_Modified
+        from t_vlan_plan
+        where resId = #{resId}
+    </select>
+
+
+    <select id="getAllVlanInstance" resultType="VlanPlan" parameterType="VlanPlan">
+        select V.resId, V.areaName, V.name, V.ipSegment, V.startIp, V.endIp, V.gatewayIp, v.remarks, V.userParType,
+        V.userchiType, V.vlanId, V.subnetMask, V.last_Modified,I.ipCount from t_vlan_plan V
+        left join (select count(*) as ipCount,vlanName from t_ip_manage GROUP BY vlanName) I
+        on I.vlanName = V.name
+        <where>
+            <if test="name!=null and name !=''">V.name like concat('%',#{name},'%')</if>
+            <if test="ipSegment!=null and ipSegment !=''">and V.ipSegment like concat('%',#{ipSegment},'%')</if>
+            <if test="userParType!=null and userParType !=''">and V.userParType like concat('%',#{userParType},'%')</if>
+            <if test="userchiType!=null and userchiType !=''">and V.userchiType like concat('%',#{userchiType},'%')</if>
+            <if test="areaName!=null and areaName !=''">and V.areaName = #{areaName}</if>
+            <if test="areaNameArray!=null">and V.areaName in
+                <foreach collection="areaNameArray" item="org"
+                         open="(" close=")" separator=",">
+                    #{org}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertSingleVlanInfo" parameterType="VlanPlan">
+        insert into t_vlan_plan(resId, areaName, name, ipSegment, startIp, endIp, gatewayIp, remarks, userParType,
+                                userchiType, vlanId, subnetMask, last_Modified)
+        values (#{resId}, #{areaName}, #{name}, #{ipSegment}, #{startIp}, #{endIp}, #{gatewayIp}, #{remarks},
+                #{userParType}, #{userchiType}, #{vlanId}, #{subnetMask}, #{last_Modified})
+    </insert>
+
+    <delete id="deleteSingleVlanInfo" parameterType="String">
+        delete
+        from t_vlan_plan
+        where resId = #{resId}
+    </delete>
+
+    <update id="updateSingleVlanInfo" parameterType="VlanPlan">
+        update t_vlan_plan
+        <trim prefix="set" suffixOverrides=",">
+            <if test="areaName!=null and areaName!=''">
+                areaName = #{areaName},
+            </if>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="ipSegment!=null and ipSegment!=''">
+                ipSegment = #{ipSegment},
+            </if>
+            <if test="startIp!=null and startIp!=''">
+                startIp = #{startIp},
+            </if>
+            <if test="endIp!=null and endIp!=''">
+                endIp = #{endIp},
+            </if>
+            <if test="gatewayIp!=null and gatewayIp!=''">
+                gatewayIp = #{gatewayIp},
+            </if>
+            <if test="remarks!=null and remarks!=''">
+                remarks = #{remarks},
+            </if>
+            <if test="userParType!=null and userParType!=''">
+                userParType = #{userParType},
+            </if>
+            <if test="userchiType!=null and userchiType!=''">
+                userchiType = #{userchiType},
+            </if>
+            <if test="vlanId!=null and vlanId!=''">
+                vlanId = #{vlanId},
+            </if>
+            <if test="subnetMask!=null and subnetMask!=''">
+                subnetMask = #{subnetMask},
+            </if>
+            <if test="last_Modified!=null">
+                last_Modified = #{last_Modified},
+            </if>
+        </trim>
+        where resId = #{resId}
+    </update>
+
+    <select id="getVlanByName" parameterType="string" resultType="string">
+        select resId
+        from t_vlan_plan
+        where name = #{vlanName}
+    </select>
+
+    <select id="getVlanNameById" parameterType="string" resultType="string">
+        select name
+        from t_vlan_plan
+        where resId = #{vlanId}
+    </select>
+
+    <select id="getVlanInfoByName" resultType="VlanPlan" parameterType="String">
+        select resId,
+               areaName,
+               name,
+               ipSegment,
+               startIp,
+               endIp,
+               gatewayIp,
+               remarks,
+               userParType,
+               userchiType,
+               vlanId,
+               subnetMask,
+               last_Modified
+        from t_vlan_plan
+        where name = #{name}
+    </select>
+
+    <update id="updateSingleVlanInfoByName" parameterType="VlanPlan">
+        update t_vlan_plan
+        <trim prefix="set" suffixOverrides=",">
+            <if test="areaName!=null and areaName!=''">
+                areaName = #{areaName},
+            </if>
+            <if test="ipSegment!=null and ipSegment!=''">
+                ipSegment = #{ipSegment},
+            </if>
+            <if test="startIp!=null and startIp!=''">
+                startIp = #{startIp},
+            </if>
+            <if test="endIp!=null and endIp!=''">
+                endIp = #{endIp},
+            </if>
+            <if test="gatewayIp!=null and gatewayIp!=''">
+                gatewayIp = #{gatewayIp},
+            </if>
+            <if test="remarks!=null and remarks!=''">
+                remarks = #{remarks},
+            </if>
+            <if test="userParType!=null and userParType!=''">
+                userParType = #{userParType},
+            </if>
+            <if test="userchiType!=null and userchiType!=''">
+                userchiType = #{userchiType},
+            </if>
+            <if test="vlanId!=null and vlanId!=''">
+                vlanId = #{vlanId},
+            </if>
+            <if test="subnetMask!=null and subnetMask!=''">
+                subnetMask = #{subnetMask},
+            </if>
+            <if test="last_Modified!=null">
+                last_Modified = #{last_Modified},
+            </if>
+        </trim>
+        where name = #{name}
+    </update>
+
+    <select id="getVlanByAreaName" parameterType="string" resultType="hashmap">
+        select resId,
+               areaName,
+               name,
+               ipSegment,
+               startIp,
+               endIp,
+               gatewayIp,
+               remarks,
+               userParType,
+               userchiType,
+               vlanId,
+               subnetMask,
+               last_Modified
+        from t_vlan_plan
+        where areaName = #{areaName}
+    </select>
+
+    <select id="getAllVlanNameAndIpCount" parameterType="vlanPlan" resultType="vlanPlan">
+        select V.name,V.resId,I.ipCount from t_vlan_plan V
+        left join (select count(*) as ipCount,vlanName from t_ip_manage GROUP BY vlanName) I
+        on I.vlanName = V.name
+        <where>
+            <if test="name!=null and name !=''">V.name like concat('%',#{name},'%')</if>
+            <if test="ipSegment!=null and ipSegment !=''">and V.ipSegment like concat('%',#{ipSegment},'%')</if>
+            <if test="userParType!=null and userParType !=''">and V.userParType like concat('%',#{userParType},'%')</if>
+            <if test="userchiType!=null and userchiType !=''">and V.userchiType like concat('%',#{userchiType},'%')</if>
+            <if test="areaName!=null and areaName !=''">and V.areaName = #{areaName}</if>
+        </where>
+    </select>
+</mapper>

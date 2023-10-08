@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.AppInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.AppInfo" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="agentId" property="agentId" jdbcType="VARCHAR" />
+    <result column="hostname" property="hostname" jdbcType="VARCHAR" />
+    <result column="displayIp" property="displayIp" jdbcType="VARCHAR" />
+    <result column="connectionIp" property="connectionIp" jdbcType="VARCHAR" />
+    <result column="externalIp" property="externalIp" jdbcType="VARCHAR" />
+    <result column="internalIp" property="internalIp" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="udpateTime" property="udpateTime" jdbcType="TIMESTAMP" />
+    <result column="bizGroupIp" property="bizGroupIp" jdbcType="INTEGER" />
+    <result column="bizGroup" property="bizGroup" jdbcType="VARCHAR" />
+    <result column="bindIp" property="bindIp" jdbcType="VARCHAR" />
+    <result column="uname" property="uname" jdbcType="VARCHAR" />
+    <result column="hostTagList" property="hostTagList" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="processes" property="processes" jdbcType="LONGVARCHAR" />
+    <result column="binPath" property="binPath" jdbcType="VARCHAR" />
+    <result column="configPath" property="configPath" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="deployEnv" property="deployEnv" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, agentId, hostname, displayIp, connectionIp, externalIp, internalIp, `name`,
+    version, createTime, udpateTime, bizGroupIp, bizGroup, bindIp, uname, hostTagList,
+    remark, processes, binPath, configPath, deployEnv,status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_app_info
+    where resId = #{resId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_app_info
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.AppInfo" >
+    insert into t_app_info (resId, agentId, hostname,
+      displayIp, connectionIp, externalIp,
+      internalIp, `name`, version,
+      createTime, udpateTime, bizGroupIp,
+      bizGroup, bindIp, uname,
+      hostTagList, remark, processes,
+      binPath, configPath, deployEnv,status
+      )
+    values (#{resId,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{hostname,jdbcType=VARCHAR},
+      #{displayIp,jdbcType=VARCHAR}, #{connectionIp,jdbcType=VARCHAR}, #{externalIp,jdbcType=VARCHAR},
+      #{internalIp,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{udpateTime,jdbcType=TIMESTAMP}, #{bizGroupIp,jdbcType=INTEGER},
+      #{bizGroup,jdbcType=VARCHAR}, #{bindIp,jdbcType=VARCHAR}, #{uname,jdbcType=VARCHAR},
+      #{hostTagList,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{processes,jdbcType=LONGVARCHAR},
+      #{binPath,jdbcType=VARCHAR}, #{configPath,jdbcType=VARCHAR}, #{deployEnv,jdbcType=INTEGER},#{status,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <select id="getAllInstance" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from t_app_info
+  </select>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.AppInfo" >
+    insert into t_app_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="agentId != null" >
+        agentId,
+      </if>
+      <if test="hostname != null" >
+        hostname,
+      </if>
+      <if test="displayIp != null" >
+        displayIp,
+      </if>
+      <if test="connectionIp != null" >
+        connectionIp,
+      </if>
+      <if test="externalIp != null" >
+        externalIp,
+      </if>
+      <if test="internalIp != null" >
+        internalIp,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="udpateTime != null" >
+        udpateTime,
+      </if>
+      <if test="bizGroupIp != null" >
+        bizGroupIp,
+      </if>
+      <if test="bizGroup != null" >
+        bizGroup,
+      </if>
+      <if test="bindIp != null" >
+        bindIp,
+      </if>
+      <if test="uname != null" >
+        uname,
+      </if>
+      <if test="hostTagList != null" >
+        hostTagList,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="processes != null" >
+        processes,
+      </if>
+      <if test="binPath != null" >
+        binPath,
+      </if>
+      <if test="configPath != null" >
+        configPath,
+      </if>
+      <if test="deployEnv != null" >
+        deployEnv,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentId != null" >
+        #{agentId,jdbcType=VARCHAR},
+      </if>
+      <if test="hostname != null" >
+        #{hostname,jdbcType=VARCHAR},
+      </if>
+      <if test="displayIp != null" >
+        #{displayIp,jdbcType=VARCHAR},
+      </if>
+      <if test="connectionIp != null" >
+        #{connectionIp,jdbcType=VARCHAR},
+      </if>
+      <if test="externalIp != null" >
+        #{externalIp,jdbcType=VARCHAR},
+      </if>
+      <if test="internalIp != null" >
+        #{internalIp,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udpateTime != null" >
+        #{udpateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bizGroupIp != null" >
+        #{bizGroupIp,jdbcType=INTEGER},
+      </if>
+      <if test="bizGroup != null" >
+        #{bizGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="bindIp != null" >
+        #{bindIp,jdbcType=VARCHAR},
+      </if>
+      <if test="uname != null" >
+        #{uname,jdbcType=VARCHAR},
+      </if>
+      <if test="hostTagList != null" >
+        #{hostTagList,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="processes != null" >
+        #{processes,jdbcType=VARCHAR},
+      </if>
+      <if test="binPath != null" >
+        #{binPath,jdbcType=VARCHAR},
+      </if>
+      <if test="configPath != null" >
+        #{configPath,jdbcType=VARCHAR},
+      </if>
+      <if test="deployEnv != null" >
+        #{deployEnv,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.AppInfo" >
+    update t_app_info
+    <set >
+      <if test="agentId != null" >
+        agentId = #{agentId,jdbcType=VARCHAR},
+      </if>
+      <if test="hostname != null" >
+        hostname = #{hostname,jdbcType=VARCHAR},
+      </if>
+      <if test="displayIp != null" >
+        displayIp = #{displayIp,jdbcType=VARCHAR},
+      </if>
+      <if test="connectionIp != null" >
+        connectionIp = #{connectionIp,jdbcType=VARCHAR},
+      </if>
+      <if test="externalIp != null" >
+        externalIp = #{externalIp,jdbcType=VARCHAR},
+      </if>
+      <if test="internalIp != null" >
+        internalIp = #{internalIp,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udpateTime != null" >
+        udpateTime = #{udpateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bizGroupIp != null" >
+        bizGroupIp = #{bizGroupIp,jdbcType=INTEGER},
+      </if>
+      <if test="bizGroup != null" >
+        bizGroup = #{bizGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="bindIp != null" >
+        bindIp = #{bindIp,jdbcType=VARCHAR},
+      </if>
+      <if test="uname != null" >
+        uname = #{uname,jdbcType=VARCHAR},
+      </if>
+      <if test="hostTagList != null" >
+        hostTagList = #{hostTagList,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="processes != null" >
+        processes = #{processes,jdbcType=VARCHAR},
+      </if>
+      <if test="binPath != null" >
+        binPath = #{binPath,jdbcType=VARCHAR},
+      </if>
+      <if test="configPath != null" >
+        configPath = #{configPath,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="deployEnv != null" >
+        deployEnv = #{deployEnv,jdbcType=INTEGER},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.AppInfo" >
+    update t_app_info
+    set agentId = #{agentId,jdbcType=VARCHAR},
+      hostname = #{hostname,jdbcType=VARCHAR},
+      displayIp = #{displayIp,jdbcType=VARCHAR},
+      connectionIp = #{connectionIp,jdbcType=VARCHAR},
+      externalIp = #{externalIp,jdbcType=VARCHAR},
+      internalIp = #{internalIp,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      version = #{version,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      udpateTime = #{udpateTime,jdbcType=TIMESTAMP},
+      bizGroupIp = #{bizGroupIp,jdbcType=INTEGER},
+      bizGroup = #{bizGroup,jdbcType=VARCHAR},
+      bindIp = #{bindIp,jdbcType=VARCHAR},
+      uname = #{uname,jdbcType=VARCHAR},
+      hostTagList = #{hostTagList,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      processes = #{processes,jdbcType=LONGVARCHAR},
+      binPath = #{binPath,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      configPath = #{configPath,jdbcType=VARCHAR},
+      deployEnv = #{deployEnv,jdbcType=INTEGER}
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+</mapper>

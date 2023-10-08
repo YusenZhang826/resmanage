@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.VmSummaryInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.VmSummaryInfo" >
+    <result column="VCDB_ID" property="VCDB_ID" jdbcType="DOUBLE" />
+    <result column="VC_IP" property="VC_IP" jdbcType="VARCHAR" />
+    <result column="VCDB_USAGE" property="VCDB_USAGE" jdbcType="VARCHAR" />
+    <result column="HOST" property="HOST" jdbcType="BIGINT" />
+    <result column="VM" property="VM" jdbcType="BIGINT" />
+    <result column="P_CPU" property="p_CPU" jdbcType="DOUBLE" />
+    <result column="V_CPU" property="v_CPU" jdbcType="DOUBLE" />
+    <result column="P_MEM" property="p_MEM" jdbcType="DOUBLE" />
+    <result column="V_MEM" property="v_MEM" jdbcType="DOUBLE" />
+    <result column="CAPACITY" property="CAPACITY" jdbcType="DOUBLE" />
+    <result column="FREE_SPACE" property="FREE_SPACE" jdbcType="DOUBLE" />
+    <result column="VC_ADMIN" property="VC_ADMIN" jdbcType="VARCHAR" />
+    <result column="DEPARTMENT" property="DEPARTMENT" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.VmSummaryInfo" >
+    insert into summary (VCDB_ID, VC_IP, VCDB_USAGE, 
+      `HOST`, VM, P_CPU, V_CPU, 
+      P_MEM, V_MEM, CAPACITY, 
+      FREE_SPACE, VC_ADMIN, DEPARTMENT
+      )
+    values (#{VCDB_ID,jdbcType=DOUBLE}, #{VC_IP,jdbcType=VARCHAR}, #{VCDB_USAGE,jdbcType=VARCHAR}, 
+      #{HOST,jdbcType=BIGINT}, #{VM,jdbcType=BIGINT}, #{p_CPU,jdbcType=DOUBLE}, #{v_CPU,jdbcType=DOUBLE}, 
+      #{p_MEM,jdbcType=DOUBLE}, #{v_MEM,jdbcType=DOUBLE}, #{CAPACITY,jdbcType=DOUBLE}, 
+      #{FREE_SPACE,jdbcType=DOUBLE}, #{VC_ADMIN,jdbcType=VARCHAR}, #{DEPARTMENT,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.VmSummaryInfo" >
+    insert into summary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="VCDB_ID != null" >
+        VCDB_ID,
+      </if>
+      <if test="VC_IP != null" >
+        VC_IP,
+      </if>
+      <if test="VCDB_USAGE != null" >
+        VCDB_USAGE,
+      </if>
+      <if test="HOST != null" >
+        `HOST`,
+      </if>
+      <if test="VM != null" >
+        VM,
+      </if>
+      <if test="p_CPU != null" >
+        P_CPU,
+      </if>
+      <if test="v_CPU != null" >
+        V_CPU,
+      </if>
+      <if test="p_MEM != null" >
+        P_MEM,
+      </if>
+      <if test="v_MEM != null" >
+        V_MEM,
+      </if>
+      <if test="CAPACITY != null" >
+        CAPACITY,
+      </if>
+      <if test="FREE_SPACE != null" >
+        FREE_SPACE,
+      </if>
+      <if test="VC_ADMIN != null" >
+        VC_ADMIN,
+      </if>
+      <if test="DEPARTMENT != null" >
+        DEPARTMENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="VCDB_ID != null" >
+        #{VCDB_ID,jdbcType=DOUBLE},
+      </if>
+      <if test="VC_IP != null" >
+        #{VC_IP,jdbcType=VARCHAR},
+      </if>
+      <if test="VCDB_USAGE != null" >
+        #{VCDB_USAGE,jdbcType=VARCHAR},
+      </if>
+      <if test="HOST != null" >
+        #{HOST,jdbcType=BIGINT},
+      </if>
+      <if test="VM != null" >
+        #{VM,jdbcType=BIGINT},
+      </if>
+      <if test="p_CPU != null" >
+        #{p_CPU,jdbcType=DOUBLE},
+      </if>
+      <if test="v_CPU != null" >
+        #{v_CPU,jdbcType=DOUBLE},
+      </if>
+      <if test="p_MEM != null" >
+        #{p_MEM,jdbcType=DOUBLE},
+      </if>
+      <if test="v_MEM != null" >
+        #{v_MEM,jdbcType=DOUBLE},
+      </if>
+      <if test="CAPACITY != null" >
+        #{CAPACITY,jdbcType=DOUBLE},
+      </if>
+      <if test="FREE_SPACE != null" >
+        #{FREE_SPACE,jdbcType=DOUBLE},
+      </if>
+      <if test="VC_ADMIN != null" >
+        #{VC_ADMIN,jdbcType=VARCHAR},
+      </if>
+      <if test="DEPARTMENT != null" >
+        #{DEPARTMENT,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

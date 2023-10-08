@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clic.ccdbaas.dao.ResourceSearchMapper">
+    <sql id="parseCondition">
+        <choose>
+            <when test='condition.searchType == "in" or condition.searchType == "not in"'>
+                ${condition.domainName} ${condition.searchType}
+                <foreach collection="condition.values" item="value" open="(" separator="," close=")">
+                    <choose>
+                        <when test="condition.domainType == 'String'">
+                            #{value,javaType=String}
+                        </when>
+                        <when test="condition.domainType == 'Integer'">
+                            #{value,javaType=Integer}
+                        </when>
+                        <when test="condition.domainType == 'Date'">
+                            #{value,javaType=Date}
+                        </when>
+                    </choose>
+                </foreach>
+            </when>
+
+            <when test='condition.searchType == "between" or condition.searchType == "not between"'>
+                ${condition.domainName} ${condition.searchType}
+                <choose>
+                    <when test="condition.domainType == 'Integer'">
+                        #{condition.values[0],javaType=Integer} and #{condition.values[1],javaType=Integer}
+                    </when>
+                    <when test="condition.domainType == 'Date'">
+                        #{condition.values[0],javaType=Date} and #{condition.values[1],javaType=Date}
+                    </when>
+                </choose>
+            </when>
+
+            <when test='condition.searchType == "like" or condition.searchType == "not like"'>
+                ${condition.domainName} ${condition.searchType} concat('%', #{condition.values[0],javaType=String}, '%')
+            </when>
+
+            <when test='condition.searchType == "startWith"'>
+                ${condition.domainName} like concat(#{condition.values[0],javaType=String}, '%')
+            </when>
+
+            <when test='condition.searchType == "endWith"'>
+                ${condition.domainName} like concat('%', #{condition.values[0],javaType=String})
+            </when>
+
+            <when test='condition.searchType == "is null" or condition.searchType == "is not null"'>
+                ${condition.domainName} ${condition.searchType}
+            </when>
+
+            <when test='condition.searchType == "regexp"'>
+                ${condition.domainName} regexp #{condition.values[0],javaType=String}
+            </when>
+
+            <when test='condition.searchType == "instr"'>
+                instr(#{condition.values[0],javaType=String},${condition.domainName}) > 0
+            </when>
+
+            <otherwise>
+                ${condition.domainName} ${condition.searchType}
+                <choose>
+                    <when test="condition.domainType == 'String'">
+                        #{condition.values[0],javaType=String}
+                    </when>
+                    <when test="condition.domainType == 'Integer'">
+                        #{condition.values[0],javaType=Integer}
+                    </when>
+                    <when test="condition.domainType == 'Date'">
+                        #{condition.values[0],javaType=Date}
+                    </when>
+                </choose>
+            </otherwise>
+        </choose>
+    </sql>
+    <select id="selectByAdvancedSearch" parameterType="com.clic.ccdbaas.utils.sql.AdvancedSearch"
+            resultType="java.util.Map">
+        select * from ${tableName} where 1=1
+        <if test="preConditions != null and preConditions.size() > 0">
+            and (
+            <foreach collection="preConditions" item="condition" index="index">
+                <if test='index != 0'>
+                    ${condition.conditionType}
+                </if>
+                <include refid="parseCondition">
+                    <property name="condition" value="condition"/>
+                </include>
+            </foreach>
+            )
+        </if>
+        <if test="conditions != null and conditions.size() > 0">
+            and (
+            <foreach collection="conditions" item="condition" index="index">
+                <if test='index != 0'>
+                    ${condition.conditionType}
+                </if>
+                <include refid="parseCondition">
+                    <property name="condition" value="condition"/>
+                </include>
+            </foreach>
+            )
+        </if>
+        <if test="fuzzySearch != null">
+            and (
+            concat_ws(' ',
+            <foreach collection="fuzzySearch.searchedFields" item="field" separator=",">
+                ${field}
+            </foreach>
+            ) like concat('%', #{fuzzySearch.value}, '%')
+            )
+        </if>
+        <if test="sortBy != null and sortBy.size() > 0">
+            order by
+            <foreach collection="sortBy" item="sort" separator=",">
+                ${sort}
+            </foreach>
+        </if>
+    </select>
+    <select id="countByGroupSearch" parameterType="com.clic.ccdbaas.utils.sql.CountByGroupSearch"
+            resultType="java.util.Map">
+        select ${searchedField}, count(*)
+        from ${tableName}
+        where 1=1
+        <if test="preConditions != null and preConditions.size() > 0">
+            and (
+            <foreach collection="preConditions" item="condition" index="index">
+                <if test='index != 0'>
+                    ${condition.conditionType}
+                </if>
+                <include refid="parseCondition">
+                    <property name="condition" value="condition"/>
+                </include>
+            </foreach>
+            )
+        </if>
+        <if test="conditions != null and conditions.size() > 0">
+            and (
+            <foreach collection="conditions" item="condition" index="index">
+                <if test='index != 0'>
+                    ${condition.conditionType}
+                </if>
+                <include refid="parseCondition">
+                    <property name="condition" value="condition"/>
+                </include>
+            </foreach>
+            )
+        </if>
+        group by ${searchedField}
+    </select>
+    <select id="countByAdvancedSearch" parameterType="com.clic.ccdbaas.utils.sql.AdvancedSearch"
+            resultType="java.lang.Integer">
+        select count(*) from ${tableName} where 1=1
+        <if test="preConditions != null and preConditions.size() > 0">
+            and (
+            <foreach collection="preConditions" item="condition" index="index">
+                <if test='index != 0'>
+                    ${condition.conditionType}
+                </if>
+                <include refid="parseCondition">
+                    <property name="condition" value="condition"/>
+                </include>
+            </foreach>
+            )
+        </if>
+        <if test="conditions != null and conditions.size() > 0">
+            and (
+            <foreach collection="conditions" item="condition" index="index">
+                <if test='index != 0'>
+                    ${condition.conditionType}
+                </if>
+                <include refid="parseCondition">
+                    <property name="condition" value="condition"/>
+                </include>
+            </foreach>
+            )
+        </if>
+        <if test="fuzzySearch != null">
+            and (
+            concat_ws(' ',
+            <foreach collection="fuzzySearch.searchedFields" item="field" separator=",">
+                ${field}
+            </foreach>
+            ) like concat('%', #{fuzzySearch.value}, '%')
+            )
+        </if>
+    </select>
+</mapper>

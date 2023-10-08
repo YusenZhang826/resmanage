@@ -1,0 +1,1762 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.CloudVmNovaMapper">
+
+    <!-- 获取所有vm信息 -->
+    <select id="getAllInstance" resultType="CloudVmare" parameterType="CloudVmare">
+        SELECT
+        resId,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        osAdminUser,
+        osNormalUser,
+        azoneId,
+        name,
+        status,
+        azoneName,
+        sysAdminTeam,
+        belongProduct,
+        productToken,
+        deployEnv,
+        memorySize,
+        memorySize as memoryCapacity,
+        last_Modified,
+        regionId,
+        regionName,
+        networkArea,
+        diskSize as diskCapacity,
+        nativeId,
+        cpuCoreNum,
+        mainIp,
+        bizRegionName,
+        projectName,
+        belongCompany,
+        createUser,
+        relatedIp as relateIp,
+        virtualIp,
+        resourceCode,
+        clusterName,
+        physicalHostId,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware
+        FROM t_cloudvm nova
+        <where>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="productToken !=null and productToken !=''">
+                and productToken = #{productToken}
+            </if>
+            <if test="mainIp !=null and mainIp !=''">
+                and mainIp = #{mainIp}
+            </if>
+            <if test="statusArr !=null and statusArr.size!=0">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="resId !=null and resId !=''">
+                and resId = #{resId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="ifVdesk == 'true'">
+                and azoneName like CONCAT ('%','云桌面','%')
+            </if>
+            <if test="ifVdesk == 'false'">
+                and azoneName not like CONCAT ('%','云桌面','%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="networkArea !=null and networkArea !=''">
+                and networkArea = #{networkArea}
+            </if>
+            <if test="resIdArr !=null and resIdArr.size() > 0 ">
+                and resId in
+                <foreach collection="resIdArr" index="index" item="resIdItem" open="(" separator="," close=")">
+                    #{resIdItem}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
+    <!-- 存储过程 -->
+    <select id="saveResCountInfo" statementType="CALLABLE">
+        {CALL p_saveEveryDayResCount()}
+    </select>
+
+
+    <!-- 计算资源流向信息 -->
+    <select id="saveResTrendInfo" statementType="CALLABLE">
+        {CALL p_record_res_trend_info()}
+    </select>
+
+    <!-- 数据库流向信息 -->
+    <select id="saveDbTrendInfo" statementType="CALLABLE">
+        {CALL p_record_db_trend_info()}
+    </select>
+
+    <select id="getResCountInfoByClassName" parameterType="string" resultType="java.util.HashMap">
+        select * from (select className,count,DATE_FORMAT(oper_time, "%Y-%m-%d") as oper_time
+        from t_res_num_info
+        where className = #{className}
+        order by oper_time desc
+        limit 7) order by oper_time
+    </select>
+
+
+    <select id="getResCountByDate" parameterType="date" resultType="java.util.HashMap">
+      select sum(count)count,DATE_FORMAT(oper_time, "%Y-%m-%d") as oper_time
+        from t_res_num_info
+        where date_format(oper_time,'%y%m%d') = date_format(#{paramValue},'%y%m%d')
+        group by date_format(oper_time,'%y%m%d')
+    </select>
+
+
+
+    <select id="getProductHostNumInfo" parameterType="string" resultType="java.util.HashMap">
+        SELECT
+        belongProduct,
+        MAX(
+        CASE className
+        WHEN 'CloudVm' THEN num
+        ELSE 0
+        END
+        ) 'vmNum',
+        MAX(
+        CASE className
+        WHEN 'PhysicalServer' THEN num
+        ELSE 0
+        END
+        ) 'serverNum',
+        MAX(
+        CASE className
+        WHEN 'PhysicalHost' THEN num
+        ELSE 0
+        END
+        ) 'hostNum',
+        sum(num) as total
+        from
+        (
+        select
+        count(0) as num,
+        belongProduct,
+        productToken,
+        className
+        from
+        (
+        select
+        productToken,
+        belongProduct,
+        'CloudVm' as className,
+        sysAdminTeam,
+        resId
+        from
+        t_cloudvm
+        union
+        select
+        productToken,
+        belongProduct,
+        'PhysicalServer' as className,
+        sysAdminTeam,
+        resId
+        from
+        t_physicalserver
+        union
+        select
+        productToken,
+        belongProduct,
+        'PhysicalHost' as className,
+        sysAdminTeam,
+        resId
+        from
+        t_physicalhost
+        ) allhost
+        where
+        productToken is not null
+        <if test="teamName !=null and teamName !=''">
+            and sysAdminTeam = #{teamName}
+        </if>
+
+        group by
+        productToken,
+        className
+        )
+        GROUP BY
+        productToken
+        ORDER BY
+        total desc
+
+    </select>
+
+    <!-- 获取所有vm信息 -->
+    <select id="getMergeInstance" resultType="CloudVmare" parameterType="CloudVmare">
+        select
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        productToken,
+        deployEnv,
+        memorySize as memoryCapacity,
+        nativeId,
+        cpuArch,
+        cpuCoreNum,
+        networkArea,
+        diskSize as diskCapacity,
+        last_Modified,
+        relatedIp as relateIp,
+        virtualIp,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        osAdminUser,
+        osNormalUser,
+        bizRegionName,
+        projectName,
+        createUser,
+        resourceCode,
+        NULL as locationCode,
+        NULL as bmcIp,
+        belongCompany
+        FROM t_cloudvm
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="productToken !=null and productToken !=''">
+                and productToken = #{productToken}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="networkArea !=null and networkArea !=''">
+                and networkArea = #{networkArea}
+            </if>
+            <if test="resIdArr !=null and resIdArr.size() > 0 ">
+                and resId in
+                <foreach collection="resIdArr" index="index" item="resIdItem" open="(" separator="," close=")">
+                    #{resIdItem}
+                </foreach>
+            </if>
+            <if test="resId !=null and resId !=''">
+                and resId = #{resId}
+            </if>
+        </where>
+        union all
+        SELECT
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        mainIp as ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        productToken,
+        deployEnv,
+        memoryCapacity,
+        nativeId,
+        cpuArch,
+        cpuCores as cpuCoreNum,
+        networkArea,
+        diskCapacity,
+        last_Modified,
+        relateIp,
+        virtualIp,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        osAdminUser,
+        osNormalUser,
+        bizregionName as bizRegionName,
+        NULL as projectName,
+        NULL as createUser,
+        resourceCode,
+        locationCode,
+        mgmtIp as bmcIp,
+        belongCompany
+        FROM
+
+        t_physicalserver
+
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="productToken !=null and productToken !=''">
+                and productToken = #{productToken}
+            </if>
+            <if test="statusArr !=null and statusArr.size!=0">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="resId !=null and resId !=''">
+                and resId = #{resId}
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relateIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="networkArea !=null and networkArea !=''">
+                and networkArea = #{networkArea}
+            </if>
+            <if test="resIdArr !=null and resIdArr.size() > 0 ">
+                and resId in
+                <foreach collection="resIdArr" index="index" item="resIdItem" open="(" separator="," close=")">
+                    #{resIdItem}
+                </foreach>
+            </if>
+        </where>
+        union all
+        select resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        productToken,
+        deployEnv,
+        totalMemory as memoryCapacity,
+        nativeId,
+        cpuArch,
+        totalVcpuCores as cpuCoreNum,
+        networkArea,
+        totalDiskSizeMB as diskCapacity,
+        last_Modified,
+        relatedIp as relateIp,
+        virtualIp,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        osAdminUser,
+        osNormalUser,
+        bizregionName as bizRegionName,
+        NULL as projectName,
+        NULL as createUser,
+        resourceCode,
+        locationCode,
+        bmcIp,
+        belongCompany
+        from t_physicalhost
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct like CONCAT ('%',#{belongProduct},'%')
+            </if>
+            <if test="productToken !=null and productToken !=''">
+                and productToken = #{productToken}
+            </if>
+            <if test="statusArr !=null and statusArr.size!=0">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam like CONCAT ('%',#{sysAdminTeam},'%')
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="resId !=null and resId !=''">
+                and resId = #{resId}
+            </if>
+            <if test="networkArea !=null and networkArea !=''">
+                and networkArea = #{networkArea}
+            </if>
+            <if test="resIdArr !=null and resIdArr.size() > 0 ">
+                and resId in
+                <foreach collection="resIdArr" index="index" item="resIdItem" open="(" separator="," close=")">
+                    #{resIdItem}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
+    <!-- 获取全量虚拟机，宿主机，物理机信息，全部统一到CloudVmare实体类中 -->
+    <select id="getAllCloudInstance" resultType="CloudVmare">
+        select
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        memorySize,
+        nativeId,
+        cpuArch,
+        cpuCoreNum,
+        networkArea,
+        diskSize,
+        last_Modified,
+        relatedIp,
+        virtualIp,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        osAdminUser,
+        osNormalUser,
+        bizRegionName,
+        azoneName,
+        ownerType,
+        tenantType,
+        projectName,
+        createUser
+
+        FROM t_cloudvm
+
+        union all
+        SELECT
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        mainIp as ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        memoryCapacity as memorySize,
+        nativeId,
+        cpuArch,
+        cpuCores as cpuCoreNum,
+        networkArea,
+        diskCapacity as diskSize,
+        last_Modified,
+        relateIp as relatedIp,
+        virtualIp,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        osAdminUser,
+        osNormalUser,
+        bizregionName as bizRegionName,
+        azoneName,
+        NULL as ownerType,
+        NULL as tenantType,
+        NULL as projectName,
+        NULL as createUser
+        FROM t_physicalserver
+
+        union all
+        select
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        totalMemory as memorySize,
+        nativeId,
+        cpuArch,
+        totalVcpuCores as cpuCoreNum,
+        networkArea,
+        totalDiskSizeMB as diskSize,
+        last_Modified,
+        relatedIp,
+        virtualIp,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        osAdminUser,
+        osNormalUser,
+        bizregionName as bizRegionName,
+        azoneName,
+        NULL as ownerType,
+        NULL as tenantType,
+        NULL as projectName,
+        NULL as createUser
+        from t_physicalhost
+    </select>
+
+    <select id="getNullBelongProductList" resultType="CloudVmare" parameterType="CloudVmare">
+        select
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        memorySize,
+        nativeId,
+        cpuArch,
+        cpuCoreNum,
+        networkArea,
+        diskSize as diskCapacity,
+        last_Modified,
+        relatedIp as relateIp,
+        virtualIp,
+        stakeholder,
+        bizRegionName
+        FROM t_cloudvm
+        <where>
+            (belongProduct is null or belongProduct = '')
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        union all
+        SELECT
+        resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        mainIp as ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        memoryCapacity as memorySize,
+        nativeId,
+        cpuArch,
+        cpuCores as cpuCoreNum,
+        networkArea,
+        diskCapacity,
+        last_Modified,
+        relateIp,
+        virtualIp,
+        stakeholder,
+        bizregionName as bizRegionName
+        FROM
+
+        t_physicalserver
+        <where>
+            (belongProduct is null or belongProduct = '')
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relateIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        union all
+        select resId,
+        mainIp,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        name,
+        status,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        totalMemory as memoryCapacity,
+        nativeId,
+        cpuArch,
+        totalVcpuCores as cpuCoreNum,
+        networkArea,
+        totalDiskSizeMB as diskCapacity,
+        last_Modified,
+        relatedIp as relateIp,
+        virtualIp,
+        stakeholder,
+        bizregionName as bizRegionName
+        from t_physicalhost
+        <where>
+            (belongProduct is null or belongProduct = '')
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="countInstanceByStatus" resultType="hashmap" parameterType="CloudVmare">
+        select status, count(resId) num from t_cloudvm
+        <where>
+            azoneName not like CONCAT ('%','云桌面','%')
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by status
+    </select>
+
+    <select id="countInstanceByStatusGroudByAzoneName" resultType="hashmap" parameterType="CloudVmare">
+        select status, count(resId) num from t_cloudvm
+        <where>
+            azoneName like CONCAT ('%','云桌面','%')
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by status
+    </select>
+
+    <select id="countInstanceBydeployenv" resultType="hashmap" parameterType="CloudVmare">
+        select deployenv, count(resId) num from t_cloudvm
+        <where>
+            <if test="ifVdesk == 'true'">
+                and azoneName like CONCAT ('%','云桌面','%')
+            </if>
+            <if test="ifVdesk == 'false'">
+                and azoneName not like CONCAT ('%','云桌面','%')
+            </if>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by deployenv
+    </select>
+
+    <select id="countPhysicalServerByDeployEnv" parameterType="CloudVmare" resultType="hashmap">
+        select deployEnv, count(resId) num from t_physicalserver
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relateIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by deployEnv
+    </select>
+
+    <select id="countPhysicalHostByDeployEnv" parameterType="CloudVmare" resultType="hashmap">
+        select deployEnv, count(resId) num from t_physicalhost
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by deployEnv
+    </select>
+
+    <select id="countMergeInstanceByDeployEnv" parameterType="CloudVmare" resultType="hashmap">
+        select deployEnv, sum(num) num from (
+        select deployEnv, count(resId) num from t_cloudvm
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by deployEnv
+        union all
+        select deployEnv, count(resId) num from t_physicalserver
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relateIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by deployEnv
+        union all
+        select deployEnv, count(resId) num from t_physicalhost
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by deployEnv)
+        group by deployEnv
+    </select>
+
+    <select id="countMergeInstanceByStatus" resultType="hashmap" parameterType="CloudVmare">
+        select status, sum(num) num from (
+        select status, count(resId) num FROM t_cloudvm
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by status
+        union all
+        select status, count(resId) num FROM t_physicalserver
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relateIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by status
+        union all
+        select status, count(resId) num FROM t_physicalhost
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and
+                CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,''),IFNULL(relatedIp,''),IFNULL(virtualIp,''))
+                like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="bizRegionNameArr !=null and bizRegionNameArr.size!=0">
+                and bizRegionName in
+                <foreach collection="bizRegionNameArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by status)
+        group by status
+    </select>
+
+    <update id="updateAdministrator" parameterType="hashmap">
+        update t_cloudvm
+        <set>
+            <if test="sysAdministrator != null and sysAdministrator !=''">
+                sysAdministrator=#{sysAdministrator},
+            </if>
+            <if test="sysAdminBackup != null and sysAdminBackup !=''">
+                sysAdminBackup=#{sysAdminBackup},
+            </if>
+            <if test="stakeholder != null and stakeholder !=''">
+                stakeholder=#{stakeholder},
+            </if>
+            <if test="hidsStatus != null and hidsStatus !=''">
+                hidsStatus=#{hidsStatus},
+            </if>
+            <if test="zabbixStatus != null and zabbixStatus !=''">
+                zabbixStatus=#{zabbixStatus},
+            </if>
+            <if test="deployAdminA != null and deployAdminA !=''">
+                deployAdminA=#{deployAdminA},
+            </if>
+            <if test="deployAdminB != null and deployAdminB !=''">
+                deployAdminB=#{deployAdminB},
+            </if>
+        </set>
+        where resId=#{resId}
+    </update>
+
+    <update id="updatebackupAdministrator" parameterType="hashmap">
+        update t_cloudvm set sysAdminBackup=#{sysAdminBackup} where resId=#{resId}
+    </update>
+
+    <update id="updateStakeholder" parameterType="hashmap">
+        update t_cloudvm set stakeholder=#{stakeholder} where resId=#{resId}
+    </update>
+
+    <select id="countNonCompliantZabbixStatus" resultType="int">
+        select sum(num) num from (
+        select count(resId) num from t_cloudvm where deployEnv != "1" and status="active" and
+        (zabbixStatus is null or zabbixStatus not in ("0", "3"))
+        union all
+        select count(resId) num FROM t_physicalserver where status="active" and (zabbixStatus is null or zabbixStatus
+        not in ("0", "3"))
+        union all select count(resId) num FROM t_physicalhost where status="active" and (zabbixStatus is null or
+        zabbixStatus not in ("0", "3")))
+    </select>
+
+    <select id="countNonCompliantHidsStatus" resultType="int">
+        select sum(num) num from (
+        select count(resId) num from t_cloudvm where status="active" and (hidsStatus is null or hidsStatus not in ("0",
+        "4"))
+        union all
+        select count(resId) num FROM t_physicalserver where status="active" and (hidsStatus is null or hidsStatus not in
+        ("0", "4"))
+        union all
+        select count(resId) num from t_physicalhost where status="active" and (hidsStatus is null or hidsStatus not in
+        ("0", "4")))
+    </select>
+
+    <select id="countNonCompliantMainIp" resultType="int">
+        select sum(num) num from (
+        select count(resId) num from t_cloudvm where bizRegionName != "成员-VMware区" and status="active" and (mainIp is
+        null or mainIp = '')
+        union all
+        select count(resId) num FROM t_physicalserver where status="active" and (mainIp is null or mainIp = '')
+        union all select count(resId) num FROM t_physicalhost where status="active" and (mainIp is null or mainIp = ''))
+    </select>
+
+    <select id="countAttrNull" resultType="int" parameterType="map">
+        select sum(num) num from (
+        <foreach collection="params.keys" index="index" item="k" separator="union all">
+            select count(resId) num from ${k} where ${params[k]} is null or ${params[k]} = ''
+        </foreach>
+        )
+    </select>
+
+    <select id="countAttrNullActive" resultType="int" parameterType="map">
+        select sum(num) num from (
+        <foreach collection="params.keys" index="index" item="k" separator="union all">
+            select count(resId) num from ${k} where (${params[k]} is null or ${params[k]} = '') and status="active"
+        </foreach>
+        )
+    </select>
+
+    <select id="countNonCompliantDeployEnv" resultType="int">
+        select sum(num) num from (
+        select count(resId) num from t_cloudvm where status="active" and deployEnv not in ('0', '1')
+        union all
+        select count(resId) num FROM t_physicalserver where status="active" and deployEnv not in ('0', '1')
+        union all select count(resId) num FROM t_physicalhost where status="active" and deployEnv not in ('0', '1'))
+    </select>
+
+    <select id="getCloudVmareCount" resultType="int">
+        select count(resId) from t_cloudvm where azoneName not like CONCAT ('%','云桌面','%')
+    </select>
+
+    <select id="getVdeskVMCount" resultType="int">
+        select count(resId) from t_cloudvm where azoneName like CONCAT ('%','云桌面','%')
+    </select>
+
+    <select id="getBmsCount" resultType="int">
+        select count(resId) from t_cloud_bms
+    </select>
+
+    <select id="getSafeEquipmentCount" resultType="int">
+    select count(resId) from t_physicalserver where class_Name = 'Safe_Equipment'
+    </select>
+
+    <update id="updateFindResource" parameterType="hashmap">
+        update t_cloudvm set
+        belongProduct=#{belongProduct},sysAdministrator=#{sysAdministrator},resourceCode=#{resourceCode},productToken=#{productToken},appModName=#{appModName},appModToken=#{appModToken}
+        where resId = #{id}
+    </update>
+
+    <select id="getCloudVmareInfo" resultType="hashmap">
+        select sysAdministrator,sysAdminBackup,stakeholder from t_cloudvm where resId=#{resId}
+    </select>
+
+    <select id="getCloudVMByResIds" parameterType="java.util.HashSet" resultType="java.util.HashMap">
+        select
+        resId,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        class_Name,
+        azoneId,
+        name,
+        status,
+        azoneName,
+        sysAdminTeam,
+        belongProduct,
+        deployEnv,
+        memorySize,
+        last_Modified,
+        regionId,
+        regionName,
+        networkArea,
+        diskSize as diskCapacity,
+        nativeId,
+        cpuCoreNum,
+        mainIp,
+        relatedIp as relateIp,
+        virtualIp,
+        stakeholder
+        FROM t_cloudvm nova where resId in
+        <foreach collection="resIds" index="index" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getCloudVMInfoByResId" resultType="com.clic.ccdbaas.entity.CloudVmare" parameterType="String">
+        select * from t_cloudvm where resId=#{resId}
+    </select>
+
+    <update id="updateUsageDes" parameterType="String">
+        update t_cloudvm set usageDes=#{usageDes} where resId=#{resId}
+    </update>
+
+    <select id="getResIdByIp" parameterType="string" resultType="hashmap">
+        select resId,relatedIp,virtualIp,mainIp from t_cloudvm where relatedIp like concat('%',#{ip},'%') or virtualIp
+        like concat('%',#{ip},'%') or mainIp = #{ip}
+    </select>
+
+    <update id="updateCloudVmKafka" parameterType="CloudVmKafka">
+        update t_cloudvm
+        <trim prefix="set" suffixOverrides=",">
+            <if test="resourceCode!=null and resourceCode!=''">resourceCode = #{resourceCode},</if>
+            <if test="belongProduct!=null and belongProduct!=''">belongProduct = #{belongProduct},</if>
+            <if test="ProductToken!=null and ProductToken!=''">ProductToken = #{ProductToken},</if>
+            <if test="appModName!=null and appModName!=''">appModName = #{appModName},</if>
+            <if test="appModToken!=null and appModToken!=''">appModToken = #{appModToken},</if>
+            <if test="sysAdministrator!=null and sysAdministrator!=''">sysAdministrator = #{sysAdministrator},</if>
+            <if test="stakeholder!=null and stakeholder!=''">stakeholder = #{stakeholder},</if>
+            <if test="sysAdminBackup!=null and sysAdminBackup!=''">sysAdminBackup = #{sysAdminBackup},</if>
+            <if test="sysAdminTeam!=null and sysAdminTeam!=''">sysAdminTeam = #{sysAdminTeam},</if>
+            <if test="deployAdminA!=null and deployAdminA!=''">deployAdminA = #{deployAdminA},</if>
+        </trim>
+        where mainIp = #{mainIp}
+    </update>
+
+    <select id="getCloudVmByMainIp" parameterType="string" resultType="map">
+        select * from t_cloudvm where mainIp = #{mainIp}
+    </select>
+
+    <delete id="testDelete">
+        delete from test01
+    </delete>
+
+    <select id="getRegionNameOfMergedInstance" resultType="map">
+        select bizRegionId, bizRegionName from (
+        select bizRegionId, bizRegionName from t_cloudvm
+        union all
+        select regionId as bizRegionId, bizregionName as bizRegionName from t_physicalserver
+        union all
+        select regionId as bizRegionId, bizregionName as bizRegionName from t_physicalhost)
+        group by bizRegionName
+    </select>
+
+
+    <select id="getAllResDefModel" resultType="map">
+        select
+        resId,
+        tableName,
+        resName,
+        descInfo,
+        category
+        from
+        t_res_model_def
+    </select>
+
+    <select id="getAllResCount" parameterType="java.util.List" resultType="int">
+        select count(0) from(
+
+        <foreach collection="resModelArr" index="index" item="resItem" open="(" separator="union" close=")">
+            select resId from ${resItem.tableName}
+        </foreach>
+
+        )
+    </select>
+
+
+    <select id="getAllTrendName" resultType="map">
+        select distinct name from
+        (select sourceName as name from t_res_trend_info where nowCount >0
+        union
+        select targetName as name from t_res_trend_info where nowCount >0)
+    </select>
+
+
+    <select id="getTrendDetailInfo" resultType="map">
+        select
+        sourceName source,
+        targetName target,
+        nowCount value
+        from
+        t_res_trend_info where nowCount>0
+    </select>
+
+    <!-- 获取除3个vc以外的所有vm信息 -->
+    <select id="getAllInstanceExceptCloudDesktop" resultType="CloudVmare">
+        SELECT
+        resId,
+        usageDes,
+        sysAdministrator,
+        sysAdminBackup,
+        deployOs,
+        ipAddress,
+        zabbixStatus,
+        hidsStatus,
+        pingStatus,
+        class_Name,
+        osAdminUser,
+        osNormalUser,
+        azoneId,
+        name,
+        status,
+        azoneName,
+        sysAdminTeam,
+        belongProduct,
+        productToken,
+        deployEnv,
+        memorySize,
+        memorySize as memoryCapacity,
+        last_Modified,
+        regionId,
+        regionName,
+        networkArea,
+        diskSize as diskCapacity,
+        nativeId,
+        cpuCoreNum,
+        mainIp,
+        bizRegionName,
+        projectName,
+        createUser,
+        relatedIp as relateIp,
+        virtualIp,
+        resourceCode,
+        clusterName,
+        physicalHostId,
+        stakeholder,
+        ownerType,
+        tenantType,
+        extraSpecs,
+        privateIps,
+        ownerId,
+        createdAt,
+        logicalRegionName,
+        flavorId,
+        clusterId,
+        deviceName,
+        diskSize,
+        powerState,
+        ownerName,
+        confirmStatus,
+        bizRegionId,
+        class_Id,
+        originalState,
+        hostId,
+        hypervisorType,
+        resourcePoolName,
+        keystoneId,
+        logicalRegionId,
+        is_Local,
+        dataPlane,
+        tenantName,
+        createTime,
+        resourcePoolId,
+        tenantId,
+        isVirtual,
+        vdcName,
+        launchedAt,
+        projectId,
+        vdcId,
+        resourcePoolType,
+        imageId,
+        tags,
+        relatedIp,
+        belongCompany,
+        osVersion,
+        appModToken,
+        appModName,
+        cpuArch,
+        azoneInfo,
+        appId
+        FROM t_cloudvm
+        where azoneName not in ('VMware6.0-卡园-办公云桌面01', 'VMware6.0-卡园-办公云桌面02', 'VMware6.0-卡园-办公云桌面03')
+    </select>
+
+    <insert id="insertSingleCloudVmInstance" parameterType="CloudVmare">
+        insert into t_cloudvm (resId, usageDes, sysAdministrator, sysAdminBackup, deployOs, ipAddress, zabbixStatus,
+        hidsStatus, pingStatus, class_Name, osAdminUser, osNormalUser, azoneId, name, status, azoneName, sysAdminTeam,
+        belongProduct, productToken, deployEnv, memorySize, last_Modified, regionId, regionName, networkArea, diskSize,
+        nativeId, cpuCoreNum, mainIp, bizRegionName, projectName, createUser, relatedIp, virtualIp, resourceCode,
+        clusterName, physicalHostId, stakeholder, ownerType, tenantType, extraSpecs, privateIps, ownerId, createdAt,
+        logicalRegionName, flavorId, clusterId, deviceName, diskCapacity, powerState, ownerName, confirmStatus,
+        bizRegionId, class_Id, originalState, hostId, hypervisorType, resourcePoolName, keystoneId, logicalRegionId,
+        is_Local, appId, dataPlane, tenantName, createTime, resourcePoolId, tenantId, isVirtual, vdcName, launchedAt,
+        projectId, vdcId, resourcePoolType, imageId, tags, relateIp, belongCompany, osVersion, appModToken, appModName,
+        cpuArch, azoneInfo)
+        values (#{resId}, #{usageDes}, #{sysAdministrator}, #{sysAdminBackup}, #{deployOs}, #{ipAddress},
+        #{zabbixStatus}, #{hidsStatus}, #{pingStatus}, #{class_Name}, #{osAdminUser}, #{osNormalUser}, #{azoneId},
+        #{name}, #{status}, #{azoneName}, #{sysAdminTeam}, #{belongProduct}, #{productToken}, #{deployEnv},
+        #{memorySize}, #{last_Modified}, #{regionId}, #{regionName}, #{networkArea}, #{diskSize}, #{nativeId},
+        #{cpuCoreNum}, #{mainIp}, #{bizRegionName}, #{projectName}, #{createUser}, #{relatedIp}, #{virtualIp},
+        #{resourceCode}, #{clusterName}, #{physicalHostId}, #{stakeholder}, #{ownerType}, #{tenantType}, #{extraSpecs},
+        #{privateIps}, #{ownerId}, #{createdAt}, #{logicalRegionName}, #{flavorId}, #{clusterId}, #{deviceName},
+        #{diskCapacity}, #{powerState}, #{ownerName}, #{confirmStatus}, #{bizRegionId}, #{class_Id}, #{originalState},
+        #{hostId}, #{hypervisorType}, #{resourcePoolName}, #{keystoneId}, #{logicalRegionId}, #{is_Local}, #{appId},
+        #{dataPlane}, #{tenantName}, #{createTime}, #{resourcePoolId}, #{tenantId}, #{isVirtual}, #{vdcName},
+        #{launchedAt}, #{projectId}, #{vdcId}, #{resourcePoolType}, #{imageId}, #{tags}, #{relateIp}, #{belongCompany},
+        #{osVersion}, #{appModToken}, #{appModName}, #{cpuArch}, #{azoneInfo})
+    </insert>
+
+    <update id="updateSingleCloudVmInstance" parameterType="CloudVmare">
+        update t_cloudvm
+        <trim prefix="set" suffixOverrides=",">
+            <if test="ipAddress!=null and ipAddress!=''"> ipAddress = #{ipAddress},</if>
+            <if test="azoneId!=null and azoneId!=''"> azoneId = #{azoneId},</if>
+            <if test="name!=null and name!=''"> name = #{name},</if>
+            <if test="status!=null and status!=''"> status = #{status},</if>
+            <if test="azoneName!=null and azoneName!=''"> azoneName = #{azoneName},</if>
+            <if test="last_Modified!=null and last_Modified!=''"> last_Modified = #{last_Modified},</if>
+            <if test="diskSize!=null and diskSize!=''"> diskSize = #{diskSize},</if>
+            <if test="nativeId!=null and nativeId!=''"> nativeId = #{nativeId},</if>
+            <if test="bizRegionName!=null and bizRegionName!=''"> bizRegionName = #{bizRegionName},</if>
+            <if test="projectName!=null and projectName!=''"> projectName = #{projectName},</if>
+            <if test="clusterName!=null and clusterName!=''"> clusterName = #{clusterName},</if>
+            <if test="physicalHostId!=null and physicalHostId!=''"> physicalHostId = #{physicalHostId},</if>
+            <if test="ownerType!=null and ownerType!=''"> ownerType = #{ownerType},</if>
+            <if test="tenantType!=null and tenantType!=''"> tenantType = #{tenantType},</if>
+            <if test="extraSpecs!=null and extraSpecs!=''"> extraSpecs = #{extraSpecs},</if>
+            <if test="privateIps!=null and privateIps!=''"> privateIps = #{privateIps},</if>
+            <if test="ownerId!=null and ownerId!=''"> ownerId = #{ownerId},</if>
+            <if test="createdAt!=null and createdAt!=''"> createdAt = #{createdAt},</if>
+            <if test="logicalRegionName!=null and logicalRegionName!=''"> logicalRegionName = #{logicalRegionName},</if>
+            <if test="flavorId!=null and flavorId!=''"> flavorId = #{flavorId},</if>
+            <if test="clusterId!=null and clusterId!=''"> clusterId = #{clusterId},</if>
+            <if test="deviceName!=null and deviceName!=''"> deviceName = #{deviceName},</if>
+            <if test="powerState!=null and powerState!=''"> powerState = #{powerState},</if>
+            <if test="ownerName!=null and ownerName!=''"> ownerName = #{ownerName},</if>
+            <if test="confirmStatus!=null and confirmStatus!=''"> confirmStatus = #{confirmStatus},</if>
+            <if test="bizRegionId!=null and bizRegionId!=''"> bizRegionId = #{bizRegionId},</if>
+            <if test="class_Id!=null and class_Id!=''"> class_Id = #{class_Id},</if>
+            <if test="originalState!=null and originalState!=''"> originalState = #{originalState},</if>
+            <if test="hostId!=null and hostId!=''"> hostId = #{hostId},</if>
+            <if test="hypervisorType!=null and hypervisorType!=''"> hypervisorType = #{hypervisorType},</if>
+            <if test="resourcePoolName!=null and resourcePoolName!=''"> resourcePoolName = #{resourcePoolName},</if>
+            <if test="keystoneId!=null and keystoneId!=''"> keystoneId = #{keystoneId},</if>
+            <if test="logicalRegionId!=null and logicalRegionId!=''"> logicalRegionId = #{logicalRegionId},</if>
+            <if test="is_Local!=null and is_Local!=''"> is_Local = #{is_Local},</if>
+            <if test="dataPlane!=null and dataPlane!=''"> dataPlane = #{dataPlane},</if>
+            <if test="tenantName!=null and tenantName!=''"> tenantName = #{tenantName},</if>
+            <if test="resourcePoolId!=null and resourcePoolId!=''"> resourcePoolId = #{resourcePoolId},</if>
+            <if test="tenantId!=null and tenantId!=''"> tenantId = #{tenantId},</if>
+            <if test="isVirtual!=null and isVirtual!=''"> isVirtual = #{isVirtual},</if>
+            <if test="vdcName!=null and vdcName!=''"> vdcName = #{vdcName},</if>
+            <if test="projectId!=null and projectId!=''"> projectId = #{projectId},</if>
+            <if test="vdcId!=null and vdcId!=''"> vdcId = #{vdcId},</if>
+            <if test="resourcePoolType!=null and resourcePoolType!=''"> resourcePoolType = #{resourcePoolType},</if>
+            <if test="imageId!=null and imageId!=''"> imageId = #{imageId},</if>
+            <if test="tags!=null and tags!=''"> tags = #{tags},</if>
+            <if test="osVersion!=null and osVersion!=''"> osVersion = #{osVersion},</if>
+            <if test="cpuArch!=null and cpuArch!=''"> cpuArch = #{cpuArch},</if>
+            <if test="azoneInfo!=null and azoneInfo!=''"> azoneInfo = #{azoneInfo},</if>
+            <if test="appId!=null and appId!=''"> appId = #{appId},</if>
+            <if test="createUser!=null and createUser!=''"> createUser = #{createUser},</if>
+            <if test="belongCompany!=null and belongCompany!=''"> belongCompany = #{belongCompany},</if>
+        </trim>
+        where resId = #{resId}
+    </update>
+
+    <delete id="deleteSingleCloudVmInstance" parameterType="CloudVmare">
+        delete from t_cloudvm where resId = #{resId}
+    </delete>
+
+    <select id="getProjectInfoByBizRegionName" parameterType="String" resultType="Map">
+        select projectId, projectName from t_cloudvm
+        where bizRegionName = #{bizRegionName}
+        group by projectId
+    </select>
+
+    <select id="getCloudVmInstanceByProjectInfo" parameterType="String" resultType="CloudVmare">
+        select resId, name, nativeId, deployOs, projectId, projectName from t_cloudvm
+        where projectId = #{projectId} and projectName = #{projectName}
+    </select>
+
+    <update id="updateSingleCloudVmInfoByNativeId" parameterType="CloudVmare">
+        update t_cloudvm
+        <trim prefix="set" suffixOverrides=",">
+            <if test="deployOs!=null and deployOs!=''"> deployOs = #{deployOs},</if>
+        </trim>
+        where nativeId = #{nativeId}
+    </update>
+</mapper>

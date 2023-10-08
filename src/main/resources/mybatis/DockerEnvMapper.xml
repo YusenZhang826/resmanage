@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.DockerEnvMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.DockerEnv" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="displayName" property="displayName" jdbcType="VARCHAR" />
+    <result column="cloudName" property="cloudName" jdbcType="VARCHAR" />
+    <result column="rangeEnd" property="rangeEnd" jdbcType="VARCHAR" />
+    <result column="rangeStart" property="rangeStart" jdbcType="VARCHAR" />
+    <result column="cpu" property="cpu" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="memory" property="memory" jdbcType="VARCHAR" />
+    <result column="delFlag" property="delFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, id, displayName, cloudName, rangeEnd, rangeStart, cpu, `state`, memory,delFlag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_docker_env
+    where resId = #{resId,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="getAllInstance" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from t_docker_env
+  </select>
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_docker_env
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.DockerEnv" >
+    insert into t_docker_env (resId, id, displayName, 
+      cloudName, rangeEnd, rangeStart, 
+      cpu, `state`, memory,delFlag)
+    values (#{resId,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
+      #{cloudName,jdbcType=VARCHAR}, #{rangeEnd,jdbcType=VARCHAR}, #{rangeStart,jdbcType=VARCHAR}, 
+      #{cpu,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR}, #{memory,jdbcType=VARCHAR},#{delFlag,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.DockerEnv" >
+    insert into t_docker_env
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="displayName != null" >
+        displayName,
+      </if>
+      <if test="cloudName != null" >
+        cloudName,
+      </if>
+      <if test="rangeEnd != null" >
+        rangeEnd,
+      </if>
+      <if test="rangeStart != null" >
+        rangeStart,
+      </if>
+      <if test="cpu != null" >
+        cpu,
+      </if>
+      <if test="state != null" >
+        `state`,
+      </if>
+      <if test="memory != null" >
+        memory,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="displayName != null" >
+        #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="cloudName != null" >
+        #{cloudName,jdbcType=VARCHAR},
+      </if>
+      <if test="rangeEnd != null" >
+        #{rangeEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="rangeStart != null" >
+        #{rangeStart,jdbcType=VARCHAR},
+      </if>
+      <if test="cpu != null" >
+        #{cpu,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="memory != null" >
+        #{memory,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.DockerEnv" >
+    update t_docker_env
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="displayName != null" >
+        displayName = #{displayName,jdbcType=VARCHAR},
+      </if>
+      <if test="cloudName != null" >
+        cloudName = #{cloudName,jdbcType=VARCHAR},
+      </if>
+      <if test="rangeEnd != null" >
+        rangeEnd = #{rangeEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="rangeStart != null" >
+        rangeStart = #{rangeStart,jdbcType=VARCHAR},
+      </if>
+      <if test="cpu != null" >
+        cpu = #{cpu,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        `state` = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="memory != null" >
+      memory = #{memory,jdbcType=VARCHAR},
+    </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.DockerEnv" >
+    update t_docker_env
+    set id = #{id,jdbcType=VARCHAR},
+      displayName = #{displayName,jdbcType=VARCHAR},
+      cloudName = #{cloudName,jdbcType=VARCHAR},
+      rangeEnd = #{rangeEnd,jdbcType=VARCHAR},
+      rangeStart = #{rangeStart,jdbcType=VARCHAR},
+      cpu = #{cpu,jdbcType=INTEGER},
+         delFlag = #{delFlag,jdbcType=VARCHAR},
+      `state` = #{state,jdbcType=VARCHAR},
+      memory = #{memory,jdbcType=VARCHAR}
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="getEnvHost" parameterType="java.lang.String" resultType="com.clic.ccdbaas.entity.CloudVmare">
+    select
+    resId,
+    usageDes,
+    sysAdministrator,
+    sysAdminBackup,
+    deployOs,
+    ipAddress,
+    zabbixStatus,
+    hidsStatus,
+    pingStatus,
+    class_Name,
+    osAdminUser,
+    osNormalUser,
+    name,
+    status,
+    sysAdminTeam,
+    belongProduct,
+    deployEnv,
+
+    memoryCapacity,
+    last_Modified,
+
+    networkArea,
+    diskCapacity,
+    nativeId,
+    cpuCoreNum,
+    mainIp,
+    bizRegionName,
+    projectName,
+    belongCompany,
+    createUser,
+    relateIp,
+    virtualIp,
+    resourceCode,
+    stakeholder,
+    deployAdminA,
+    deployAdminB,
+    fourA,
+    antivirusSoftware
+     from t_host_instance_view
+    where mainIp in
+    <foreach collection="mainIpArr" open="(" close=")" separator="," item="mainIp">
+      #{mainIp}
+    </foreach>
+  </select>
+
+</mapper>

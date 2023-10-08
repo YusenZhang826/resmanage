@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.TestRegistrationProductMapper">
+    <select id="getAllInstance" parameterType="TestRegistrationProduct" resultType="TestRegistrationProduct">
+        select resId,detailDesc,dmUids,dtmUids,name,omUids,owner,smUids,description,productionToken from
+        t_test_acs_product_info
+        <where>
+            <if test="name !=null and name != ''">name like concat('%',#{name},'%')</if>
+        </where>
+    </select>
+
+    <update id="addVmProduct" parameterType="hashmap">
+        update t_cloudvm set belongProduct=#{belongProduct}
+        <if test="productToken != null and productToken != ''">
+            ,productToken=#{productToken}
+        </if>
+        where resId =#{resId}
+    </update>
+
+    <update id="addPhysicalProduct" parameterType="hashmap">
+        update t_physicalserver set belongProduct=#{belongProduct}
+        <if test="productToken != null and productToken != ''">
+            ,productToken=#{productToken}
+        </if>
+        where resId =#{resId}
+    </update>
+
+    <select id="getAuthorizeProduct" resultType="map">
+        select mainIp,deployAdminA,deployOs,belongProduct from t_cloudvm where deployEnv = '1' and deployAdminA is not
+        null and
+        deployAdminA
+        != '' and
+        belongProduct is not null and belongProduct != '' limit 2
+    </select>
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.ScheduledTaskMapper">
+    <!-- 获取所有的定时任务实例 -->
+    <select id="getAllRunningScheduledTask" resultType="hashmap">
+        select resId,execPeriod,resourceTypeId, triggerMechanism, executeStatement, searchType
+        from t_compliance_rule
+        where status=1 and checkType=0
+    </select>
+
+    <!--删除过期数据-->
+    <delete id="deleteExpireData" parameterType="string">
+        delete from t_scheduled_task where ruleId=#{ruleId}
+    </delete>
+
+    <!--批量插入结果集-->
+    <insert id="batchInsertResult">
+        insert into t_scheduled_task(id, ruleId, resourceId, resourceTypeId) values
+        <foreach collection="idsList" item="idInfo" separator=",">
+            (#{idInfo.id}, #{ruleId}, #{idInfo.resId}, #{resourceTypeId})
+        </foreach>
+    </insert>
+
+    <!--获取指定资源表数据总量-->
+    <select id="getResourceTotal" parameterType="string" resultType="int">
+        select count(${primaryKey}) from ${tableName}
+    </select>
+
+    <!--获取规则对应结果集数据-->
+    <select id="getResult" resultType="map">
+        select * from ${params.tableName} where ${params.primaryKey} in
+        (select resourceId from t_scheduled_task where ruleId=#{params.ruleId}
+        <if test="fuzzyParam != null and fuzzyParam.size > 0">
+            <foreach collection="fuzzyParam" index="key" item="value" separator=" ">
+                and ${key} like CONCAT ('%', #{value}, '%')
+            </foreach>
+        </if>
+        <if test="enumParam != null and enumParam.size > 0">
+            <foreach collection="enumParam" index="key" item="value" separator=" ">
+                and ${key}=#{value}
+            </foreach>
+        </if>
+        <if test="resIds != null and resIds.size > 0">
+            and resourceId in
+            <foreach collection="resIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        )
+    </select>
+
+    <delete id="deleteScheduledTaskByRuleId" parameterType="string">
+        delete from t_scheduled_task
+        where ruleId=#{resId}
+    </delete>
+
+</mapper>

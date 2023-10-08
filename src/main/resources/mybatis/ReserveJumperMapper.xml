@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.ReserveJumperMapper">
+    <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.ReserveJumper">
+        <id column="resId" property="resId" jdbcType="VARCHAR"/>
+        <result column="server" property="server" jdbcType="VARCHAR"/>
+        <result column="portServer" property="portServer" jdbcType="VARCHAR"/>
+        <result column="portPxj1" property="portPxj1" jdbcType="VARCHAR"/>
+        <result column="portPxj2" property="portPxj2" jdbcType="VARCHAR"/>
+        <result column="portPxj3" property="portPxj3" jdbcType="VARCHAR"/>
+        <result column="portPxj4" property="portPxj4" jdbcType="VARCHAR"/>
+        <result column="switcher" property="switcher" jdbcType="VARCHAR"/>
+        <result column="portSwitch" property="portSwitch" jdbcType="VARCHAR"/>
+        <result column="speed" property="speed" jdbcType="VARCHAR"/>
+        <result column="bond" property="bond" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="vlan" property="vlan" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="comment" property="comment" jdbcType="VARCHAR"/>
+        <result column="category" property="category" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="createBy" property="createBy" jdbcType="VARCHAR"/>
+        <result column="updateBy" property="updateBy" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        resId, server, portServer, portPxj1, portPxj2, portPxj3, portPxj4, switcher, portSwitch,
+        speed, bond, `type`, vlan, description, `comment`, category, `status`, createTime,
+        updateTime, createBy, updateBy, remark
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.clic.ccdbaas.entity.example.ReserveJumperExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from t_reserve_jumper
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_reserve_jumper
+        where resId = #{resId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from t_reserve_jumper
+        where resId = #{resId,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.example.ReserveJumperExample">
+        delete from t_reserve_jumper
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.clic.ccdbaas.entity.ReserveJumper">
+        insert into t_reserve_jumper (resId, server, portServer,
+        portPxj1, portPxj2, portPxj3,
+        portPxj4, switcher, portSwitch,
+        speed, bond, `type`,
+        vlan, description, `comment`,
+        category, `status`, createTime,
+        updateTime, createBy, updateBy,
+        remark)
+        values (#{resId,jdbcType=VARCHAR}, #{server,jdbcType=VARCHAR}, #{portServer,jdbcType=VARCHAR},
+        #{portPxj1,jdbcType=VARCHAR}, #{portPxj2,jdbcType=VARCHAR}, #{portPxj3,jdbcType=VARCHAR},
+        #{portPxj4,jdbcType=VARCHAR}, #{switcher,jdbcType=VARCHAR}, #{portSwitch,jdbcType=VARCHAR},
+        #{speed,jdbcType=VARCHAR}, #{bond,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+        #{vlan,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR},
+        #{category,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.ReserveJumper">
+        insert into t_reserve_jumper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                resId,
+            </if>
+            <if test="server != null">
+                server,
+            </if>
+            <if test="portServer != null">
+                portServer,
+            </if>
+            <if test="portPxj1 != null">
+                portPxj1,
+            </if>
+            <if test="portPxj2 != null">
+                portPxj2,
+            </if>
+            <if test="portPxj3 != null">
+                portPxj3,
+            </if>
+            <if test="portPxj4 != null">
+                portPxj4,
+            </if>
+            <if test="switcher != null">
+                switcher,
+            </if>
+            <if test="portSwitch != null">
+                portSwitch,
+            </if>
+            <if test="speed != null">
+                speed,
+            </if>
+            <if test="bond != null">
+                bond,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="vlan != null">
+                vlan,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="comment != null">
+                `comment`,
+            </if>
+            <if test="category != null">
+                category,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="createBy != null">
+                createBy,
+            </if>
+            <if test="updateBy != null">
+                updateBy,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                #{resId,jdbcType=VARCHAR},
+            </if>
+            <if test="server != null">
+                #{server,jdbcType=VARCHAR},
+            </if>
+            <if test="portServer != null">
+                #{portServer,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj1 != null">
+                #{portPxj1,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj2 != null">
+                #{portPxj2,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj3 != null">
+                #{portPxj3,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj4 != null">
+                #{portPxj4,jdbcType=VARCHAR},
+            </if>
+            <if test="switcher != null">
+                #{switcher,jdbcType=VARCHAR},
+            </if>
+            <if test="portSwitch != null">
+                #{portSwitch,jdbcType=VARCHAR},
+            </if>
+            <if test="speed != null">
+                #{speed,jdbcType=VARCHAR},
+            </if>
+            <if test="bond != null">
+                #{bond,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="vlan != null">
+                #{vlan,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null">
+                #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="category != null">
+                #{category,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.clic.ccdbaas.entity.example.ReserveJumperExample"
+            resultType="java.lang.Integer">
+        select count(*) from t_reserve_jumper
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_reserve_jumper
+        <set>
+            <if test="record.resId != null">
+                resId = #{record.resId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.server != null">
+                server = #{record.server,jdbcType=VARCHAR},
+            </if>
+            <if test="record.portServer != null">
+                portServer = #{record.portServer,jdbcType=VARCHAR},
+            </if>
+            <if test="record.portPxj1 != null">
+                portPxj1 = #{record.portPxj1,jdbcType=VARCHAR},
+            </if>
+            <if test="record.portPxj2 != null">
+                portPxj2 = #{record.portPxj2,jdbcType=VARCHAR},
+            </if>
+            <if test="record.portPxj3 != null">
+                portPxj3 = #{record.portPxj3,jdbcType=VARCHAR},
+            </if>
+            <if test="record.portPxj4 != null">
+                portPxj4 = #{record.portPxj4,jdbcType=VARCHAR},
+            </if>
+            <if test="record.switcher != null">
+                switcher = #{record.switcher,jdbcType=VARCHAR},
+            </if>
+            <if test="record.portSwitch != null">
+                portSwitch = #{record.portSwitch,jdbcType=VARCHAR},
+            </if>
+            <if test="record.speed != null">
+                speed = #{record.speed,jdbcType=VARCHAR},
+            </if>
+            <if test="record.bond != null">
+                bond = #{record.bond,jdbcType=VARCHAR},
+            </if>
+            <if test="record.type != null">
+                `type` = #{record.type,jdbcType=VARCHAR},
+            </if>
+            <if test="record.vlan != null">
+                vlan = #{record.vlan,jdbcType=VARCHAR},
+            </if>
+            <if test="record.description != null">
+                description = #{record.description,jdbcType=VARCHAR},
+            </if>
+            <if test="record.comment != null">
+                `comment` = #{record.comment,jdbcType=VARCHAR},
+            </if>
+            <if test="record.category != null">
+                category = #{record.category,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                `status` = #{record.status,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createBy != null">
+                createBy = #{record.createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="record.updateBy != null">
+                updateBy = #{record.updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_reserve_jumper
+        set resId = #{record.resId,jdbcType=VARCHAR},
+        server = #{record.server,jdbcType=VARCHAR},
+        portServer = #{record.portServer,jdbcType=VARCHAR},
+        portPxj1 = #{record.portPxj1,jdbcType=VARCHAR},
+        portPxj2 = #{record.portPxj2,jdbcType=VARCHAR},
+        portPxj3 = #{record.portPxj3,jdbcType=VARCHAR},
+        portPxj4 = #{record.portPxj4,jdbcType=VARCHAR},
+        switcher = #{record.switcher,jdbcType=VARCHAR},
+        portSwitch = #{record.portSwitch,jdbcType=VARCHAR},
+        speed = #{record.speed,jdbcType=VARCHAR},
+        bond = #{record.bond,jdbcType=VARCHAR},
+        `type` = #{record.type,jdbcType=VARCHAR},
+        vlan = #{record.vlan,jdbcType=VARCHAR},
+        description = #{record.description,jdbcType=VARCHAR},
+        `comment` = #{record.comment,jdbcType=VARCHAR},
+        category = #{record.category,jdbcType=VARCHAR},
+        `status` = #{record.status,jdbcType=VARCHAR},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+        createBy = #{record.createBy,jdbcType=VARCHAR},
+        updateBy = #{record.updateBy,jdbcType=VARCHAR},
+        remark = #{record.remark,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.ReserveJumper">
+        update t_reserve_jumper
+        <set>
+            <if test="server != null">
+                server = #{server,jdbcType=VARCHAR},
+            </if>
+            <if test="portServer != null">
+                portServer = #{portServer,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj1 != null">
+                portPxj1 = #{portPxj1,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj2 != null">
+                portPxj2 = #{portPxj2,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj3 != null">
+                portPxj3 = #{portPxj3,jdbcType=VARCHAR},
+            </if>
+            <if test="portPxj4 != null">
+                portPxj4 = #{portPxj4,jdbcType=VARCHAR},
+            </if>
+            <if test="switcher != null">
+                switcher = #{switcher,jdbcType=VARCHAR},
+            </if>
+            <if test="portSwitch != null">
+                portSwitch = #{portSwitch,jdbcType=VARCHAR},
+            </if>
+            <if test="speed != null">
+                speed = #{speed,jdbcType=VARCHAR},
+            </if>
+            <if test="bond != null">
+                bond = #{bond,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="vlan != null">
+                vlan = #{vlan,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null">
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="category != null">
+                category = #{category,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                createBy = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                updateBy = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.ReserveJumper">
+        update t_reserve_jumper
+        set server = #{server,jdbcType=VARCHAR},
+        portServer = #{portServer,jdbcType=VARCHAR},
+        portPxj1 = #{portPxj1,jdbcType=VARCHAR},
+        portPxj2 = #{portPxj2,jdbcType=VARCHAR},
+        portPxj3 = #{portPxj3,jdbcType=VARCHAR},
+        portPxj4 = #{portPxj4,jdbcType=VARCHAR},
+        switcher = #{switcher,jdbcType=VARCHAR},
+        portSwitch = #{portSwitch,jdbcType=VARCHAR},
+        speed = #{speed,jdbcType=VARCHAR},
+        bond = #{bond,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=VARCHAR},
+        vlan = #{vlan,jdbcType=VARCHAR},
+        description = #{description,jdbcType=VARCHAR},
+        `comment` = #{comment,jdbcType=VARCHAR},
+        category = #{category,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=VARCHAR},
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+        createBy = #{createBy,jdbcType=VARCHAR},
+        updateBy = #{updateBy,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR}
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+</mapper>

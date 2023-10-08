@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.MaintenanceContractMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.MaintenanceContract" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="contractNo" property="contractNo" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="partyAName" property="partyAName" jdbcType="VARCHAR" />
+    <result column="belongDepartment" property="belongDepartment" jdbcType="VARCHAR" />
+    <result column="budgetAccount" property="budgetAccount" jdbcType="VARCHAR" />
+    <result column="maintenanceType" property="maintenanceType" jdbcType="VARCHAR" />
+    <result column="contractAmount" property="contractAmount" jdbcType="DOUBLE" />
+    <result column="contractStatus" property="contractStatus" jdbcType="VARCHAR" />
+    <result column="signTime" property="signTime" jdbcType="TIMESTAMP" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="endTimeRemark" property="endTimeRemark" jdbcType="VARCHAR" />
+    <result column="firstCheckTime" property="firstCheckTime" jdbcType="TIMESTAMP" />
+    <result column="lastCheckTime" property="lastCheckTime" jdbcType="TIMESTAMP" />
+    <result column="budgetYear" property="budgetYear" jdbcType="VARCHAR" />
+    <result column="signNo" property="signNo" jdbcType="VARCHAR" />
+    <result column="contractExecutor" property="contractExecutor" jdbcType="VARCHAR" />
+    <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR" />
+    <result column="manufacturerAccount" property="manufacturerAccount" jdbcType="VARCHAR" />
+    <result column="manufacturerManager" property="manufacturerManager" jdbcType="VARCHAR" />
+    <result column="manufacturerContacts" property="manufacturerContacts" jdbcType="VARCHAR" />
+    <result column="manufacturerContactWay" property="manufacturerContactWay" jdbcType="VARCHAR" />
+    <result column="nextContractNo" property="nextContractNo" jdbcType="VARCHAR" />
+    <result column="nextContractStatus" property="nextContractStatus" jdbcType="VARCHAR" />
+    <result column="nextContractProcess" property="nextContractProcess" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="annex" property="annex" jdbcType="VARCHAR" />
+    <result column="accumulatedPaymentAmount" property="accumulatedPaymentAmount" jdbcType="DOUBLE" />
+    <result column="payProportion" property="payProportion" jdbcType="VARCHAR" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
+    <result column="linkUrl" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="lastUpdateTime" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, contractNo, `name`, partyAName, belongDepartment, budgetAccount, maintenanceType, 
+    contractAmount, contractStatus, signTime, startTime, endTime, endTimeRemark, firstCheckTime, 
+    lastCheckTime, budgetYear, signNo, contractExecutor, manufacturer, manufacturerAccount, 
+    manufacturerManager, manufacturerContacts, manufacturerContactWay, nextContractNo, 
+    nextContractStatus, nextContractProcess, remark, annex, accumulatedPaymentAmount, 
+    payProportion, creator, `owner`, linkUrl, createTime, lastUpdateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_maintenance_contract
+    where resId = #{resId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_maintenance_contract
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.MaintenanceContract" >
+    insert into t_maintenance_contract (resId, contractNo, `name`, 
+      partyAName, belongDepartment, budgetAccount, 
+      maintenanceType, contractAmount, contractStatus, 
+      signTime, startTime, endTime, 
+      endTimeRemark, firstCheckTime, lastCheckTime, 
+      budgetYear, signNo, contractExecutor, 
+      manufacturer, manufacturerAccount, manufacturerManager, 
+      manufacturerContacts, manufacturerContactWay, 
+      nextContractNo, nextContractStatus, nextContractProcess, 
+      remark, annex, accumulatedPaymentAmount, 
+      payProportion, creator, `owner`, 
+      linkUrl, createTime, lastUpdateTime
+      )
+    values (#{resId,jdbcType=VARCHAR}, #{contractNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{partyAName,jdbcType=VARCHAR}, #{belongDepartment,jdbcType=VARCHAR}, #{budgetAccount,jdbcType=VARCHAR}, 
+      #{maintenanceType,jdbcType=VARCHAR}, #{contractAmount,jdbcType=DOUBLE}, #{contractStatus,jdbcType=VARCHAR}, 
+      #{signTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{endTimeRemark,jdbcType=VARCHAR}, #{firstCheckTime,jdbcType=TIMESTAMP}, #{lastCheckTime,jdbcType=TIMESTAMP}, 
+      #{budgetYear,jdbcType=VARCHAR}, #{signNo,jdbcType=VARCHAR}, #{contractExecutor,jdbcType=VARCHAR}, 
+      #{manufacturer,jdbcType=VARCHAR}, #{manufacturerAccount,jdbcType=VARCHAR}, #{manufacturerManager,jdbcType=VARCHAR}, 
+      #{manufacturerContacts,jdbcType=VARCHAR}, #{manufacturerContactWay,jdbcType=VARCHAR}, 
+      #{nextContractNo,jdbcType=VARCHAR}, #{nextContractStatus,jdbcType=VARCHAR}, #{nextContractProcess,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{annex,jdbcType=VARCHAR}, #{accumulatedPaymentAmount,jdbcType=DOUBLE}, 
+      #{payProportion,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+      #{linkUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.MaintenanceContract" >
+    insert into t_maintenance_contract
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="contractNo != null" >
+        contractNo,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="partyAName != null" >
+        partyAName,
+      </if>
+      <if test="belongDepartment != null" >
+        belongDepartment,
+      </if>
+      <if test="budgetAccount != null" >
+        budgetAccount,
+      </if>
+      <if test="maintenanceType != null" >
+        maintenanceType,
+      </if>
+      <if test="contractAmount != null" >
+        contractAmount,
+      </if>
+      <if test="contractStatus != null" >
+        contractStatus,
+      </if>
+      <if test="signTime != null" >
+        signTime,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="endTime != null" >
+        endTime,
+      </if>
+      <if test="endTimeRemark != null" >
+        endTimeRemark,
+      </if>
+      <if test="firstCheckTime != null" >
+        firstCheckTime,
+      </if>
+      <if test="lastCheckTime != null" >
+        lastCheckTime,
+      </if>
+      <if test="budgetYear != null" >
+        budgetYear,
+      </if>
+      <if test="signNo != null" >
+        signNo,
+      </if>
+      <if test="contractExecutor != null" >
+        contractExecutor,
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer,
+      </if>
+      <if test="manufacturerAccount != null" >
+        manufacturerAccount,
+      </if>
+      <if test="manufacturerManager != null" >
+        manufacturerManager,
+      </if>
+      <if test="manufacturerContacts != null" >
+        manufacturerContacts,
+      </if>
+      <if test="manufacturerContactWay != null" >
+        manufacturerContactWay,
+      </if>
+      <if test="nextContractNo != null" >
+        nextContractNo,
+      </if>
+      <if test="nextContractStatus != null" >
+        nextContractStatus,
+      </if>
+      <if test="nextContractProcess != null" >
+        nextContractProcess,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="annex != null" >
+        annex,
+      </if>
+      <if test="accumulatedPaymentAmount != null" >
+        accumulatedPaymentAmount,
+      </if>
+      <if test="payProportion != null" >
+        payProportion,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="owner != null" >
+        `owner`,
+      </if>
+      <if test="linkUrl != null" >
+        linkUrl,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="lastUpdateTime != null" >
+        lastUpdateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null" >
+        #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="partyAName != null" >
+        #{partyAName,jdbcType=VARCHAR},
+      </if>
+      <if test="belongDepartment != null" >
+        #{belongDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="budgetAccount != null" >
+        #{budgetAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="maintenanceType != null" >
+        #{maintenanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="contractAmount != null" >
+        #{contractAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="contractStatus != null" >
+        #{contractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null" >
+        #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTimeRemark != null" >
+        #{endTimeRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="firstCheckTime != null" >
+        #{firstCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastCheckTime != null" >
+        #{lastCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="budgetYear != null" >
+        #{budgetYear,jdbcType=VARCHAR},
+      </if>
+      <if test="signNo != null" >
+        #{signNo,jdbcType=VARCHAR},
+      </if>
+      <if test="contractExecutor != null" >
+        #{contractExecutor,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerAccount != null" >
+        #{manufacturerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerManager != null" >
+        #{manufacturerManager,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerContacts != null" >
+        #{manufacturerContacts,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerContactWay != null" >
+        #{manufacturerContactWay,jdbcType=VARCHAR},
+      </if>
+      <if test="nextContractNo != null" >
+        #{nextContractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nextContractStatus != null" >
+        #{nextContractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="nextContractProcess != null" >
+        #{nextContractProcess,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="annex != null" >
+        #{annex,jdbcType=VARCHAR},
+      </if>
+      <if test="accumulatedPaymentAmount != null" >
+        #{accumulatedPaymentAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="payProportion != null" >
+        #{payProportion,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null" >
+        #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null" >
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.MaintenanceContract" >
+    update t_maintenance_contract
+    <set >
+      <if test="contractNo != null" >
+        contractNo = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="partyAName != null" >
+        partyAName = #{partyAName,jdbcType=VARCHAR},
+      </if>
+      <if test="belongDepartment != null" >
+        belongDepartment = #{belongDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="budgetAccount != null" >
+        budgetAccount = #{budgetAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="maintenanceType != null" >
+        maintenanceType = #{maintenanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="contractAmount != null" >
+        contractAmount = #{contractAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="contractStatus != null" >
+        contractStatus = #{contractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null" >
+        signTime = #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTimeRemark != null" >
+        endTimeRemark = #{endTimeRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="firstCheckTime != null" >
+        firstCheckTime = #{firstCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastCheckTime != null" >
+        lastCheckTime = #{lastCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="budgetYear != null" >
+        budgetYear = #{budgetYear,jdbcType=VARCHAR},
+      </if>
+      <if test="signNo != null" >
+        signNo = #{signNo,jdbcType=VARCHAR},
+      </if>
+      <if test="contractExecutor != null" >
+        contractExecutor = #{contractExecutor,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerAccount != null" >
+        manufacturerAccount = #{manufacturerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerManager != null" >
+        manufacturerManager = #{manufacturerManager,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerContacts != null" >
+        manufacturerContacts = #{manufacturerContacts,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerContactWay != null" >
+        manufacturerContactWay = #{manufacturerContactWay,jdbcType=VARCHAR},
+      </if>
+      <if test="nextContractNo != null" >
+        nextContractNo = #{nextContractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="nextContractStatus != null" >
+        nextContractStatus = #{nextContractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="nextContractProcess != null" >
+        nextContractProcess = #{nextContractProcess,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="annex != null" >
+        annex = #{annex,jdbcType=VARCHAR},
+      </if>
+      <if test="accumulatedPaymentAmount != null" >
+        accumulatedPaymentAmount = #{accumulatedPaymentAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="payProportion != null" >
+        payProportion = #{payProportion,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null" >
+        `owner` = #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null" >
+        linkUrl = #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        lastUpdateTime = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="batchDelete" parameterType="java.lang.String" >
+    delete from t_maintenance_contract
+    where resId in
+    <foreach collection="resIdArr" open="(" close=")" separator="," item="resId">
+      #{resId}
+    </foreach>
+  </delete>
+
+
+  <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.MaintenanceContract" >
+    select
+    <include refid="Base_Column_List" />
+    from t_maintenance_contract
+    <where>
+      <if test="resId !=null and resId !=''">
+        and resId  =  #{resId,jdbcType=VARCHAR}
+      </if>
+
+      <if test="contractNo != null" >
+        and  contractNo =   #{contractNo,jdbcType=VARCHAR}
+      </if>
+
+
+    </where>
+  </select>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.MaintenanceContract" >
+    update t_maintenance_contract
+    set contractNo = #{contractNo,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      partyAName = #{partyAName,jdbcType=VARCHAR},
+      belongDepartment = #{belongDepartment,jdbcType=VARCHAR},
+      budgetAccount = #{budgetAccount,jdbcType=VARCHAR},
+      maintenanceType = #{maintenanceType,jdbcType=VARCHAR},
+      contractAmount = #{contractAmount,jdbcType=DOUBLE},
+      contractStatus = #{contractStatus,jdbcType=VARCHAR},
+      signTime = #{signTime,jdbcType=TIMESTAMP},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      endTimeRemark = #{endTimeRemark,jdbcType=VARCHAR},
+      firstCheckTime = #{firstCheckTime,jdbcType=TIMESTAMP},
+      lastCheckTime = #{lastCheckTime,jdbcType=TIMESTAMP},
+      budgetYear = #{budgetYear,jdbcType=VARCHAR},
+      signNo = #{signNo,jdbcType=VARCHAR},
+      contractExecutor = #{contractExecutor,jdbcType=VARCHAR},
+      manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      manufacturerAccount = #{manufacturerAccount,jdbcType=VARCHAR},
+      manufacturerManager = #{manufacturerManager,jdbcType=VARCHAR},
+      manufacturerContacts = #{manufacturerContacts,jdbcType=VARCHAR},
+      manufacturerContactWay = #{manufacturerContactWay,jdbcType=VARCHAR},
+      nextContractNo = #{nextContractNo,jdbcType=VARCHAR},
+      nextContractStatus = #{nextContractStatus,jdbcType=VARCHAR},
+      nextContractProcess = #{nextContractProcess,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      annex = #{annex,jdbcType=VARCHAR},
+      accumulatedPaymentAmount = #{accumulatedPaymentAmount,jdbcType=DOUBLE},
+      payProportion = #{payProportion,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      `owner` = #{owner,jdbcType=VARCHAR},
+      linkUrl = #{linkUrl,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      lastUpdateTime = #{lastUpdateTime,jdbcType=TIMESTAMP}
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.ContractDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.ContractDetail" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="procureBatch" property="procureBatch" jdbcType="VARCHAR" />
+    <result column="equipmentModel" property="equipmentModel" jdbcType="VARCHAR" />
+    <result column="deployDetail" property="deployDetail" jdbcType="VARCHAR" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="deployUsage" property="deployUsage" jdbcType="VARCHAR" />
+    <result column="xinChuang" property="xinChuang" jdbcType="VARCHAR" />
+    <result column="contractCount" property="contractCount" jdbcType="INTEGER" />
+    <result column="contractNo" property="contractNo" jdbcType="VARCHAR" />
+    <result column="arriveNum" property="arriveNum" jdbcType="INTEGER" />
+    <result column="allocatedNum" property="allocatedNum" jdbcType="INTEGER" />
+    <result column="availableNum" property="availableNum" jdbcType="INTEGER" />
+    <result column="adapterCloudPlat" property="adapterCloudPlat" jdbcType="BIT" />
+    <result column="adapterCloudProcess" property="adapterCloudProcess" jdbcType="DOUBLE" />
+    <result column="arriveDetail" property="arriveDetail" jdbcType="VARCHAR" />
+    <result column="allocatedDetail" property="allocatedDetail" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, procureBatch, equipmentModel, deployDetail, num, deployUsage, xinChuang, contractCount, 
+    contractNo, arriveNum, allocatedNum, availableNum, adapterCloudPlat, adapterCloudProcess,
+    arriveDetail, allocatedDetail
+  </sql>
+  <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.ContractDetail" >
+    select
+    <include refid="Base_Column_List" />
+    from t_contract_detail
+    <where>
+      <if test="resId !=null and resId !=''">
+        and resId  =  #{resId,jdbcType=VARCHAR}
+      </if>
+      <if test="equipmentModel !=null and equipmentModel !=''">
+        and equipmentModel  =  #{equipmentModel,jdbcType=VARCHAR}
+      </if>
+      <if test="num !=null and num !=''">
+        and num  =  #{num,jdbcType=VARCHAR}
+      </if>
+      <if test="procureBatch !=null and procureBatch !=''">
+        and procureBatch  =  #{procureBatch,jdbcType=VARCHAR}
+      </if>
+      <if test="deployDetail !=null and deployDetail !=''">
+        and deployDetail  =  #{deployDetail,jdbcType=VARCHAR}
+      </if>
+      <if test="contractNo != null" >
+        and  contractNo =   #{contractNo,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_contract_detail
+    where resId = #{resId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_contract_detail
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.ContractDetail" >
+    insert into t_contract_detail (resId, procureBatch, equipmentModel, 
+      deployDetail, num, deployUsage, 
+      xinChuang, contractCount, contractNo,
+      arriveNum, allocatedNum, availableNum, 
+      adapterCloudPlat, adapterCloudProcess, arriveDetail, 
+      allocatedDetail)
+    values (#{resId,jdbcType=VARCHAR}, #{procureBatch,jdbcType=VARCHAR}, #{equipmentModel,jdbcType=VARCHAR}, 
+      #{deployDetail,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, #{deployUsage,jdbcType=VARCHAR}, 
+      #{xinChuang,jdbcType=VARCHAR}, #{contractCount,jdbcType=INTEGER}, #{contractNo,jdbcType=VARCHAR},
+      #{arriveNum,jdbcType=INTEGER}, #{allocatedNum,jdbcType=INTEGER}, #{availableNum,jdbcType=INTEGER}, 
+      #{adapterCloudPlat,jdbcType=BIT}, #{adapterCloudProcess,jdbcType=DOUBLE}, #{arriveDetail,jdbcType=VARCHAR}, 
+      #{allocatedDetail,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.ContractDetail" >
+    insert into t_contract_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="procureBatch != null" >
+        procureBatch,
+      </if>
+      <if test="equipmentModel != null" >
+        equipmentModel,
+      </if>
+      <if test="deployDetail != null" >
+        deployDetail,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="deployUsage != null" >
+        deployUsage,
+      </if>
+      <if test="xinChuang != null" >
+        xinChuang,
+      </if>
+      <if test="contractCount != null" >
+        contractCount,
+      </if>
+      <if test="contractNo != null" >
+        contractNo,
+      </if>
+      <if test="arriveNum != null" >
+        arriveNum,
+      </if>
+      <if test="allocatedNum != null" >
+        allocatedNum,
+      </if>
+      <if test="availableNum != null" >
+        availableNum,
+      </if>
+      <if test="adapterCloudPlat != null" >
+        adapterCloudPlat,
+      </if>
+      <if test="adapterCloudProcess != null" >
+        adapterCloudProcess,
+      </if>
+      <if test="arriveDetail != null" >
+        arriveDetail,
+      </if>
+      <if test="allocatedDetail != null" >
+        allocatedDetail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="procureBatch != null" >
+        #{procureBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentModel != null" >
+        #{equipmentModel,jdbcType=VARCHAR},
+      </if>
+      <if test="deployDetail != null" >
+        #{deployDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="deployUsage != null" >
+        #{deployUsage,jdbcType=VARCHAR},
+      </if>
+      <if test="xinChuang != null" >
+        #{xinChuang,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCount != null" >
+        #{contractCount,jdbcType=INTEGER},
+      </if>
+      <if test="contractNo != null" >
+        #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="arriveNum != null" >
+        #{arriveNum,jdbcType=INTEGER},
+      </if>
+      <if test="allocatedNum != null" >
+        #{allocatedNum,jdbcType=INTEGER},
+      </if>
+      <if test="availableNum != null" >
+        #{availableNum,jdbcType=INTEGER},
+      </if>
+      <if test="adapterCloudPlat != null" >
+        #{adapterCloudPlat,jdbcType=BIT},
+      </if>
+      <if test="adapterCloudProcess != null" >
+        #{adapterCloudProcess,jdbcType=DOUBLE},
+      </if>
+      <if test="arriveDetail != null" >
+        #{arriveDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="allocatedDetail != null" >
+        #{allocatedDetail,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.ContractDetail" >
+    update t_contract_detail
+    <set >
+      <if test="procureBatch != null" >
+        procureBatch = #{procureBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentModel != null" >
+        equipmentModel = #{equipmentModel,jdbcType=VARCHAR},
+      </if>
+      <if test="deployDetail != null" >
+        deployDetail = #{deployDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="deployUsage != null" >
+        deployUsage = #{deployUsage,jdbcType=VARCHAR},
+      </if>
+      <if test="xinChuang != null" >
+        xinChuang = #{xinChuang,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCount != null" >
+        contractCount = #{contractCount,jdbcType=INTEGER},
+      </if>
+      <if test="contractNo != null" >
+        contractNo = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="arriveNum != null" >
+        arriveNum = #{arriveNum,jdbcType=INTEGER},
+      </if>
+      <if test="allocatedNum != null" >
+        allocatedNum = #{allocatedNum,jdbcType=INTEGER},
+      </if>
+      <if test="availableNum != null" >
+        availableNum = #{availableNum,jdbcType=INTEGER},
+      </if>
+      <if test="adapterCloudPlat != null" >
+        adapterCloudPlat = #{adapterCloudPlat,jdbcType=BIT},
+      </if>
+      <if test="adapterCloudProcess != null" >
+        adapterCloudProcess = #{adapterCloudProcess,jdbcType=DOUBLE},
+      </if>
+      <if test="arriveDetail != null" >
+        arriveDetail = #{arriveDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="allocatedDetail != null" >
+        allocatedDetail = #{allocatedDetail,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.ContractDetail" >
+    update t_contract_detail
+    set procureBatch = #{procureBatch,jdbcType=VARCHAR},
+      equipmentModel = #{equipmentModel,jdbcType=VARCHAR},
+      deployDetail = #{deployDetail,jdbcType=VARCHAR},
+      num = #{num,jdbcType=INTEGER},
+      deployUsage = #{deployUsage,jdbcType=VARCHAR},
+      xinChuang = #{xinChuang,jdbcType=VARCHAR},
+      contractCount = #{contractCount,jdbcType=INTEGER},
+      contractNo = #{contractNo,jdbcType=VARCHAR},
+      arriveNum = #{arriveNum,jdbcType=INTEGER},
+      allocatedNum = #{allocatedNum,jdbcType=INTEGER},
+      availableNum = #{availableNum,jdbcType=INTEGER},
+      adapterCloudPlat = #{adapterCloudPlat,jdbcType=BIT},
+      adapterCloudProcess = #{adapterCloudProcess,jdbcType=DOUBLE},
+      arriveDetail = #{arriveDetail,jdbcType=VARCHAR},
+      allocatedDetail = #{allocatedDetail,jdbcType=VARCHAR}
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

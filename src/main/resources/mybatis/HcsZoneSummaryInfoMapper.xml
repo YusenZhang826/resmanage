@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.HcsZoneSummaryInfoMapper">
+    <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.HcsZoneSummaryInfo">
+        <id column="azoneId" property="azoneId" jdbcType="VARCHAR"/>
+        <result column="azoneName" property="azoneName" jdbcType="VARCHAR"/>
+        <result column="regionId" property="regionId" jdbcType="VARCHAR"/>
+        <result column="regionName" property="regionName" jdbcType="VARCHAR"/>
+        <result column="cpuUsed" property="cpuUsed" jdbcType="INTEGER"/>
+        <result column="memoryUsed" property="memoryUsed" jdbcType="DOUBLE"/>
+        <result column="diskUsed" property="diskUsed" jdbcType="DOUBLE"/>
+        <result column="cpuTotal" property="cpuTotal" jdbcType="INTEGER"/>
+        <result column="memoryTotal" property="memoryTotal" jdbcType="DOUBLE"/>
+        <result column="diskTotal" property="diskTotal" jdbcType="DOUBLE"/>
+        <result column="cpuUsedRatio" property="cpuUsedRatio" jdbcType="DECIMAL"/>
+        <result column="memoryUsedRatio" property="memoryUsedRatio" jdbcType="DECIMAL"/>
+        <result column="diskUsedRatio" property="diskUsedRatio" jdbcType="DECIMAL"/>
+        <result column="vmOnNum" property="vmOnNum" jdbcType="INTEGER"/>
+        <result column="vmOffNum" property="vmOffNum" jdbcType="INTEGER"/>
+        <result column="serverOnNum" property="serverOnNum" jdbcType="INTEGER"/>
+        <result column="serverOffNum" property="serverOffNum" jdbcType="INTEGER"/>
+        <result column="totalCapacity" property="totalCapacity" jdbcType="DOUBLE"/>
+        <result column="usedCapacity" property="usedCapacity" jdbcType="DOUBLE"/>
+        <result column="freeCapacity" property="freeCapacity" jdbcType="DOUBLE"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    azoneId, azoneName, regionId, regionName, cpuUsed, memoryUsed, diskUsed, cpuTotal,
+    memoryTotal, diskTotal, cpuUsedRatio, memoryUsedRatio, diskUsedRatio, vmOnNum, vmOffNum,
+    serverOnNum, serverOffNum
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_hcs_azone_summary_info
+        where azoneId = #{azoneId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_hcs_azone_summary_info
+    where azoneId = #{azoneId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.clic.ccdbaas.entity.HcsZoneSummaryInfo">
+    insert into t_hcs_azone_summary_info (azoneId, azoneName, regionId,
+      regionName, cpuUsed, memoryUsed,
+      diskUsed, cpuTotal, memoryTotal,
+      diskTotal, cpuUsedRatio, memoryUsedRatio,
+      diskUsedRatio, vmOnNum, vmOffNum,
+      serverOnNum, serverOffNum, totalCapacity,
+      usedCapacity, freeCapacity
+      )
+    values (#{azoneId,jdbcType=VARCHAR}, #{azoneName,jdbcType=VARCHAR}, #{regionId,jdbcType=VARCHAR},
+      #{regionName,jdbcType=VARCHAR}, #{cpuUsed,jdbcType=INTEGER}, #{memoryUsed,jdbcType=DOUBLE},
+      #{diskUsed,jdbcType=DOUBLE}, #{cpuTotal,jdbcType=INTEGER}, #{memoryTotal,jdbcType=DOUBLE},
+      #{diskTotal,jdbcType=DOUBLE}, #{cpuUsedRatio,jdbcType=DECIMAL}, #{memoryUsedRatio,jdbcType=DECIMAL},
+      #{diskUsedRatio,jdbcType=DECIMAL}, #{vmOnNum,jdbcType=INTEGER}, #{vmOffNum,jdbcType=INTEGER},
+      #{serverOnNum,jdbcType=INTEGER}, #{serverOffNum,jdbcType=INTEGER}, #{totalCapacity,jdbcType=DOUBLE},
+      #{usedCapacity,jdbcType=DOUBLE}, #{freeCapacity,jdbcType=DOUBLE}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.HcsZoneSummaryInfo">
+        insert into t_hcs_azone_summary_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="azoneId != null">
+                azoneId,
+            </if>
+            <if test="azoneName != null">
+                azoneName,
+            </if>
+            <if test="regionId != null">
+                regionId,
+            </if>
+            <if test="regionName != null">
+                regionName,
+            </if>
+            <if test="cpuUsed != null">
+                cpuUsed,
+            </if>
+            <if test="memoryUsed != null">
+                memoryUsed,
+            </if>
+            <if test="diskUsed != null">
+                diskUsed,
+            </if>
+            <if test="cpuTotal != null">
+                cpuTotal,
+            </if>
+            <if test="memoryTotal != null">
+                memoryTotal,
+            </if>
+            <if test="diskTotal != null">
+                diskTotal,
+            </if>
+            <if test="cpuUsedRatio != null">
+                cpuUsedRatio,
+            </if>
+            <if test="memoryUsedRatio != null">
+                memoryUsedRatio,
+            </if>
+            <if test="diskUsedRatio != null">
+                diskUsedRatio,
+            </if>
+            <if test="vmOnNum != null">
+                vmOnNum,
+            </if>
+            <if test="vmOffNum != null">
+                vmOffNum,
+            </if>
+            <if test="serverOnNum != null">
+                serverOnNum,
+            </if>
+            <if test="serverOffNum != null">
+                serverOffNum,
+            </if>
+            <if test="totalCapacity != null">
+                totalCapacity,
+            </if>
+            <if test="usedCapacity != null">
+                usedCapacity,
+            </if>
+            <if test="freeCapacity != null">
+                freeCapacity,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="azoneId != null">
+                #{azoneId,jdbcType=VARCHAR},
+            </if>
+            <if test="azoneName != null">
+                #{azoneName,jdbcType=VARCHAR},
+            </if>
+            <if test="regionId != null">
+                #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="regionName != null">
+                #{regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuUsed != null">
+                #{cpuUsed,jdbcType=INTEGER},
+            </if>
+            <if test="memoryUsed != null">
+                #{memoryUsed,jdbcType=DOUBLE},
+            </if>
+            <if test="diskUsed != null">
+                #{diskUsed,jdbcType=DOUBLE},
+            </if>
+            <if test="cpuTotal != null">
+                #{cpuTotal,jdbcType=INTEGER},
+            </if>
+            <if test="memoryTotal != null">
+                #{memoryTotal,jdbcType=DOUBLE},
+            </if>
+            <if test="diskTotal != null">
+                #{diskTotal,jdbcType=DOUBLE},
+            </if>
+            <if test="cpuUsedRatio != null">
+                #{cpuUsedRatio,jdbcType=DECIMAL},
+            </if>
+            <if test="memoryUsedRatio != null">
+                #{memoryUsedRatio,jdbcType=DECIMAL},
+            </if>
+            <if test="diskUsedRatio != null">
+                #{diskUsedRatio,jdbcType=DECIMAL},
+            </if>
+            <if test="vmOnNum != null">
+                #{vmOnNum,jdbcType=INTEGER},
+            </if>
+            <if test="vmOffNum != null">
+                #{vmOffNum,jdbcType=INTEGER},
+            </if>
+            <if test="serverOnNum != null">
+                #{serverOnNum,jdbcType=INTEGER},
+            </if>
+            <if test="serverOffNum != null">
+                #{serverOffNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalCapacity != null">
+                #{totalCapacity,jdbcType=DOUBLE},
+            </if>
+            <if test="usedCapacity != null">
+                #{usedCapacity,jdbcType=DOUBLE},
+            </if>
+            <if test="freeCapacity != null">
+                #{freeCapacity,jdbcType=DOUBLE},
+            </if>
+
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.HcsZoneSummaryInfo">
+        update t_hcs_azone_summary_info
+        <set>
+            <if test="azoneName != null">
+                azoneName = #{azoneName,jdbcType=VARCHAR},
+            </if>
+            <if test="regionId != null">
+                regionId = #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="regionName != null">
+                regionName = #{regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuUsed != null">
+                cpuUsed = #{cpuUsed,jdbcType=INTEGER},
+            </if>
+            <if test="memoryUsed != null">
+                memoryUsed = #{memoryUsed,jdbcType=DOUBLE},
+            </if>
+            <if test="diskUsed != null">
+                diskUsed = #{diskUsed,jdbcType=DOUBLE},
+            </if>
+            <if test="cpuTotal != null">
+                cpuTotal = #{cpuTotal,jdbcType=INTEGER},
+            </if>
+            <if test="memoryTotal != null">
+                memoryTotal = #{memoryTotal,jdbcType=DOUBLE},
+            </if>
+            <if test="diskTotal != null">
+                diskTotal = #{diskTotal,jdbcType=DOUBLE},
+            </if>
+            <if test="cpuUsedRatio != null">
+                cpuUsedRatio = #{cpuUsedRatio,jdbcType=DECIMAL},
+            </if>
+            <if test="memoryUsedRatio != null">
+                memoryUsedRatio = #{memoryUsedRatio,jdbcType=DECIMAL},
+            </if>
+            <if test="diskUsedRatio != null">
+                diskUsedRatio = #{diskUsedRatio,jdbcType=DECIMAL},
+            </if>
+            <if test="vmOnNum != null">
+                vmOnNum = #{vmOnNum,jdbcType=INTEGER},
+            </if>
+            <if test="vmOffNum != null">
+                vmOffNum = #{vmOffNum,jdbcType=INTEGER},
+            </if>
+            <if test="serverOnNum != null">
+                serverOnNum = #{serverOnNum,jdbcType=INTEGER},
+            </if>
+            <if test="serverOffNum != null">
+                serverOffNum = #{serverOffNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalCapacity != null">
+                totalCapacity = #{totalCapacity,jdbcType=DOUBLE},
+            </if>
+            <if test="usedCapacity != null">
+                usedCapacity = #{usedCapacity,jdbcType=DOUBLE},
+            </if>
+            <if test="freeCapacity != null">
+                freeCapacity = #{freeCapacity,jdbcType=DOUBLE},
+            </if>
+
+        </set>
+        where azoneId = #{azoneId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.HcsZoneSummaryInfo">
+    update t_hcs_azone_summary_info
+    set azoneName = #{azoneName,jdbcType=VARCHAR},
+      regionId = #{regionId,jdbcType=VARCHAR},
+      regionName = #{regionName,jdbcType=VARCHAR},
+      cpuUsed = #{cpuUsed,jdbcType=INTEGER},
+      memoryUsed = #{memoryUsed,jdbcType=DOUBLE},
+      diskUsed = #{diskUsed,jdbcType=DOUBLE},
+      cpuTotal = #{cpuTotal,jdbcType=INTEGER},
+      memoryTotal = #{memoryTotal,jdbcType=DOUBLE},
+      diskTotal = #{diskTotal,jdbcType=DOUBLE},
+      cpuUsedRatio = #{cpuUsedRatio,jdbcType=DECIMAL},
+      memoryUsedRatio = #{memoryUsedRatio,jdbcType=DECIMAL},
+      diskUsedRatio = #{diskUsedRatio,jdbcType=DECIMAL},
+      vmOnNum = #{vmOnNum,jdbcType=INTEGER},
+      vmOffNum = #{vmOffNum,jdbcType=INTEGER},
+      serverOnNum = #{serverOnNum,jdbcType=INTEGER},
+      serverOffNum = #{serverOffNum,jdbcType=INTEGER},
+      totalCapacity = #{totalCapacity,jdbcType=DOUBLE},
+      usedCapacity = #{usedCapacity,jdbcType=DOUBLE},
+      freeCapacity = #{freeCapacity,jdbcType=DOUBLE}
+
+    where azoneId = #{azoneId,jdbcType=VARCHAR}
+  </update>
+
+    <select id="getRegionOverviewInfo" resultType="map" parameterType="map">
+        select
+        regionId,
+        regionName,
+        sum(vmOnNum) vmOnNum,
+        sum(vmOffNum)vmOffNum,
+        sum(serverOnNum)serverOnNum,
+        sum(serverOffNum)serverOffNum,
+        sum(cpuUsed)cpuUsed,
+        sum(cpuTotal)cpuTotal,
+        round(sum(memoryUsed),2)memoryUsed,
+        round(sum(memoryTotal),2) memoryTotal
+        from t_hcs_azone_summary_info
+        <where>
+            <if test="regionId != null">
+                regionId = #{regionId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        GROUP BY regionId
+    </select>
+
+
+    <select id="getRegionAzoneInfo" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.HcsZoneSummaryInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from t_hcs_azone_summary_info
+        <where>
+            <if test="regionId != null">
+                regionId = #{regionId,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getClusterSummaryInfo" resultType="map" parameterType="map">
+        select
+        clusterName,
+        regionId,
+        bizregionName,
+        azoneName,
+        azoneId,
+        count(0) as hostCount,
+        sum(totalVcpuCores) totalVcpuCores,
+        sum(totalMemory) totalMemory,
+        sum(totalDiskSizeMB) totalDiskSizeMB,
+
+        sum(freeVcpuCores) freeVcpuCores,
+        sum(freeDiskSizeMB) freeDiskSizeMB,
+        sum(freeVmemoryMB) freeVmemoryMB,
+
+        sum(allocatedVcpuCores) allocatedCpuCores,
+        sum(allocatedVmemoryMB) allocatedMemory,
+        sum(allocatedDiskSizeMB) allocatedDiskSizeMB,
+
+        CONCAT(FORMAT(Round(SUM(allocatedVcpuCores)/SUM(totalVcpuCores),4) * 100, 2), '%') as usedCpuRatio,
+        CONCAT(FORMAT(Round(SUM(allocatedVmemoryMB)/SUM(totalMemory),4) * 100, 2), '%') as usedMemRatio,
+        CONCAT(FORMAT(Round(SUM(allocatedDiskSizeMB)/SUM(totalDiskSizeMB),4) * 100, 2), '%') as usedDiskRatio
+        from
+        t_physicalhost
+
+        <where>
+            <if test="regionId != null">
+            and regionId = #{regionId,jdbcType=VARCHAR}
+        </if>
+            <if test="azoneId != null">
+             and   azoneId = #{azoneId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        GROUP BY
+        clusterId,
+        clusterName
+    </select>
+
+
+    <select id="getRegionStorageInfo" resultType="map" parameterType="map">
+        select
+        dimensionType,
+        regionName,
+        regionId,
+        SUM(totalCapacity)totalCapacity,
+        SUM(usedCapacity) usedCapacity,
+        SUM(freeCapacity) freeCapacity,
+        CONCAT(FORMAT(Round(SUM(usedCapacity)/SUM(totalCapacity),4) * 100, 2), '%') as usedRatio
+        from
+        t_hcs_azone_summary_storage_info
+               <where>
+            <if test="regionId != null">
+                regionId = #{regionId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        GROUP BY
+        dimensionType,
+        regionId,
+        regionName
+        order by regionName
+    </select>
+
+
+</mapper>

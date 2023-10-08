@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.ReserveDeviceMapper">
+
+    <sql id="reserveServerIsRunning">
+        <choose>
+            <when test="isRunning == null"/>
+            <when test="isRunning">
+                and allocateStatus = '运行'
+            </when>
+            <when test="!isRunning">
+                and allocateStatus != '运行'
+            </when>
+        </choose>
+    </sql>
+
+    <select id="getReserveServerCount" resultType="hashmap">
+        SELECT deviceAssort, count(*) from t_reserve_server
+        <where>
+            <include refid="reserveServerIsRunning"/>
+        </where>
+        GROUP BY deviceAssort
+    </select>
+
+    <sql id="reserveStorageIsRunning">
+        <choose>
+            <when test="isRunning == null"/>
+            <when test="isRunning">
+                and resourceStatus = '运行'
+            </when>
+            <when test="!isRunning">
+                and resourceStatus != '运行'
+            </when>
+        </choose>
+    </sql>
+
+    <select id="getReserveStorageType1Count" resultType="hashmap">
+        SELECT type1, count(*) from t_reserve_storage
+        <where>
+            <include refid="reserveStorageIsRunning"/>
+        </where>
+        GROUP BY type1 HAVING type1 != ''
+    </select>
+
+    <select id="getReserveStorageType2Count" resultType="hashmap">
+        SELECT type2, count(*) from t_reserve_storage
+        <where>
+            <include refid="reserveStorageIsRunning"/>
+        </where>
+        GROUP BY type2 HAVING type2 != ''
+    </select>
+
+    <select id="getReserveStorageCount" resultType="int">
+        SELECT count(*) from t_reserve_storage
+        <where>
+            <include refid="reserveStorageIsRunning"/>
+        </where>
+    </select>
+
+    <select id="getReserveStorageNonTypeCount" resultType="int">
+        SELECT count(*) from t_reserve_storage
+        <where>
+            and type1 = ''
+            and type2 = ''
+            <include refid="reserveStorageIsRunning"/>
+        </where>
+    </select>
+
+    <select id="getReserveStorageCapacitySum" resultType="hashmap" parameterType="reserveStorage">
+        SELECT COALESCE(SUM(totalStorageCapacity),0) as total, COALESCE(SUM(restStorageCapacity),0) as `left` from
+        t_reserve_storage
+        <where>
+            <if test="type1 != null">
+                and type1 = #{type1}
+            </if>
+            <if test="type2 != null">
+                and type2 = #{type2}
+            </if>
+            <if test="physicalPosition != null">
+                and physicalPosition = #{physicalPosition}
+            </if>
+            and totalStorageCapacity > 0 and resourceStatus = '运行'
+        </where>
+    </select>
+
+    <select id="getReserveNetworkCount" resultType="hashmap">
+        SELECT deviceType, count(*)
+        from t_reserve_network
+        GROUP BY deviceType
+    </select>
+</mapper>

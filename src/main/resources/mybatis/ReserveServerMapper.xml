@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.ReserveServerMapper">
+    <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.ReserveServer">
+        <id column="resId" property="resId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="netCardNum" property="netCardNum" jdbcType="INTEGER"/>
+        <result column="raidModel" property="raidModel" jdbcType="VARCHAR"/>
+        <result column="raidCount" property="raidCount" jdbcType="INTEGER"/>
+        <result column="pcieModel" property="pcieModel" jdbcType="VARCHAR"/>
+        <result column="pcieCount" property="pcieCount" jdbcType="INTEGER"/>
+        <result column="powerModel" property="powerModel" jdbcType="VARCHAR"/>
+        <result column="powerNum" property="powerNum" jdbcType="INTEGER"/>
+        <result column="fanNum" property="fanNum" jdbcType="INTEGER"/>
+        <result column="lastUpdateTime" property="lastUpdateTime" jdbcType="DATE"/>
+        <result column="allocateBMCIP" property="allocateBMCIP" jdbcType="VARCHAR"/>
+        <result column="shelfPosition" property="shelfPosition" jdbcType="VARCHAR"/>
+        <result column="resAllocationCode" property="resAllocationCode" jdbcType="VARCHAR"/>
+        <result column="regionName" property="regionName" jdbcType="VARCHAR"/>
+        <result column="cpuSize" property="cpuSize" jdbcType="INTEGER"/>
+        <result column="cpuCount" property="cpuCount" jdbcType="INTEGER"/>
+        <result column="cpuModel" property="cpuModel" jdbcType="VARCHAR"/>
+        <result column="warrantyRemark" property="warrantyRemark" jdbcType="VARCHAR"/>
+        <result column="warrantyManufacturer" property="warrantyManufacturer" jdbcType="VARCHAR"/>
+        <result column="warrantyEndTime" property="warrantyEndTime" jdbcType="DATE"/>
+        <result column="warrantyStartTime" property="warrantyStartTime" jdbcType="DATE"/>
+        <result column="warrantyContract" property="warrantyContract" jdbcType="VARCHAR"/>
+        <result column="purchaseContract" property="purchaseContract" jdbcType="VARCHAR"/>
+        <result column="newSAPNum" property="newSAPNum" jdbcType="VARCHAR"/>
+        <result column="SAPNum" property="SAPNum" jdbcType="VARCHAR"/>
+        <result column="deviceModel" property="deviceModel" jdbcType="VARCHAR"/>
+        <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR"/>
+        <result column="standTeam" property="standTeam" jdbcType="VARCHAR"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="HBAModel" property="HBAModel" jdbcType="VARCHAR"/>
+        <result column="HBACount" property="HBACount" jdbcType="INTEGER"/>
+        <result column="netCardModel" property="netCardModel" jdbcType="VARCHAR"/>
+        <result column="remainingDiskSlot" property="remainingDiskSlot" jdbcType="INTEGER"/>
+        <result column="physicalPosition" property="physicalPosition" jdbcType="VARCHAR"/>
+        <result column="cpuManufacturer" property="cpuManufacturer" jdbcType="VARCHAR"/>
+        <result column="cpuArch" property="cpuArch" jdbcType="VARCHAR"/>
+        <result column="assetBelong" property="assetBelong" jdbcType="VARCHAR"/>
+        <result column="allocateStatus" property="allocateStatus" jdbcType="VARCHAR"/>
+        <result column="deviceAssort" property="deviceAssort" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="memSize" property="memSize" jdbcType="INTEGER"/>
+        <result column="memCount" property="memCount" jdbcType="INTEGER"/>
+        <result column="memModel" property="memModel" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="createBy" property="createBy" jdbcType="VARCHAR"/>
+        <result column="updateBy" property="updateBy" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="admins" property="admins" jdbcType="VARCHAR"/>
+        <result column="alias" property="alias" jdbcType="VARCHAR"/>
+        <result column="memberCompany" property="memberCompany" jdbcType="VARCHAR"/>
+        <result column="warrantyTag" property="warrantyTag" jdbcType="VARCHAR"/>
+        <result column="manageUsername" property="manageUsername" jdbcType="VARCHAR"/>
+        <result column="managePassword" property="managePassword" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        resId
+        , `name`, netCardNum, raidModel, raidCount, pcieModel, pcieCount, powerModel,
+    powerNum, fanNum, lastUpdateTime, allocateBMCIP, shelfPosition, resAllocationCode, 
+    regionName, cpuSize, cpuCount, cpuModel, warrantyRemark, warrantyManufacturer, warrantyEndTime, 
+    warrantyStartTime, warrantyContract, purchaseContract, newSAPNum, SAPNum, deviceModel, 
+    manufacturer, standTeam, sn, HBAModel, HBACount, netCardModel, remainingDiskSlot, 
+    physicalPosition, cpuManufacturer, cpuArch, assetBelong, allocateStatus, deviceAssort, 
+    creator, memSize, memCount, memModel, createTime, updateTime, createBy, updateBy, 
+    remark, admins, `alias`, memberCompany, warrantyTag, manageUsername, managePassword
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.clic.ccdbaas.entity.example.ReserveServerExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from t_reserve_server
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_reserve_server
+        where resId = #{resId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from t_reserve_server
+        where resId = #{resId,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.example.ReserveServerExample">
+        delete from t_reserve_server
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.clic.ccdbaas.entity.ReserveServer">
+        insert into t_reserve_server (resId, `name`, netCardNum,
+                                      raidModel, raidCount, pcieModel,
+                                      pcieCount, powerModel, powerNum,
+                                      fanNum, lastUpdateTime, allocateBMCIP,
+                                      shelfPosition, resAllocationCode, regionName,
+                                      cpuSize, cpuCount, cpuModel,
+                                      warrantyRemark, warrantyManufacturer, warrantyEndTime,
+                                      warrantyStartTime, warrantyContract, purchaseContract,
+                                      newSAPNum, SAPNum, deviceModel,
+                                      manufacturer, standTeam, sn,
+                                      HBAModel, HBACount, netCardModel,
+                                      remainingDiskSlot, physicalPosition, cpuManufacturer,
+                                      cpuArch, assetBelong, allocateStatus,
+                                      deviceAssort, creator, memSize,
+                                      memCount, memModel, createTime,
+                                      updateTime, createBy, updateBy,
+                                      remark, admins, `alias`,
+                                      memberCompany, warrantyTag, manageUsername,
+                                      managePassword)
+        values (#{resId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{netCardNum,jdbcType=INTEGER},
+                #{raidModel,jdbcType=VARCHAR}, #{raidCount,jdbcType=INTEGER}, #{pcieModel,jdbcType=VARCHAR},
+                #{pcieCount,jdbcType=INTEGER}, #{powerModel,jdbcType=VARCHAR}, #{powerNum,jdbcType=INTEGER},
+                #{fanNum,jdbcType=INTEGER}, #{lastUpdateTime,jdbcType=DATE}, #{allocateBMCIP,jdbcType=VARCHAR},
+                #{shelfPosition,jdbcType=VARCHAR}, #{resAllocationCode,jdbcType=VARCHAR},
+                #{regionName,jdbcType=VARCHAR},
+                #{cpuSize,jdbcType=INTEGER}, #{cpuCount,jdbcType=INTEGER}, #{cpuModel,jdbcType=VARCHAR},
+                #{warrantyRemark,jdbcType=VARCHAR}, #{warrantyManufacturer,jdbcType=VARCHAR},
+                #{warrantyEndTime,jdbcType=DATE},
+                #{warrantyStartTime,jdbcType=DATE}, #{warrantyContract,jdbcType=VARCHAR},
+                #{purchaseContract,jdbcType=VARCHAR},
+                #{newSAPNum,jdbcType=VARCHAR}, #{SAPNum,jdbcType=VARCHAR}, #{deviceModel,jdbcType=VARCHAR},
+                #{manufacturer,jdbcType=VARCHAR}, #{standTeam,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR},
+                #{HBAModel,jdbcType=VARCHAR}, #{HBACount,jdbcType=INTEGER}, #{netCardModel,jdbcType=VARCHAR},
+                #{remainingDiskSlot,jdbcType=INTEGER}, #{physicalPosition,jdbcType=VARCHAR},
+                #{cpuManufacturer,jdbcType=VARCHAR},
+                #{cpuArch,jdbcType=VARCHAR}, #{assetBelong,jdbcType=VARCHAR}, #{allocateStatus,jdbcType=VARCHAR},
+                #{deviceAssort,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{memSize,jdbcType=INTEGER},
+                #{memCount,jdbcType=INTEGER}, #{memModel,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+                #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
+                #{remark,jdbcType=VARCHAR}, #{admins,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR},
+                #{memberCompany,jdbcType=VARCHAR}, #{warrantyTag,jdbcType=VARCHAR}, #{manageUsername,jdbcType=VARCHAR},
+                #{managePassword,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.ReserveServer">
+        insert into t_reserve_server
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                resId,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="netCardNum != null">
+                netCardNum,
+            </if>
+            <if test="raidModel != null">
+                raidModel,
+            </if>
+            <if test="raidCount != null">
+                raidCount,
+            </if>
+            <if test="pcieModel != null">
+                pcieModel,
+            </if>
+            <if test="pcieCount != null">
+                pcieCount,
+            </if>
+            <if test="powerModel != null">
+                powerModel,
+            </if>
+            <if test="powerNum != null">
+                powerNum,
+            </if>
+            <if test="fanNum != null">
+                fanNum,
+            </if>
+            <if test="lastUpdateTime != null">
+                lastUpdateTime,
+            </if>
+            <if test="allocateBMCIP != null">
+                allocateBMCIP,
+            </if>
+            <if test="shelfPosition != null">
+                shelfPosition,
+            </if>
+            <if test="resAllocationCode != null">
+                resAllocationCode,
+            </if>
+            <if test="regionName != null">
+                regionName,
+            </if>
+            <if test="cpuSize != null">
+                cpuSize,
+            </if>
+            <if test="cpuCount != null">
+                cpuCount,
+            </if>
+            <if test="cpuModel != null">
+                cpuModel,
+            </if>
+            <if test="warrantyRemark != null">
+                warrantyRemark,
+            </if>
+            <if test="warrantyManufacturer != null">
+                warrantyManufacturer,
+            </if>
+            <if test="warrantyEndTime != null">
+                warrantyEndTime,
+            </if>
+            <if test="warrantyStartTime != null">
+                warrantyStartTime,
+            </if>
+            <if test="warrantyContract != null">
+                warrantyContract,
+            </if>
+            <if test="purchaseContract != null">
+                purchaseContract,
+            </if>
+            <if test="newSAPNum != null">
+                newSAPNum,
+            </if>
+            <if test="SAPNum != null">
+                SAPNum,
+            </if>
+            <if test="deviceModel != null">
+                deviceModel,
+            </if>
+            <if test="manufacturer != null">
+                manufacturer,
+            </if>
+            <if test="standTeam != null">
+                standTeam,
+            </if>
+            <if test="sn != null">
+                sn,
+            </if>
+            <if test="HBAModel != null">
+                HBAModel,
+            </if>
+            <if test="HBACount != null">
+                HBACount,
+            </if>
+            <if test="netCardModel != null">
+                netCardModel,
+            </if>
+            <if test="remainingDiskSlot != null">
+                remainingDiskSlot,
+            </if>
+            <if test="physicalPosition != null">
+                physicalPosition,
+            </if>
+            <if test="cpuManufacturer != null">
+                cpuManufacturer,
+            </if>
+            <if test="cpuArch != null">
+                cpuArch,
+            </if>
+            <if test="assetBelong != null">
+                assetBelong,
+            </if>
+            <if test="allocateStatus != null">
+                allocateStatus,
+            </if>
+            <if test="deviceAssort != null">
+                deviceAssort,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="memSize != null">
+                memSize,
+            </if>
+            <if test="memCount != null">
+                memCount,
+            </if>
+            <if test="memModel != null">
+                memModel,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="createBy != null">
+                createBy,
+            </if>
+            <if test="updateBy != null">
+                updateBy,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="admins != null">
+                admins,
+            </if>
+            <if test="alias != null">
+                `alias`,
+            </if>
+            <if test="memberCompany != null">
+                memberCompany,
+            </if>
+            <if test="warrantyTag != null">
+                warrantyTag,
+            </if>
+            <if test="manageUsername != null">
+                manageUsername,
+            </if>
+            <if test="managePassword != null">
+                managePassword,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                #{resId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="netCardNum != null">
+                #{netCardNum,jdbcType=INTEGER},
+            </if>
+            <if test="raidModel != null">
+                #{raidModel,jdbcType=VARCHAR},
+            </if>
+            <if test="raidCount != null">
+                #{raidCount,jdbcType=INTEGER},
+            </if>
+            <if test="pcieModel != null">
+                #{pcieModel,jdbcType=VARCHAR},
+            </if>
+            <if test="pcieCount != null">
+                #{pcieCount,jdbcType=INTEGER},
+            </if>
+            <if test="powerModel != null">
+                #{powerModel,jdbcType=VARCHAR},
+            </if>
+            <if test="powerNum != null">
+                #{powerNum,jdbcType=INTEGER},
+            </if>
+            <if test="fanNum != null">
+                #{fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateTime != null">
+                #{lastUpdateTime,jdbcType=DATE},
+            </if>
+            <if test="allocateBMCIP != null">
+                #{allocateBMCIP,jdbcType=VARCHAR},
+            </if>
+            <if test="shelfPosition != null">
+                #{shelfPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="resAllocationCode != null">
+                #{resAllocationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="regionName != null">
+                #{regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuSize != null">
+                #{cpuSize,jdbcType=INTEGER},
+            </if>
+            <if test="cpuCount != null">
+                #{cpuCount,jdbcType=INTEGER},
+            </if>
+            <if test="cpuModel != null">
+                #{cpuModel,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyRemark != null">
+                #{warrantyRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyManufacturer != null">
+                #{warrantyManufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyEndTime != null">
+                #{warrantyEndTime,jdbcType=DATE},
+            </if>
+            <if test="warrantyStartTime != null">
+                #{warrantyStartTime,jdbcType=DATE},
+            </if>
+            <if test="warrantyContract != null">
+                #{warrantyContract,jdbcType=VARCHAR},
+            </if>
+            <if test="purchaseContract != null">
+                #{purchaseContract,jdbcType=VARCHAR},
+            </if>
+            <if test="newSAPNum != null">
+                #{newSAPNum,jdbcType=VARCHAR},
+            </if>
+            <if test="SAPNum != null">
+                #{SAPNum,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceModel != null">
+                #{deviceModel,jdbcType=VARCHAR},
+            </if>
+            <if test="manufacturer != null">
+                #{manufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="standTeam != null">
+                #{standTeam,jdbcType=VARCHAR},
+            </if>
+            <if test="sn != null">
+                #{sn,jdbcType=VARCHAR},
+            </if>
+            <if test="HBAModel != null">
+                #{HBAModel,jdbcType=VARCHAR},
+            </if>
+            <if test="HBACount != null">
+                #{HBACount,jdbcType=INTEGER},
+            </if>
+            <if test="netCardModel != null">
+                #{netCardModel,jdbcType=VARCHAR},
+            </if>
+            <if test="remainingDiskSlot != null">
+                #{remainingDiskSlot,jdbcType=INTEGER},
+            </if>
+            <if test="physicalPosition != null">
+                #{physicalPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuManufacturer != null">
+                #{cpuManufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuArch != null">
+                #{cpuArch,jdbcType=VARCHAR},
+            </if>
+            <if test="assetBelong != null">
+                #{assetBelong,jdbcType=VARCHAR},
+            </if>
+            <if test="allocateStatus != null">
+                #{allocateStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceAssort != null">
+                #{deviceAssort,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="memSize != null">
+                #{memSize,jdbcType=INTEGER},
+            </if>
+            <if test="memCount != null">
+                #{memCount,jdbcType=INTEGER},
+            </if>
+            <if test="memModel != null">
+                #{memModel,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="admins != null">
+                #{admins,jdbcType=VARCHAR},
+            </if>
+            <if test="alias != null">
+                #{alias,jdbcType=VARCHAR},
+            </if>
+            <if test="memberCompany != null">
+                #{memberCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyTag != null">
+                #{warrantyTag,jdbcType=VARCHAR},
+            </if>
+            <if test="manageUsername != null">
+                #{manageUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="managePassword != null">
+                #{managePassword,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.clic.ccdbaas.entity.example.ReserveServerExample"
+            resultType="java.lang.Integer">
+        select count(*) from t_reserve_server
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_reserve_server
+        <set>
+            <if test="record.resId != null">
+                resId = #{record.resId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null">
+                `name` = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.netCardNum != null">
+                netCardNum = #{record.netCardNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.raidModel != null">
+                raidModel = #{record.raidModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.raidCount != null">
+                raidCount = #{record.raidCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.pcieModel != null">
+                pcieModel = #{record.pcieModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.pcieCount != null">
+                pcieCount = #{record.pcieCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.powerModel != null">
+                powerModel = #{record.powerModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.powerNum != null">
+                powerNum = #{record.powerNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.fanNum != null">
+                fanNum = #{record.fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.lastUpdateTime != null">
+                lastUpdateTime = #{record.lastUpdateTime,jdbcType=DATE},
+            </if>
+            <if test="record.allocateBMCIP != null">
+                allocateBMCIP = #{record.allocateBMCIP,jdbcType=VARCHAR},
+            </if>
+            <if test="record.shelfPosition != null">
+                shelfPosition = #{record.shelfPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="record.resAllocationCode != null">
+                resAllocationCode = #{record.resAllocationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.regionName != null">
+                regionName = #{record.regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cpuSize != null">
+                cpuSize = #{record.cpuSize,jdbcType=INTEGER},
+            </if>
+            <if test="record.cpuCount != null">
+                cpuCount = #{record.cpuCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.cpuModel != null">
+                cpuModel = #{record.cpuModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.warrantyRemark != null">
+                warrantyRemark = #{record.warrantyRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.warrantyManufacturer != null">
+                warrantyManufacturer = #{record.warrantyManufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="record.warrantyEndTime != null">
+                warrantyEndTime = #{record.warrantyEndTime,jdbcType=DATE},
+            </if>
+            <if test="record.warrantyStartTime != null">
+                warrantyStartTime = #{record.warrantyStartTime,jdbcType=DATE},
+            </if>
+            <if test="record.warrantyContract != null">
+                warrantyContract = #{record.warrantyContract,jdbcType=VARCHAR},
+            </if>
+            <if test="record.purchaseContract != null">
+                purchaseContract = #{record.purchaseContract,jdbcType=VARCHAR},
+            </if>
+            <if test="record.newSAPNum != null">
+                newSAPNum = #{record.newSAPNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record.SAPNum != null">
+                SAPNum = #{record.SAPNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record.deviceModel != null">
+                deviceModel = #{record.deviceModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.manufacturer != null">
+                manufacturer = #{record.manufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="record.standTeam != null">
+                standTeam = #{record.standTeam,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sn != null">
+                sn = #{record.sn,jdbcType=VARCHAR},
+            </if>
+            <if test="record.HBAModel != null">
+                HBAModel = #{record.HBAModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.HBACount != null">
+                HBACount = #{record.HBACount,jdbcType=INTEGER},
+            </if>
+            <if test="record.netCardModel != null">
+                netCardModel = #{record.netCardModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remainingDiskSlot != null">
+                remainingDiskSlot = #{record.remainingDiskSlot,jdbcType=INTEGER},
+            </if>
+            <if test="record.physicalPosition != null">
+                physicalPosition = #{record.physicalPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cpuManufacturer != null">
+                cpuManufacturer = #{record.cpuManufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cpuArch != null">
+                cpuArch = #{record.cpuArch,jdbcType=VARCHAR},
+            </if>
+            <if test="record.assetBelong != null">
+                assetBelong = #{record.assetBelong,jdbcType=VARCHAR},
+            </if>
+            <if test="record.allocateStatus != null">
+                allocateStatus = #{record.allocateStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="record.deviceAssort != null">
+                deviceAssort = #{record.deviceAssort,jdbcType=VARCHAR},
+            </if>
+            <if test="record.creator != null">
+                creator = #{record.creator,jdbcType=VARCHAR},
+            </if>
+            <if test="record.memSize != null">
+                memSize = #{record.memSize,jdbcType=INTEGER},
+            </if>
+            <if test="record.memCount != null">
+                memCount = #{record.memCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.memModel != null">
+                memModel = #{record.memModel,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createBy != null">
+                createBy = #{record.createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="record.updateBy != null">
+                updateBy = #{record.updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.admins != null">
+                admins = #{record.admins,jdbcType=VARCHAR},
+            </if>
+            <if test="record.alias != null">
+                `alias` = #{record.alias,jdbcType=VARCHAR},
+            </if>
+            <if test="record.memberCompany != null">
+                memberCompany = #{record.memberCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="record.warrantyTag != null">
+                warrantyTag = #{record.warrantyTag,jdbcType=VARCHAR},
+            </if>
+            <if test="record.manageUsername != null">
+                manageUsername = #{record.manageUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="record.managePassword != null">
+                managePassword = #{record.managePassword,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_reserve_server
+        set resId = #{record.resId,jdbcType=VARCHAR},
+        `name` = #{record.name,jdbcType=VARCHAR},
+        netCardNum = #{record.netCardNum,jdbcType=INTEGER},
+        raidModel = #{record.raidModel,jdbcType=VARCHAR},
+        raidCount = #{record.raidCount,jdbcType=INTEGER},
+        pcieModel = #{record.pcieModel,jdbcType=VARCHAR},
+        pcieCount = #{record.pcieCount,jdbcType=INTEGER},
+        powerModel = #{record.powerModel,jdbcType=VARCHAR},
+        powerNum = #{record.powerNum,jdbcType=INTEGER},
+        fanNum = #{record.fanNum,jdbcType=INTEGER},
+        lastUpdateTime = #{record.lastUpdateTime,jdbcType=DATE},
+        allocateBMCIP = #{record.allocateBMCIP,jdbcType=VARCHAR},
+        shelfPosition = #{record.shelfPosition,jdbcType=VARCHAR},
+        resAllocationCode = #{record.resAllocationCode,jdbcType=VARCHAR},
+        regionName = #{record.regionName,jdbcType=VARCHAR},
+        cpuSize = #{record.cpuSize,jdbcType=INTEGER},
+        cpuCount = #{record.cpuCount,jdbcType=INTEGER},
+        cpuModel = #{record.cpuModel,jdbcType=VARCHAR},
+        warrantyRemark = #{record.warrantyRemark,jdbcType=VARCHAR},
+        warrantyManufacturer = #{record.warrantyManufacturer,jdbcType=VARCHAR},
+        warrantyEndTime = #{record.warrantyEndTime,jdbcType=DATE},
+        warrantyStartTime = #{record.warrantyStartTime,jdbcType=DATE},
+        warrantyContract = #{record.warrantyContract,jdbcType=VARCHAR},
+        purchaseContract = #{record.purchaseContract,jdbcType=VARCHAR},
+        newSAPNum = #{record.newSAPNum,jdbcType=VARCHAR},
+        SAPNum = #{record.SAPNum,jdbcType=VARCHAR},
+        deviceModel = #{record.deviceModel,jdbcType=VARCHAR},
+        manufacturer = #{record.manufacturer,jdbcType=VARCHAR},
+        standTeam = #{record.standTeam,jdbcType=VARCHAR},
+        sn = #{record.sn,jdbcType=VARCHAR},
+        HBAModel = #{record.HBAModel,jdbcType=VARCHAR},
+        HBACount = #{record.HBACount,jdbcType=INTEGER},
+        netCardModel = #{record.netCardModel,jdbcType=VARCHAR},
+        remainingDiskSlot = #{record.remainingDiskSlot,jdbcType=INTEGER},
+        physicalPosition = #{record.physicalPosition,jdbcType=VARCHAR},
+        cpuManufacturer = #{record.cpuManufacturer,jdbcType=VARCHAR},
+        cpuArch = #{record.cpuArch,jdbcType=VARCHAR},
+        assetBelong = #{record.assetBelong,jdbcType=VARCHAR},
+        allocateStatus = #{record.allocateStatus,jdbcType=VARCHAR},
+        deviceAssort = #{record.deviceAssort,jdbcType=VARCHAR},
+        creator = #{record.creator,jdbcType=VARCHAR},
+        memSize = #{record.memSize,jdbcType=INTEGER},
+        memCount = #{record.memCount,jdbcType=INTEGER},
+        memModel = #{record.memModel,jdbcType=VARCHAR},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+        createBy = #{record.createBy,jdbcType=VARCHAR},
+        updateBy = #{record.updateBy,jdbcType=VARCHAR},
+        remark = #{record.remark,jdbcType=VARCHAR},
+        admins = #{record.admins,jdbcType=VARCHAR},
+        `alias` = #{record.alias,jdbcType=VARCHAR},
+        memberCompany = #{record.memberCompany,jdbcType=VARCHAR},
+        warrantyTag = #{record.warrantyTag,jdbcType=VARCHAR},
+        manageUsername = #{record.manageUsername,jdbcType=VARCHAR},
+        managePassword = #{record.managePassword,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.ReserveServer">
+        update t_reserve_server
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="netCardNum != null">
+                netCardNum = #{netCardNum,jdbcType=INTEGER},
+            </if>
+            <if test="raidModel != null">
+                raidModel = #{raidModel,jdbcType=VARCHAR},
+            </if>
+            <if test="raidCount != null">
+                raidCount = #{raidCount,jdbcType=INTEGER},
+            </if>
+            <if test="pcieModel != null">
+                pcieModel = #{pcieModel,jdbcType=VARCHAR},
+            </if>
+            <if test="pcieCount != null">
+                pcieCount = #{pcieCount,jdbcType=INTEGER},
+            </if>
+            <if test="powerModel != null">
+                powerModel = #{powerModel,jdbcType=VARCHAR},
+            </if>
+            <if test="powerNum != null">
+                powerNum = #{powerNum,jdbcType=INTEGER},
+            </if>
+            <if test="fanNum != null">
+                fanNum = #{fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateTime != null">
+                lastUpdateTime = #{lastUpdateTime,jdbcType=DATE},
+            </if>
+            <if test="allocateBMCIP != null">
+                allocateBMCIP = #{allocateBMCIP,jdbcType=VARCHAR},
+            </if>
+            <if test="shelfPosition != null">
+                shelfPosition = #{shelfPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="resAllocationCode != null">
+                resAllocationCode = #{resAllocationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="regionName != null">
+                regionName = #{regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuSize != null">
+                cpuSize = #{cpuSize,jdbcType=INTEGER},
+            </if>
+            <if test="cpuCount != null">
+                cpuCount = #{cpuCount,jdbcType=INTEGER},
+            </if>
+            <if test="cpuModel != null">
+                cpuModel = #{cpuModel,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyRemark != null">
+                warrantyRemark = #{warrantyRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyManufacturer != null">
+                warrantyManufacturer = #{warrantyManufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyEndTime != null">
+                warrantyEndTime = #{warrantyEndTime,jdbcType=DATE},
+            </if>
+            <if test="warrantyStartTime != null">
+                warrantyStartTime = #{warrantyStartTime,jdbcType=DATE},
+            </if>
+            <if test="warrantyContract != null">
+                warrantyContract = #{warrantyContract,jdbcType=VARCHAR},
+            </if>
+            <if test="purchaseContract != null">
+                purchaseContract = #{purchaseContract,jdbcType=VARCHAR},
+            </if>
+            <if test="newSAPNum != null">
+                newSAPNum = #{newSAPNum,jdbcType=VARCHAR},
+            </if>
+            <if test="SAPNum != null">
+                SAPNum = #{SAPNum,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceModel != null">
+                deviceModel = #{deviceModel,jdbcType=VARCHAR},
+            </if>
+            <if test="manufacturer != null">
+                manufacturer = #{manufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="standTeam != null">
+                standTeam = #{standTeam,jdbcType=VARCHAR},
+            </if>
+            <if test="sn != null">
+                sn = #{sn,jdbcType=VARCHAR},
+            </if>
+            <if test="HBAModel != null">
+                HBAModel = #{HBAModel,jdbcType=VARCHAR},
+            </if>
+            <if test="HBACount != null">
+                HBACount = #{HBACount,jdbcType=INTEGER},
+            </if>
+            <if test="netCardModel != null">
+                netCardModel = #{netCardModel,jdbcType=VARCHAR},
+            </if>
+            <if test="remainingDiskSlot != null">
+                remainingDiskSlot = #{remainingDiskSlot,jdbcType=INTEGER},
+            </if>
+            <if test="physicalPosition != null">
+                physicalPosition = #{physicalPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuManufacturer != null">
+                cpuManufacturer = #{cpuManufacturer,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuArch != null">
+                cpuArch = #{cpuArch,jdbcType=VARCHAR},
+            </if>
+            <if test="assetBelong != null">
+                assetBelong = #{assetBelong,jdbcType=VARCHAR},
+            </if>
+            <if test="allocateStatus != null">
+                allocateStatus = #{allocateStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceAssort != null">
+                deviceAssort = #{deviceAssort,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="memSize != null">
+                memSize = #{memSize,jdbcType=INTEGER},
+            </if>
+            <if test="memCount != null">
+                memCount = #{memCount,jdbcType=INTEGER},
+            </if>
+            <if test="memModel != null">
+                memModel = #{memModel,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                createBy = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                updateBy = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="admins != null">
+                admins = #{admins,jdbcType=VARCHAR},
+            </if>
+            <if test="alias != null">
+                `alias` = #{alias,jdbcType=VARCHAR},
+            </if>
+            <if test="memberCompany != null">
+                memberCompany = #{memberCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="warrantyTag != null">
+                warrantyTag = #{warrantyTag,jdbcType=VARCHAR},
+            </if>
+            <if test="manageUsername != null">
+                manageUsername = #{manageUsername,jdbcType=VARCHAR},
+            </if>
+            <if test="managePassword != null">
+                managePassword = #{managePassword,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.ReserveServer">
+        update t_reserve_server
+        set `name`               = #{name,jdbcType=VARCHAR},
+            netCardNum           = #{netCardNum,jdbcType=INTEGER},
+            raidModel            = #{raidModel,jdbcType=VARCHAR},
+            raidCount            = #{raidCount,jdbcType=INTEGER},
+            pcieModel            = #{pcieModel,jdbcType=VARCHAR},
+            pcieCount            = #{pcieCount,jdbcType=INTEGER},
+            powerModel           = #{powerModel,jdbcType=VARCHAR},
+            powerNum             = #{powerNum,jdbcType=INTEGER},
+            fanNum               = #{fanNum,jdbcType=INTEGER},
+            lastUpdateTime       = #{lastUpdateTime,jdbcType=DATE},
+            allocateBMCIP        = #{allocateBMCIP,jdbcType=VARCHAR},
+            shelfPosition        = #{shelfPosition,jdbcType=VARCHAR},
+            resAllocationCode    = #{resAllocationCode,jdbcType=VARCHAR},
+            regionName           = #{regionName,jdbcType=VARCHAR},
+            cpuSize              = #{cpuSize,jdbcType=INTEGER},
+            cpuCount             = #{cpuCount,jdbcType=INTEGER},
+            cpuModel             = #{cpuModel,jdbcType=VARCHAR},
+            warrantyRemark       = #{warrantyRemark,jdbcType=VARCHAR},
+            warrantyManufacturer = #{warrantyManufacturer,jdbcType=VARCHAR},
+            warrantyEndTime      = #{warrantyEndTime,jdbcType=DATE},
+            warrantyStartTime    = #{warrantyStartTime,jdbcType=DATE},
+            warrantyContract     = #{warrantyContract,jdbcType=VARCHAR},
+            purchaseContract     = #{purchaseContract,jdbcType=VARCHAR},
+            newSAPNum            = #{newSAPNum,jdbcType=VARCHAR},
+            SAPNum               = #{SAPNum,jdbcType=VARCHAR},
+            deviceModel          = #{deviceModel,jdbcType=VARCHAR},
+            manufacturer         = #{manufacturer,jdbcType=VARCHAR},
+            standTeam            = #{standTeam,jdbcType=VARCHAR},
+            sn                   = #{sn,jdbcType=VARCHAR},
+            HBAModel             = #{HBAModel,jdbcType=VARCHAR},
+            HBACount             = #{HBACount,jdbcType=INTEGER},
+            netCardModel         = #{netCardModel,jdbcType=VARCHAR},
+            remainingDiskSlot    = #{remainingDiskSlot,jdbcType=INTEGER},
+            physicalPosition     = #{physicalPosition,jdbcType=VARCHAR},
+            cpuManufacturer      = #{cpuManufacturer,jdbcType=VARCHAR},
+            cpuArch              = #{cpuArch,jdbcType=VARCHAR},
+            assetBelong          = #{assetBelong,jdbcType=VARCHAR},
+            allocateStatus       = #{allocateStatus,jdbcType=VARCHAR},
+            deviceAssort         = #{deviceAssort,jdbcType=VARCHAR},
+            creator              = #{creator,jdbcType=VARCHAR},
+            memSize              = #{memSize,jdbcType=INTEGER},
+            memCount             = #{memCount,jdbcType=INTEGER},
+            memModel             = #{memModel,jdbcType=VARCHAR},
+            createTime           = #{createTime,jdbcType=TIMESTAMP},
+            updateTime           = #{updateTime,jdbcType=TIMESTAMP},
+            createBy             = #{createBy,jdbcType=VARCHAR},
+            updateBy             = #{updateBy,jdbcType=VARCHAR},
+            remark               = #{remark,jdbcType=VARCHAR},
+            admins               = #{admins,jdbcType=VARCHAR},
+            `alias`              = #{alias,jdbcType=VARCHAR},
+            memberCompany        = #{memberCompany,jdbcType=VARCHAR},
+            warrantyTag          = #{warrantyTag,jdbcType=VARCHAR},
+            manageUsername       = #{manageUsername,jdbcType=VARCHAR},
+            managePassword       = #{managePassword,jdbcType=VARCHAR}
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateReserveServerKafka" parameterType="ReserveServerKafka">
+        update t_reserve_server
+        <trim prefix="set" suffixOverrides=",">
+            <if test="resAllocationCode!=null and resAllocationCode!=''">resAllocationCode = #{resAllocationCode},</if>
+            <if test="allocateStatus!=null and allocateStatus!=''">allocateStatus = #{allocateStatus},</if>
+        </trim>
+        where sn = #{sn}
+    </update>
+    <select id="getSingleReserveServerInstanceBySn" parameterType="string" resultType="ReserveServerKafka">
+        select *
+        from t_reserve_server
+        where sn = #{sn}
+    </select>
+    <update id="updateReserveServerResourceRecycling" parameterType="ReserveServerKafka">
+        update t_reserve_server
+        set resAllocationCode = #{resAllocationCode},
+            allocateStatus    = #{allocateStatus}
+        where sn = #{sn}
+    </update>
+</mapper>

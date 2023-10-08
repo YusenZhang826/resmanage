@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.ComplianceRuleMapper">
+
+    <!--获取所有审计规则列表-->
+    <select id="getAllComplianceRules" resultType="complianceRule">
+        select
+        a.resId,a.name,a.categoryId,b.categoryName,a.status,a.riskLevel,a.triggerMechanism,a.execPeriod,a.resourceTypeId,
+        c.name as resourceName,
+        a.runningStatus,a.lastExecResult,a.lastModified,a.total,a.compliance,a.incompliance,a.description,
+        a.maintenanceGuidance, a.createTime,a.createdBy,a.lastUpdateBy, a.checkType, a.conditionOp,
+        a.lastExecTime, a.type, a.searchType, a.configFlag
+        FROM t_compliance_rule a, t_auditrule_type b,t_resource_type c
+        where a.categoryId = b.id AND a.resourceTypeId=c.resId
+        <if test="name !=null and name !=''">
+            and a.name like CONCAT ('%', #{name}, '%')
+        </if>
+        <if test="resId != null and resId != ''">
+            and resId = #{resId}
+        </if>
+        <if test="lastModified != null and lastModified != ''">
+            and lastModified = #{lastModified}
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            and categoryName like CONCAT ('%', #{categoryName}, '%')
+        </if>
+        <if test="execPeriod != null and execPeriod != ''">
+            and execPeriod = #{execPeriod}
+        </if>
+        <if test="resourceName != null and resourceName != ''">
+            and c.name = #{resourceName}
+        </if>
+        <if test="lastExecTime != null and lastExecTime != ''">
+            and lastExecTime = #{lastExecTime}
+        </if>
+        <if test="maintenanceGuidance != null and maintenanceGuidance != ''">
+            and maintenanceGuidance like CONCAT ('%', #{maintenanceGuidance}, '%')
+        </if>
+        <if test="description != null and description != ''">
+            and description like CONCAT ('%', #{description}, '%')
+        </if>
+        <if test="createTime != null and createTime != ''">
+            and createTime = #{createTime}
+        </if>
+        <if test="createdBy != null and createdBy != ''">
+            and createdBy = createdBy}
+        </if>
+        <if test="lastUpdateBy != null and lastUpdateBy != ''">
+            and lastUpdateBy = #{lastUpdateBy}
+        </if>
+        <if test="statusArr != null and statusArr.size != 0">
+            and status in
+            <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+        </if>
+        <if test="type != null and (type != '' or type == 0)">
+            and type = #{type}
+        </if>
+        <if test="searchType != null and (searchType != '' or searchType == 0)">
+            and searchType = #{searchType}
+        </if>
+        <if test="configFlag != null and (configFlag != '' or configFlag == 0)">
+            and configFlag = #{configFlag}
+        </if>
+        order by a.type, a.triggerMechanism, a.createTime
+    </select>
+
+    <select id="executeSelectByParam" resultType="java.util.HashMap" parameterType="String">
+        SELECT * FROM ${tableName} where ${conditions}
+    </select>
+
+    <select id="getComplianceRuleByResId" resultType="map" parameterType="String">
+        select
+        a.resId,a.name,a.categoryId,b.categoryName,a.type,a.status,a.riskLevel,a.triggerMechanism,a.execPeriod,a.resourceTypeId,
+        c.name as resourceName,
+        a.runningStatus,a.lastExecResult,a.lastModified,a.total,a.compliance,a.incompliance,a.description,
+        a.maintenanceGuidance, a.createTime,a.createdBy,a.lastUpdateBy, a.checkType, a.conditionOp, a.lastExecTime
+        FROM t_compliance_rule a, t_auditrule_type b,t_resource_type c
+        where a.categoryId = b.id AND a.resourceTypeId=c.resId
+        AND a.resId = #{resId}
+    </select>
+
+    <!--更新审计配置信息-->
+    <update id="updateExecResult" parameterType="map">
+        update t_compliance_rule
+        <trim prefix="set" suffixOverrides=",">
+            <if test="runningStatus != null">
+                runningStatus=#{runningStatus},
+            </if>
+            <if test="lastExecResult != null">
+                lastExecResult=#{lastExecResult},
+            </if>
+            <if test="total != null">
+                total=#{total},
+            </if>
+            <if test="compliance != null">
+                compliance=#{compliance},
+            </if>
+            <if test="incompliance != null">
+                incompliance=#{incompliance},
+            </if>
+            <if test="lastExecTime != null">
+                lastExecTime=#{lastExecTime},
+            </if>
+        </trim>
+        where resId=#{resId}
+    </update>
+
+    <insert id="addComplianceRule" parameterType="complianceRule">
+        insert into t_compliance_rule (resId, `name`, categoryId,
+        `status`, riskLevel, triggerMechanism,
+        execPeriod, resourceTypeId, runningStatus,
+        lastExecResult, lastModified, total,
+        compliance, incompliance, description,
+        maintenanceGuidance, createTime, createdBy,
+        lastUpdateBy, checkType, conditionOp,
+        executeStatement, lastExecTime, type, searchType, configFlag)
+        values (#{resId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{categoryId,jdbcType=VARCHAR},
+        #{status,jdbcType=INTEGER}, #{riskLevel,jdbcType=INTEGER}, #{triggerMechanism,jdbcType=INTEGER},
+        #{execPeriod,jdbcType=VARCHAR}, #{resourceTypeId,jdbcType=VARCHAR}, #{runningStatus,jdbcType=INTEGER},
+        #{lastExecResult,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{total,jdbcType=BIGINT},
+        #{compliance,jdbcType=BIGINT}, #{incompliance,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR},
+        #{maintenanceGuidance,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=VARCHAR},
+        #{createdBy,jdbcType=VARCHAR}, #{checkType,jdbcType=INTEGER}, #{conditionOp,jdbcType=VARCHAR},
+        #{executeStatement,jdbcType=VARCHAR}, #{lastExecTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER},
+        #{searchType,jdbcType=INTEGER}, #{configFlag,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateComplianceRule" parameterType="complianceRule">
+        update t_compliance_rule
+        set `name` = #{name,jdbcType=VARCHAR},
+        categoryId = #{categoryId,jdbcType=VARCHAR},
+        riskLevel = #{riskLevel,jdbcType=INTEGER},
+        triggerMechanism = #{triggerMechanism,jdbcType=INTEGER},
+        execPeriod = #{execPeriod,jdbcType=VARCHAR},
+        resourceTypeId = #{resourceTypeId,jdbcType=VARCHAR},
+        lastModified = #{lastModified,jdbcType=TIMESTAMP},
+        description = #{description,jdbcType=VARCHAR},
+        maintenanceGuidance = #{maintenanceGuidance,jdbcType=VARCHAR},
+        lastUpdateBy = #{createdBy,jdbcType=VARCHAR},
+        checkType = #{checkType,jdbcType=INTEGER},
+        conditionOp = #{conditionOp,jdbcType=VARCHAR},
+        executeStatement = #{executeStatement, jdbcType=VARCHAR},
+        searchType = #{searchType, jdbcType=INTEGER}
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteComplianceRule" parameterType="String">
+        delete from t_compliance_rule
+        where resId = #{resId,jdbcType=VARCHAR}
+    </delete>
+
+    <update id="updateComplianceRuleStatus" parameterType="hashmap">
+        update t_compliance_rule set status=#{status}, lastModified=#{lastModified},
+        lastUpdateBy=#{lastUpdateBy} where resId=#{resId}
+    </update>
+
+    <select id="selectRuleClassByName" parameterType="string" resultType="hashmap">
+        select id,categoryName,last_Modified,createTime,createdBy
+        from t_auditrule_type
+        where categoryName=#{name}
+    </select>
+
+    <insert id="addComplianceRuleClass" parameterType="hashmap">
+        insert into t_auditrule_type(id,categoryName,last_Modified,createTime,createdBy)
+        values(#{id},#{categoryName},#{last_Modified},#{createTime},#{createdBy})
+    </insert>
+
+    <update id="updateComplianceRuleClass" parameterType="hashmap">
+        update t_auditrule_type set
+        categoryName=#{categoryName},last_Modified=#{last_Modified}
+        where id=#{id}
+    </update>
+
+    <select id="getAllComplianceRuleClass" resultType="hashmap">
+        select id,categoryName,last_Modified,createTime,createdBy
+        from t_auditrule_type
+        <if test="pageNum >= 0">
+            limit #{pageNum},#{pageSize}
+        </if>
+    </select>
+
+    <delete id="deleteComplianceRuleClass" parameterType="string">
+        delete from t_auditrule_type where id=#{id}
+    </delete>
+
+    <select id="selectRuleLockedInfo" parameterType="string" resultType="map">
+        select runningStatus, lastExecTime, execPeriod from t_compliance_rule where resId=#{resId}
+    </select>
+
+    <select id="selectRunningStatus" parameterType="string" resultType="Integer">
+        select runningStatus from t_compliance_rule where resId=#{resId}
+    </select>
+
+    <select id="selectResourceTypeId" parameterType="string" resultType="string">
+        select resourceTypeId from t_compliance_rule where resId=#{resId}
+    </select>
+
+    <select id="selectStatus" parameterType="string" resultType="int">
+        select status from t_compliance_rule where resId=#{resId}
+    </select>
+
+    <select id="countAppointedName" parameterType="string" resultType="int">
+        select count(*) from t_compliance_rule where name=#{name}
+        <if test="resId != null and resId != ''">
+            and resId != #{resId}
+        </if>
+    </select>
+
+    <select id="countRuleGroupByStatus" resultType="map">
+        select status, count(*) num from t_compliance_rule where 1=1
+        <if test="name !=null and name !=''">
+            and name like CONCAT ('%', #{name}, '%')
+        </if>
+        <if test="resId != null and resId != ''">
+            and resId = #{resId}
+        </if>
+        <if test="lastModified != null and lastModified != ''">
+            and lastModified = #{lastModified}
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            and categoryName like CONCAT ('%', #{categoryName}, '%')
+        </if>
+        <if test="execPeriod != null and execPeriod != ''">
+            and execPeriod = #{execPeriod}
+        </if>
+        <if test="resourceName != null and resourceName != ''">
+            and name = #{resourceName}
+        </if>
+        <if test="lastExecTime != null and lastExecTime != ''">
+            and lastExecTime = #{lastExecTime}
+        </if>
+        <if test="maintenanceGuidance != null and maintenanceGuidance != ''">
+            and maintenanceGuidance like CONCAT ('%', #{maintenanceGuidance}, '%')
+        </if>
+        <if test="description != null and description != ''">
+            and description like CONCAT ('%', #{description}, '%')
+        </if>
+        <if test="createTime != null and createTime != ''">
+            and createTime = #{createTime}
+        </if>
+        <if test="createdBy != null and createdBy != ''">
+            and createdBy = createdBy}
+        </if>
+        <if test="lastUpdateBy != null and lastUpdateBy != ''">
+            and lastUpdateBy = #{lastUpdateBy}
+        </if>
+        <if test="statusArr != null and statusArr.size != 0">
+            and status in
+            <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+        </if>
+        <if test="configFlag != null and (configFlag != '' or configFlag == 0)">
+            and configFlag = #{configFlag}
+        </if>
+        <if test="type != null and (type != '' or type == 0)">
+            and type = #{type}
+        </if>
+        <if test="searchType != null and (searchType != '' or searchType == 0)">
+            and searchType = #{searchType}
+        </if>
+        group by status
+    </select>
+
+    <update id="updateConfigFlag" parameterType="list">
+        update t_compliance_rule set configFlag=
+        <choose>
+            <when test="resIdArr != null and resIdArr.size() > 0">
+                0 where resId in
+                <foreach collection="resIdArr" index="index" item="resId" open="(" separator="," close=")">
+                    #{resId}
+                </foreach>
+            </when>
+            <otherwise>
+                1 where 1=1
+            </otherwise>
+        </choose>
+        and type = 1
+    </update>
+
+</mapper>

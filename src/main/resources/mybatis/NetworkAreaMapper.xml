@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.NetworkAreaMapper">
+    <select id="getNetworkAreaCount" resultType="int">
+        select count(resId) from t_network_logic_area
+    </select>
+
+    <select id="getAllNetworkAreaInstance" resultType="networkArea" parameterType="networkArea">
+        select nla.resId, nla.purposeDesc, nla.name, nla.location, nla.last_Modified, nla.deployEnv,
+        nla.netAdministrator, nla.category, nla.userOrg, nvl(instanceInfo.instanceNum,0) as instanceNum,
+        nvl(vlanInfo.vlanNum,0) as vlanNum
+        from t_network_logic_area nla
+        left join
+        (select count(0) as instanceNum, instance.networkArea from (
+        select name, networkArea, resId from t_cloudvm
+        union
+        select name, networkArea, resId from t_physicalserver
+        union
+        select name, networkArea, resId from t_physicalhost) instance group by instance.networkArea) instanceInfo
+        on nla.name = instanceInfo.networkArea
+        left join
+        (select count(0) as vlanNum, areaName from t_vlan_plan vp group by vp.areaName) vlanInfo
+        on nla.name = vlanInfo.areaName
+        <where>
+            <if test="name!=null and name !=''">nla.name like concat('%',#{name},'%')</if>
+            <if test="purposeDesc!=null and purposeDesc !=''">and nla.purposeDesc like concat('%',#{purposeDesc},'%')
+            </if>
+            <if test="location!=null and location !=''">and nla.location like concat('%',#{location},'%')</if>
+            <if test="netAdministrator!=null and netAdministrator !=''">and nla.netAdministrator like
+                concat('%',#{netAdministrator},'%')
+            </if>
+            <if test="userOrg!=null and userOrg !=''">and nla.userOrg like concat('%',#{userOrg},'%')</if>
+            <if test="deployEnv!=null and deployEnv !=''">and nla.deployEnv like concat('%',#{deployEnv},'%')</if>
+            <if test="deployEnvArray!=null">and nla.deployEnv in
+                <foreach collection="deployEnvArray" item="env"
+                         open="(" close=")" separator=",">
+                    #{env}
+                </foreach>
+            </if>
+            <if test="userOrgArray!=null">and nla.userOrg in
+                <foreach collection="userOrgArray" item="org"
+                         open="(" close=")" separator=",">
+                    #{org}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getNetworkAreaById" parameterType="string" resultType="networkArea">
+        select resId, purposeDesc, name, location,last_Modified,deployEnv, netAdministrator,category,userOrg
+        from t_network_logic_area
+        where resId=#{id}
+    </select>
+
+    <delete id="deleteNetworkArea" parameterType="string">
+        delete from t_network_logic_area where resId=#{resId}
+    </delete>
+
+    <update id="updateNetworkAreaById" parameterType="networkArea">
+        UPDATE t_network_logic_area
+        <trim prefix="set" suffixOverrides=",">
+            <if test="purposeDesc!=null and purposeDesc !=''">purposeDesc=#{purposeDesc},</if>
+            <if test="name!=null and name !=''">name=#{name},</if>
+            <if test="location!=null and location !=''">location=#{location},</if>
+            <if test="last_Modified!=null">last_Modified=#{last_Modified},</if>
+            <if test="deployEnv!=null and deployEnv !=''">deployEnv=#{deployEnv},</if>
+            <if test="netAdministrator!=null and netAdministrator !=''">netAdministrator=#{netAdministrator},</if>
+            <if test="category!=null and category !=''">category=#{category},</if>
+            <if test="userOrg!=null and userOrg !=''">userOrg=#{userOrg},</if>
+        </trim>
+        where resId=#{resId}
+    </update>
+
+    <insert id="addNetworkArea" parameterType="networkArea">
+        insert into t_network_logic_area(resId, purposeDesc, name, location, last_Modified, deployEnv,
+        netAdministrator,category, userOrg)
+        values ( #{resId}, #{purposeDesc}, #{name}, #{location}, #{last_Modified}, #{deployEnv},
+        #{netAdministrator},#{category}, #{userOrg})
+    </insert>
+
+    <select id="getNetworkVlanRelation" parameterType="networkVlanRelation" resultType="string">
+        select resId from t_network_vlan_info where areaId=#{areaId} and vlanId=#{vlanId}
+    </select>
+
+    <select id="getNetworkAreaByName" parameterType="String" resultType="string">
+        select resId from t_network_logic_area where name=#{areaName}
+    </select>
+
+    <select id="getVlanRelation" parameterType="string" resultType="networkVlanRelation">
+        select resId,areaId from t_network_vlan_info where vlanId=#{vlanId}
+    </select>
+
+    <delete id="deleteAreaVlanRelation" parameterType="string">
+        delete from t_network_vlan_info where resId=#{resId}
+    </delete>
+
+    <insert id="addNetworkVlanRelation" parameterType="networkVlanRelation">
+        insert into t_network_vlan_info(resId,areaId,vlanId)
+        values (#{resId},#{areaId},#{vlanId})
+    </insert>
+
+    <select id="getNetworkAreaNameById" parameterType="string" resultType="string">
+        select name from t_network_logic_area where resId=#{resId}
+    </select>
+
+    <select id="getAreaRelationByVlanId" parameterType="string" resultType="networkVlanRelation">
+        select resId,areaId,vlanId from t_network_vlan_info where vlanId=#{vlanId}
+    </select>
+
+    <update id="updateAreaNameById" parameterType="hashmap">
+        update t_vlan_plan set areaName=#{areaName} where resId=#{resId}
+    </update>
+
+    <select id="getDeployEnvGroupCount" resultType="hashmap">
+        Select deployEnv,count(deployEnv) as countNum from t_network_logic_area
+        Group By deployEnv
+    </select>
+
+    <select id="getUserOrgGroupCount" resultType="hashmap">
+        Select userOrg,count(userOrg) as countNum from t_network_logic_area
+        Group By userOrg
+    </select>
+</mapper>

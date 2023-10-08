@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.HcsRegionSummaryCapacityMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.HcsRegionSummaryCapacity" >
+    <id column="regionId" property="regionId" jdbcType="VARCHAR" />
+    <id column="dimensionType" property="dimensionType" jdbcType="VARCHAR" />
+    <result column="regionName" property="regionName" jdbcType="VARCHAR" />
+    <result column="totalCapacity" property="totalCapacity" jdbcType="DOUBLE" />
+    <result column="usedCapacity" property="usedCapacity" jdbcType="DOUBLE" />
+    <result column="freeCapacity" property="freeCapacity" jdbcType="DOUBLE" />
+    <result column="capUsedRatio" property="capUsedRatio" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    regionId, dimensionType, regionName, totalCapacity, usedCapacity, freeCapacity, capUsedRatio
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_hcs_region_summary_storage_info
+    where regionId = #{regionId,jdbcType=VARCHAR}
+      and dimensionType = #{dimensionType,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from t_hcs_region_summary_storage_info
+    where regionId = #{regionId,jdbcType=VARCHAR}
+      and dimensionType = #{dimensionType,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.HcsRegionSummaryCapacity" >
+    insert into t_hcs_region_summary_storage_info (regionId, dimensionType, regionName, 
+      totalCapacity, usedCapacity, freeCapacity, 
+      capUsedRatio)
+    values (#{regionId,jdbcType=VARCHAR}, #{dimensionType,jdbcType=VARCHAR}, #{regionName,jdbcType=VARCHAR}, 
+      #{totalCapacity,jdbcType=DOUBLE}, #{usedCapacity,jdbcType=DOUBLE}, #{freeCapacity,jdbcType=DOUBLE}, 
+      #{capUsedRatio,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.HcsRegionSummaryCapacity" >
+    insert into t_hcs_region_summary_storage_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="regionId != null" >
+        regionId,
+      </if>
+      <if test="dimensionType != null" >
+        dimensionType,
+      </if>
+      <if test="regionName != null" >
+        regionName,
+      </if>
+      <if test="totalCapacity != null" >
+        totalCapacity,
+      </if>
+      <if test="usedCapacity != null" >
+        usedCapacity,
+      </if>
+      <if test="freeCapacity != null" >
+        freeCapacity,
+      </if>
+      <if test="capUsedRatio != null" >
+        capUsedRatio,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="regionId != null" >
+        #{regionId,jdbcType=VARCHAR},
+      </if>
+      <if test="dimensionType != null" >
+        #{dimensionType,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null" >
+        #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCapacity != null" >
+        #{totalCapacity,jdbcType=DOUBLE},
+      </if>
+      <if test="usedCapacity != null" >
+        #{usedCapacity,jdbcType=DOUBLE},
+      </if>
+      <if test="freeCapacity != null" >
+        #{freeCapacity,jdbcType=DOUBLE},
+      </if>
+      <if test="capUsedRatio != null" >
+        #{capUsedRatio,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.HcsRegionSummaryCapacity" >
+    update t_hcs_region_summary_storage_info
+    <set >
+      <if test="regionName != null" >
+        regionName = #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCapacity != null" >
+        totalCapacity = #{totalCapacity,jdbcType=DOUBLE},
+      </if>
+      <if test="usedCapacity != null" >
+        usedCapacity = #{usedCapacity,jdbcType=DOUBLE},
+      </if>
+      <if test="freeCapacity != null" >
+        freeCapacity = #{freeCapacity,jdbcType=DOUBLE},
+      </if>
+      <if test="capUsedRatio != null" >
+        capUsedRatio = #{capUsedRatio,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where regionId = #{regionId,jdbcType=VARCHAR}
+      and dimensionType = #{dimensionType,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.HcsRegionSummaryCapacity" >
+    update t_hcs_region_summary_storage_info
+    set regionName = #{regionName,jdbcType=VARCHAR},
+      totalCapacity = #{totalCapacity,jdbcType=DOUBLE},
+      usedCapacity = #{usedCapacity,jdbcType=DOUBLE},
+      freeCapacity = #{freeCapacity,jdbcType=DOUBLE},
+      capUsedRatio = #{capUsedRatio,jdbcType=DECIMAL}
+    where regionId = #{regionId,jdbcType=VARCHAR}
+      and dimensionType = #{dimensionType,jdbcType=VARCHAR}
+  </update>
+  <select id="getRegionStorageInfoTmp" resultType="map" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from t_hcs_region_summary_storage_info
+    <where>
+      <if test="regionId != null">
+        regionId = #{regionId,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.EquipmentContractMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.EquipmentContract" >
+    <id column="resId" property="resId" jdbcType="VARCHAR" />
+    <result column="procureBatch" property="procureBatch" jdbcType="VARCHAR" />
+    <result column="equipmentName" property="equipmentName" jdbcType="VARCHAR" />
+    <result column="contractNo" property="contractNo" jdbcType="VARCHAR" />
+    <result column="equipmentNum" property="equipmentNum" jdbcType="INTEGER" />
+    <result column="contractAmount" property="contractAmount" jdbcType="DOUBLE" />
+    <result column="signTime" property="signTime" jdbcType="TIMESTAMP" />
+    <result column="manufacturer" property="manufacturer" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="arriveTime" property="arriveTime" jdbcType="TIMESTAMP" />
+    <result column="firstCheckTime" property="firstCheckTime" jdbcType="TIMESTAMP" />
+    <result column="lastCheckTime" property="lastCheckTime" jdbcType="TIMESTAMP" />
+    <result column="maintenanceTime" property="maintenanceTime" jdbcType="VARCHAR" />
+    <result column="contractName" property="contractName" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="linkUrl" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="equipmentType" property="equipmentType" jdbcType="VARCHAR" />
+    <result column="contractStatus" property="contractStatus" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    resId, procureBatch, equipmentName, contractNo, equipmentNum, contractAmount, signTime, 
+    manufacturer, brand, arriveTime, firstCheckTime, lastCheckTime, maintenanceTime, 
+    contractName, contractStatus,content,equipmentType,linkUrl
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  select
+  <include refid="Base_Column_List" />
+  from t_equipment_contract
+  where resId = #{resId,jdbcType=VARCHAR}
+</select>
+  <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.EquipmentContract" >
+    select
+    <include refid="Base_Column_List" />
+    from t_equipment_contract
+    <where>
+      <if test="resId !=null and resId !=''">
+        and resId  =  #{resId,jdbcType=VARCHAR}
+      </if>
+      <if test="equipmentName != null" >
+      and  equipmentName =   #{equipmentName,jdbcType=VARCHAR}
+    </if>
+      <if test="contractNo != null" >
+        and  contractNo =   #{contractNo,jdbcType=VARCHAR}
+      </if>
+
+      <if test="manufacturer != null" >
+        and  manufacturer =   #{manufacturer,jdbcType=VARCHAR}
+      </if>
+
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_equipment_contract
+    where resId = #{resId,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="batchDelete" parameterType="java.lang.String" >
+    delete from t_equipment_contract
+    where resId in
+    <foreach collection="resIdArr" open="(" close=")" separator="," item="resId">
+      #{resId}
+    </foreach>
+  </delete>
+
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.EquipmentContract" >
+    insert into t_equipment_contract (resId, procureBatch, equipmentName, 
+      contractNo, equipmentNum, contractAmount, 
+      signTime, manufacturer, brand, 
+      arriveTime, firstCheckTime, lastCheckTime, 
+      maintenanceTime, contractName, contractStatus,content,linkUrl,equipmentType
+      )
+    values (#{resId,jdbcType=VARCHAR}, #{procureBatch,jdbcType=VARCHAR}, #{equipmentName,jdbcType=VARCHAR}, 
+      #{contractNo,jdbcType=VARCHAR}, #{equipmentNum,jdbcType=INTEGER}, #{contractAmount,jdbcType=DOUBLE}, 
+      #{signTime,jdbcType=TIMESTAMP}, #{manufacturer,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, 
+      #{arriveTime,jdbcType=TIMESTAMP}, #{firstCheckTime,jdbcType=TIMESTAMP}, #{lastCheckTime,jdbcType=TIMESTAMP}, 
+      #{maintenanceTime,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, #{contractStatus,jdbcType=VARCHAR},
+      #{content,jdbcType=LONGVARCHAR},#{linkUrl,jdbcType=VARCHAR},#{equipmentType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.EquipmentContract" >
+    insert into t_equipment_contract
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        resId,
+      </if>
+      <if test="procureBatch != null" >
+        procureBatch,
+      </if>
+      <if test="equipmentName != null" >
+        equipmentName,
+      </if>
+      <if test="contractNo != null" >
+        contractNo,
+      </if>
+      <if test="equipmentNum != null" >
+        equipmentNum,
+      </if>
+      <if test="contractAmount != null" >
+        contractAmount,
+      </if>
+      <if test="signTime != null" >
+        signTime,
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="arriveTime != null" >
+        arriveTime,
+      </if>
+      <if test="firstCheckTime != null" >
+        firstCheckTime,
+      </if>
+      <if test="lastCheckTime != null" >
+        lastCheckTime,
+      </if>
+      <if test="maintenanceTime != null" >
+        maintenanceTime,
+      </if>
+      <if test="contractName != null" >
+        contractName,
+      </if>
+      <if test="contractStatus != null" >
+        contractStatus,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resId != null" >
+        #{resId,jdbcType=VARCHAR},
+      </if>
+      <if test="procureBatch != null" >
+        #{procureBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentName != null" >
+        #{equipmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null" >
+        #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentNum != null" >
+        #{equipmentNum,jdbcType=INTEGER},
+      </if>
+      <if test="contractAmount != null" >
+        #{contractAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="signTime != null" >
+        #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="arriveTime != null" >
+        #{arriveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="firstCheckTime != null" >
+        #{firstCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastCheckTime != null" >
+        #{lastCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maintenanceTime != null" >
+        #{maintenanceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="contractName != null" >
+        #{contractName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractStatus != null" >
+        #{contractStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.EquipmentContract" >
+    update t_equipment_contract
+    <set >
+      <if test="procureBatch != null" >
+        procureBatch = #{procureBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentName != null" >
+      equipmentName = #{equipmentName,jdbcType=VARCHAR},
+    </if>
+      <if test="linkUrl != null" >
+      linkUrl = #{linkUrl,jdbcType=VARCHAR},
+    </if>
+      <if test="equipmentType != null" >
+        equipmentType = #{equipmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null" >
+        contractNo = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentNum != null" >
+        equipmentNum = #{equipmentNum,jdbcType=INTEGER},
+      </if>
+      <if test="contractAmount != null" >
+        contractAmount = #{contractAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="signTime != null" >
+        signTime = #{signTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="manufacturer != null" >
+        manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="arriveTime != null" >
+        arriveTime = #{arriveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="firstCheckTime != null" >
+        firstCheckTime = #{firstCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastCheckTime != null" >
+        lastCheckTime = #{lastCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maintenanceTime != null" >
+        maintenanceTime = #{maintenanceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="contractName != null" >
+        contractName = #{contractName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="equipmentType != null" >
+        equipmentType = #{equipmentType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contractStatus != null" >
+        contractStatus = #{contractStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resId = #{resId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.EquipmentContract" >
+    update t_equipment_contract
+    set procureBatch = #{procureBatch,jdbcType=VARCHAR},
+      equipmentName = #{equipmentName,jdbcType=VARCHAR},
+      contractNo = #{contractNo,jdbcType=VARCHAR},
+      equipmentNum = #{equipmentNum,jdbcType=INTEGER},
+      contractAmount = #{contractAmount,jdbcType=DOUBLE},
+      signTime = #{signTime,jdbcType=TIMESTAMP},
+      manufacturer = #{manufacturer,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      arriveTime = #{arriveTime,jdbcType=TIMESTAMP},
+      firstCheckTime = #{firstCheckTime,jdbcType=TIMESTAMP},
+      lastCheckTime = #{lastCheckTime,jdbcType=TIMESTAMP},
+      maintenanceTime = #{maintenanceTime,jdbcType=VARCHAR},
+      contractName = #{contractName,jdbcType=VARCHAR},
+      linkUrl = #{linkUrl,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR},
+      contractStatus = #{contractStatus,jdbcType=VARCHAR},
+      equipmentType = #{equipmentType,jdbcType=VARCHAR}
+    where contractNo = #{contractNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

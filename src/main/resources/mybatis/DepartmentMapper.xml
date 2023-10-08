@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.DepartmentMapper">
+    <resultMap type="com.clic.ccdbaas.entity.Department" id="SysDeptResult">
+        <id property="deptId" column="dept_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="leader" column="leader"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectDeptAll" resultMap="SysDeptResult">
+        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status,
+        d.del_flag, d.create_by, d.create_time, d.update_by, d.update_time
+        from sys_dept d where d.del_flag != 2
+    </select>
+
+    <select id="selectDeptById" parameterType="Long" resultMap="SysDeptResult">
+        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status,
+        d.del_flag, d.create_by, d.create_time, d.update_by, d.update_time
+        from sys_dept d where dept_id=#{id} and d.del_flag != 2
+    </select>
+
+    <select id="selectDeptIdByGroupAndParent" resultType="Long">
+        select d.dept_id from sys_dept d where dept_name=#{group} and parent_id=#{parentId} and d.del_flag != 2
+    </select>
+
+    <insert id="insertDept" parameterType="com.clic.ccdbaas.entity.Department">
+        insert into sys_dept(parent_id, ancestors, dept_name, status, del_flag, create_time, create_by, order_num)
+        values(#{parentId}, #{ancestors}, #{deptName}, #{status}, #{delFlag}, #{createTime}, #{createBy}, #{orderNum})
+    </insert>
+
+    <select id="selectDeptNameById" parameterType="string" resultType="string">
+        select dept_name from sys_dept where dept_id=#{deptId}
+    </select>
+</mapper>

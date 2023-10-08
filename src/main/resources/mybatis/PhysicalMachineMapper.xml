@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.PhysicalMachineMapper">
+
+    <insert id="insert" parameterType="PhysicalServer">
+        insert into t_physicalserver_temp (resId,mainIp,relateIp,virtualIp,networkArea,name,deployEnv,usageDes,class_Name,deployOs,resourceCode,cpuCores,memoryCapacity,diskCapacity,status,belongProduct,belongCompany,sysAdministrator,sysAdminBackup,stakeholder,pingStatus,hidsStatus,zabbixStatus,osAdminUser,osNormalUser,cpuArch,nativeId,sysAdminTeam,last_Modified,productToken) values
+        ( #{resId},#{mainIp},#{relateIp},#{virtualIp},#{networkArea}, #{name}, #{deployEnv},#{usageDes}, #{class_Name}, #{deployOs},#{resourceCode}, #{cpuCores}, #{memoryCapacity}, #{diskCapacity}, #{status},#{belongProduct}, #{belongCompany}, #{sysAdministrator},#{sysAdminBackup}, #{stakeholder}, #{pingStatus}, #{hidsStatus}, #{zabbixStatus},#{osAdminUser}, #{osNormalUser}, #{cpuArch}, #{nativeId},#{sysAdminTeam},#{last_Modified},#{productToken})
+    </insert>
+
+    <!-- 获取所有物理机信息 -->
+    <select id="getAllInstance" resultType="PhysicalMachine" parameterType="PhysicalMachine">
+        SELECT
+        resId,
+        mainIp,
+        relateIp,
+        virtualIp,
+        networkArea,
+        name,
+        deployEnv,
+        usageDes,
+        class_Name,
+        deployOs,
+        resourceCode,
+        locationCode,
+        mgmtIp as bmcIp,
+        cpuCores,
+        memoryCapacity,
+        diskCapacity,
+        status,
+        belongProduct,
+        productToken,
+        belongCompany,
+        sysAdminBackup,
+        sysAdministrator,
+        stakeholder,
+        deployAdminA,
+        deployAdminB,
+        fourA,
+        antivirusSoftware,
+        pingStatus,
+        hidsStatus,
+        zabbixStatus,
+        osAdminUser,
+        osNormalUSer,
+        cpuArch,
+        nativeId,
+        sysAdminTeam,
+        bizregionName,
+        last_Modified,
+        sn
+        FROM t_physicalserver
+        <where>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct like CONCAT ('%',#{belongProduct},'%')
+            </if>
+            <if test="mainIp !=null and mainIp !=''">
+                and mainIp = #{mainIp}
+            </if>
+            <if test="resId !=null and resId !=''">
+                and resId = #{resId}
+            </if>
+            <if test="statusArr !=null and statusArr.size!=0">
+                and status in
+                <foreach collection="statusArr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam like CONCAT ('%',#{sysAdminTeam},'%')
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{paramValue},'%')
+            </if>
+            <if test="networkArea !=null and networkArea !=''">
+                and networkArea = #{networkArea}
+            </if>
+        </where>
+    </select>
+
+    <select id="countInstanceByStatus" resultType="hashmap" parameterType="PhysicalMachine">
+        select status, count(resId) num from t_physicalserver
+        <where>
+            <if test="sysAdministrator !=null and sysAdministrator !=''">
+                and CONCAT(IFNULL(sysAdminBackup,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{sysAdministrator},'%')
+            </if>
+            <if test="belongProduct !=null and belongProduct !=''">
+                and belongProduct = #{belongProduct}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+            <if test="deployEnvArr !=null and deployEnvArr.size!=0">
+                and deployenv in
+                <foreach collection="deployEnvArr" index="index" item="deployItem" open="(" separator="," close=")">
+                    #{deployItem}
+                </foreach>
+            </if>
+            <if test="sysAdminTeam !=null and sysAdminTeam !=''">
+                and sysAdminTeam =#{sysAdminTeam}
+            </if>
+            <if test="nativeId !=null and nativeId !=''">
+                and nativeId = #{nativeId}
+            </if>
+            <if test="paramValue !=null and paramValue !=''">
+                and CONCAT(IFNULL(name,''),IFNULL(mainIp,''),IFNULL(sysAdministrator,'')) like CONCAT
+                ('%',#{paramValue},'%')
+            </if>
+        </where>
+        group by status
+    </select>
+
+    <update id="updateAdministrator" parameterType="hashmap">
+        update t_physicalserver
+        <set>
+            <if test="sysAdministrator != null and sysAdministrator !=''">
+                sysAdministrator=#{sysAdministrator},
+            </if>
+            <if test="sysAdminBackup != null and sysAdminBackup !=''">
+                sysAdminBackup=#{sysAdminBackup},
+            </if>
+            <if test="stakeholder != null and stakeholder !=''">
+                stakeholder=#{stakeholder},
+            </if>
+            <if test="hidsStatus != null and hidsStatus !=''">
+                hidsStatus=#{hidsStatus},
+            </if>
+            <if test="zabbixStatus != null and zabbixStatus !=''">
+                zabbixStatus=#{zabbixStatus},
+            </if>
+            <if test="deployAdminA != null and deployAdminA !=''">
+                deployAdminA=#{deployAdminA},
+            </if>
+            <if test="deployAdminB != null and deployAdminB !=''">
+                deployAdminB=#{deployAdminB},
+            </if>
+        </set>
+
+        where resId = #{resId}
+    </update>
+
+    <update id="updatebackupAdministrator" parameterType="hashmap">
+        update t_physicalserver set sysAdminBackup=#{sysAdminBackup} where resId = #{resId}
+    </update>
+
+    <update id="updateStakeholder" parameterType="hashmap">
+        update t_physicalserver set stakeholder=#{stakeholder} where resId = #{resId}
+    </update>
+
+    <update id="updateFindResource" parameterType="hashmap">
+        update t_physicalserver set belongProduct=#{belongProduct},sysAdministrator=#{sysAdministrator},resourceCode=#{resourceCode},productToken=#{productToken},appModName=#{appModName},appModToken=#{appModToken} where resId = #{id}
+    </update>
+
+    <select id="getPhysicalCount" resultType="int">
+        select count(resId) from t_physicalserver
+    </select>
+
+    <select id="getPhysicalInfo" resultType="hashmap">
+        select sysAdministrator,sysAdminBackup,stakeholder from t_physicalserver where resId=#{resId}
+    </select>
+
+    <select id="getPhysicalInfoByResId" resultType="PhysicalMachine">
+        select * from t_physicalserver where resId=#{resId}
+    </select>
+
+    <update id="updateUsageDes" parameterType="String">
+        update t_physicalserver set usageDes=#{usageDes} where resId=#{resId}
+    </update>
+
+    <select id="getResIdByIp" parameterType="string" resultType="hashmap">
+        select resId,relateIp,virtualIp,mainIp from t_physicalserver where relateIp like concat('%',#{ip},'%') or virtualIp like concat('%',#{ip},'%') or mainIp=#{ip}
+    </select>
+
+    <select id="getPhysicalServerByMainIp" parameterType="string" resultType="PhysicalServer">
+        select * from t_physicalserver where mainIp = #{mainIp}
+    </select>
+
+    <insert id="insertSinglePhysicalServerInstance" parameterType="PhysicalServer">
+        insert into t_physicalserver (resId,mainIp,relateIp,virtualIp,networkArea,name,deployEnv,usageDes,class_Name,
+        deployOs,resourceCode,cpuCores,memoryCapacity,diskCapacity,status,belongProduct,belongCompany,sysAdministrator,
+        sysAdminBackup,stakeholder,pingStatus,hidsStatus,zabbixStatus,osAdminUser,osNormalUser,cpuArch,nativeId,sysAdminTeam,
+        last_Modified,productToken,locationCode,mgmtIp,sn,ipAddress,assetStatus,appModToken,appModName,deployAdminA)
+        values (#{resId},#{mainIp},#{relateIp},#{virtualIp},#{networkArea},#{name},#{deployEnv},#{usageDes}, #{class_Name},
+        #{deployOs},#{resourceCode}, #{cpuCores}, #{memoryCapacity}, #{diskCapacity}, #{status},#{belongProduct},
+        #{belongCompany}, #{sysAdministrator},#{sysAdminBackup}, #{stakeholder}, #{pingStatus}, #{hidsStatus},
+        #{zabbixStatus},#{osAdminUser}, #{osNormalUser}, #{cpuArch}, #{nativeId},#{sysAdminTeam},#{last_Modified},
+        #{productToken},#{locationCode},#{mgmtIp},#{sn},#{ipAddress},#{assetStatus},#{appModToken},#{appModName},#{deployAdminA})
+    </insert>
+
+    <update id="updateSinglePhysicalServerInstance" parameterType="PhysicalServer">
+        update t_physicalserver
+        <trim prefix="set" suffixOverrides=",">
+            <if test="relateIp!=null and relateIp!=''">relateIp = #{relateIp},</if>
+            <if test="virtualIp!=null and virtualIp!=''">virtualIp = #{virtualIp},</if>
+            <if test="networkArea!=null and networkArea!=''">networkArea = #{networkArea},</if>
+            <if test="name!=null and name!=''">name = #{name},</if>
+            <if test="deployEnv!=null and deployEnv!=''">deployEnv = #{deployEnv},</if>
+            <if test="usageDes!=null and usageDes!=''">usageDes = #{usageDes},</if>
+            <if test="class_Name!=null and class_Name!=''">class_Name = #{class_Name},</if>
+            <if test="deployOs!=null and deployOs!=''">deployOs = #{deployOs},</if>
+            <if test="resourceCode!=null and resourceCode!=''">resourceCode = #{resourceCode},</if>
+            <if test="cpuCores!=null and cpuCores!=''">cpuCores = #{cpuCores},</if>
+            <if test="memoryCapacity!=null and memoryCapacity!=''">memoryCapacity = #{memoryCapacity},</if>
+            <if test="diskCapacity!=null and diskCapacity!=''">diskCapacity = #{diskCapacity},</if>
+            <if test="status!=null and status!=''">status = #{status},</if>
+            <if test="belongProduct!=null and belongProduct!=''">belongProduct = #{belongProduct},</if>
+            <if test="belongCompany!=null and belongCompany!=''">belongCompany = #{belongCompany},</if>
+            <if test="sysAdministrator!=null and sysAdministrator!=''">sysAdministrator = #{sysAdministrator},</if>
+            <if test="sysAdminBackup!=null and sysAdminBackup!=''">sysAdminBackup = #{sysAdminBackup},</if>
+            <if test="stakeholder!=null and stakeholder!=''">stakeholder = #{stakeholder},</if>
+            <if test="pingStatus!=null and pingStatus!=''">pingStatus = #{pingStatus},</if>
+            <if test="hidsStatus!=null and hidsStatus!=''">hidsStatus = #{hidsStatus},</if>
+            <if test="zabbixStatus!=null and zabbixStatus!=''">zabbixStatus = #{zabbixStatus},</if>
+            <if test="osAdminUser!=null and osAdminUser!=''">osAdminUser = #{osAdminUser},</if>
+            <if test="osNormalUser!=null and osNormalUser!=''">osNormalUser = #{osNormalUser},</if>
+            <if test="cpuArch!=null and cpuArch!=''">cpuArch = #{cpuArch},</if>
+            <if test="nativeId!=null and nativeId!=''">nativeId = #{nativeId},</if>
+            <if test="sysAdminTeam!=null and sysAdminTeam!=''">sysAdminTeam = #{sysAdminTeam},</if>
+            <if test="last_Modified!=null and last_Modified!=''">last_Modified = #{last_Modified},</if>
+            <if test="productToken!=null and productToken!=''">productToken = #{productToken},</if>
+            <if test="locationCode!=null and locationCode!=''">locationCode = #{locationCode},</if>
+            <if test="mgmtIp!=null and mgmtIp!=''">mgmtIp = #{mgmtIp},</if>
+            <if test="sn!=null and sn!=''">sn = #{sn},</if>
+            <if test="ipAddress!=null and ipAddress!=''">ipAddress = #{ipAddress},</if>
+            <if test="assetStatus!=null and assetStatus!=''">assetStatus = #{assetStatus},</if>
+            <if test="appModToken!=null and appModToken!=''">appModToken = #{appModToken},</if>
+            <if test="appModName!=null and appModName!=''">appModName = #{appModName},</if>
+            <if test="deployAdminA!=null and deployAdminA!=''">deployAdminA = #{deployAdminA},</if>
+        </trim>
+        where mainIp = #{mainIp}
+    </update>
+
+    <delete id="deleteSinglePhysicalServerInstance" parameterType="ResourceApplication">
+        delete from t_physicalserver where mainIp = #{mainIp}
+    </delete>
+
+    <select id="getPhysicalServerByResId" resultType="PhysicalMachine" parameterType="string">
+        SELECT
+        resId,
+        mainIp,
+        relateIp,
+        virtualIp,
+        networkArea,
+        name,
+        deployEnv,
+        usageDes,
+        class_Name,
+        deployOs,
+        resourceCode,
+        locationCode,
+        mgmtIp  as bmcIp,
+        cpuCores,
+        memoryCapacity,
+        diskCapacity,
+        status,
+        belongProduct,
+        belongCompany,
+        sysAdminBackup,
+        sysAdministrator,
+        stakeholder,
+        pingStatus,
+        hidsStatus,
+        zabbixStatus,
+        osAdminUser,
+        osNormalUSer,
+        cpuArch,
+        nativeId,
+        sysAdminTeam,
+        last_Modified
+        FROM t_physicalserver
+        where resId=#{resId}
+    </select>
+
+    <update id="updateSinglePhysicalServerInstanceRecycling" parameterType="PhysicalServer">
+        update t_physicalserver
+        set status = #{status}, locationCode = #{locationCode}, sn = #{sn}, assetStatus = #{assetStatus}
+        where mainIp = #{mainIp}
+    </update>
+
+    <select id="selectSinglePhysicalServerInstanceRecycling" parameterType="ResourceApplication"
+            resultType="PhysicalServer">
+        select * from t_physicalserver
+        where mainIp = #{mainIp} and sn = #{sn} and locationCode = #{bmsNetAreaNo}
+    </select>
+
+    <select id="getPhysicalServerByLocationCode" parameterType="string" resultType="PhysicalServer">
+        SELECT
+        resId,
+        mainIp,
+        relateIp,
+        virtualIp,
+        networkArea,
+        name,
+        deployEnv,
+        usageDes,
+        class_Name,
+        deployOs,
+        resourceCode,
+        locationCode,
+        mgmtIp as bmcIp,
+        cpuCores,
+        memoryCapacity,
+        diskCapacity,
+        status,
+        belongProduct,
+        belongCompany,
+        sysAdminBackup,
+        sysAdministrator,
+        stakeholder,
+        pingStatus,
+        hidsStatus,
+        zabbixStatus,
+        osAdminUser,
+        osNormalUSer,
+        cpuArch,
+        nativeId,
+        sysAdminTeam,
+        last_Modified,
+        productToken,
+        locationCode,
+        sn,
+        ipAddress,
+        deployAdminA
+        FROM t_physicalserver
+        where locationCode = #{locationCode}
+    </select>
+
+    <update id="updatePhysicalServerInstanceByLocationCode" parameterType="PhysicalServer">
+        update t_physicalserver
+        <trim prefix="set" suffixOverrides=",">
+            <if test="relateIp!=null and relateIp!=''">relateIp = #{relateIp},</if>
+            <if test="virtualIp!=null and virtualIp!=''">virtualIp = #{virtualIp},</if>
+            <if test="networkArea!=null and networkArea!=''">networkArea = #{networkArea},</if>
+            <if test="name!=null and name!=''">name = #{name},</if>
+            <if test="deployEnv!=null and deployEnv!=''">deployEnv = #{deployEnv},</if>
+            <if test="usageDes!=null and usageDes!=''">usageDes = #{usageDes},</if>
+            <if test="class_Name!=null and class_Name!=''">class_Name = #{class_Name},</if>
+            <if test="deployOs!=null and deployOs!=''">deployOs = #{deployOs},</if>
+            <if test="resourceCode!=null and resourceCode!=''">resourceCode = #{resourceCode},</if>
+            <if test="cpuCores!=null and cpuCores!=''">cpuCores = #{cpuCores},</if>
+            <if test="memoryCapacity!=null and memoryCapacity!=''">memoryCapacity = #{memoryCapacity},</if>
+            <if test="diskCapacity!=null and diskCapacity!=''">diskCapacity = #{diskCapacity},</if>
+            <if test="status!=null and status!=''">status = #{status},</if>
+            <if test="belongProduct!=null and belongProduct!=''">belongProduct = #{belongProduct},</if>
+            <if test="belongCompany!=null and belongCompany!=''">belongCompany = #{belongCompany},</if>
+            <if test="sysAdministrator!=null and sysAdministrator!=''">sysAdministrator = #{sysAdministrator},</if>
+            <if test="sysAdminBackup!=null and sysAdminBackup!=''">sysAdminBackup = #{sysAdminBackup},</if>
+            <if test="stakeholder!=null and stakeholder!=''">stakeholder = #{stakeholder},</if>
+            <if test="pingStatus!=null and pingStatus!=''">pingStatus = #{pingStatus},</if>
+            <if test="hidsStatus!=null and hidsStatus!=''">hidsStatus = #{hidsStatus},</if>
+            <if test="zabbixStatus!=null and zabbixStatus!=''">zabbixStatus = #{zabbixStatus},</if>
+            <if test="osAdminUser!=null and osAdminUser!=''">osAdminUser = #{osAdminUser},</if>
+            <if test="osNormalUser!=null and osNormalUser!=''">osNormalUser = #{osNormalUser},</if>
+            <if test="cpuArch!=null and cpuArch!=''">cpuArch = #{cpuArch},</if>
+            <if test="nativeId!=null and nativeId!=''">nativeId = #{nativeId},</if>
+            <if test="sysAdminTeam!=null and sysAdminTeam!=''">sysAdminTeam = #{sysAdminTeam},</if>
+            <if test="last_Modified!=null and last_Modified!=''">last_Modified = #{last_Modified},</if>
+            <if test="productToken!=null and productToken!=''">productToken = #{productToken},</if>
+            <if test="mgmtIp!=null and mgmtIp!=''">mgmtIp = #{mgmtIp},</if>
+            <if test="sn!=null and sn!=''">sn = #{sn},</if>
+            <if test="ipAddress!=null and ipAddress!=''">ipAddress = #{ipAddress},</if>
+            <if test="assetStatus!=null and assetStatus!=''">assetStatus = #{assetStatus},</if>
+            <if test="appModToken!=null and appModToken!=''">appModToken = #{appModToken},</if>
+            <if test="appModName!=null and appModName!=''">appModName = #{appModName},</if>
+            <if test="deployAdminA!=null and deployAdminA!=''">deployAdminA = #{deployAdminA},</if>
+        </trim>
+        where locationCode = #{locationCode}
+    </update>
+
+    <delete id="deletePhysicalServerByLocationCode" parameterType="PhysicalMachine">
+        delete from t_physicalserver where locationCode = #{locationCode}
+    </delete>
+</mapper>

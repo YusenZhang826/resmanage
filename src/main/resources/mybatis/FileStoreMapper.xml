@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.FileStoreMapper">
+    <insert id="addFileStore" parameterType="filestore">
+        insert into t_file_store
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            resId,nativeId,createAt,shareProto,ownerName,tenantName,sharePath,last_Modified,resourcePoolName,size,name,vdcName,projectId,bizRegionName,resourcePoolType,status,deployEnv,
+            <if test="usedSize !=null and usedSize != 0">
+                usedSize
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{resId},
+            #{nativeId},#{createAt},#{shareProto},#{ownerName},#{tenantName},#{sharePath},#{last_Modified},#{resourcePoolName}
+            ,#{size},#{name},#{vdcName},#{projectId},#{bizRegionName},#{resourcePoolType},#{status},#{deployEnv},
+            <if test="usedSize !=null and usedSize != 0">
+                #{usedSize}
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getAllFileStore" resultType="fileStore" parameterType="fileStore">
+        select resId,nativeId,createAt,shareProto,ownerName,tenantName,sharePath,last_Modified,resourcePoolName,size,
+        name,vdcName,projectId,bizRegionName,resourcePoolType,status,deployEnv,usedSize
+        from t_file_store
+        <where>
+            <if test="name!=null and name !=''">name like concat('%',#{name},'%')</if>
+            <if test="status!=null and status !=''">and status like concat('%',#{status},'%')</if>
+            <if test="bizRegionName!=null and bizRegionName !=''">and bizRegionName like
+                concat('%',#{bizRegionName},'%')
+            </if>
+            <if test="sharePath!=null and sharePath !=''">and sharePath like concat('%',#{sharePath},'%')</if>
+            <if test="ownerName!=null and ownerName !=''">and ownerName like concat('%',#{ownerName},'%')</if>
+            <if test="shareProto!=null and shareProto !=''">and shareProto like concat('%',#{shareProto},'%')</if>
+        </where>
+    </select>
+
+    <select id="getFileStoreByResId" parameterType="string" resultType="fileStore">
+        select
+        resId,nativeId,createAt,shareProto,ownerName,tenantName,sharePath,last_Modified,resourcePoolName,size,name,vdcName,projectId,bizRegionName,resourcePoolType,status,deployEnv,usedSize
+        from t_file_store where resId=#{resId}
+    </select>
+
+    <select id="getFileStoreByNativeId" parameterType="string" resultType="fileStore">
+        select
+        resId,nativeId,createAt,shareProto,ownerName,tenantName,sharePath,last_Modified,resourcePoolName,size,name,vdcName,projectId,bizRegionName,resourcePoolType,status,deployEnv,usedSize
+        from t_file_store where nativeId=#{nativeId}
+    </select>
+
+    <update id="updateFileStore" parameterType="fileStore">
+        update t_file_store
+        <trim prefix="set" suffixOverrides=",">
+            <if test="nativeId!=null and nativeId!=''">
+                nativeId = #{nativeId},
+            </if>
+            <if test="createAt!=null">
+                createAt = #{createAt},
+            </if>
+            <if test="shareProto!=null and shareProto!=''">
+                shareProto = #{shareProto},
+            </if>
+            <if test="ownerName!=null and ownerName!=''">
+                ownerName = #{ownerName},
+            </if>
+            <if test="tenantName!=null and tenantName!=''">
+                tenantName = #{tenantName},
+            </if>
+            <if test="sharePath!=null and sharePath!=''">
+                sharePath = #{sharePath},
+            </if>
+            <if test="last_Modified!=null">
+                last_Modified = #{last_Modified},
+            </if>
+            <if test="resourcePoolName!=null and resourcePoolName!=''">
+                resourcePoolName = #{resourcePoolName},
+            </if>
+            <if test="size!=null">
+                size = #{size},
+            </if>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="vdcName!=null and vdcName!=''">
+                vdcName = #{vdcName},
+            </if>
+            <if test="projectId!=null and projectId!=''">
+                projectId = #{projectId},
+            </if>
+            <if test="bizRegionName!=null and bizRegionName!=''">
+                bizRegionName = #{bizRegionName},
+            </if>
+            <if test="resourcePoolType!=null and resourcePoolType!=''">
+                resourcePoolType = #{resourcePoolType},
+            </if>
+            <if test="status!=null and status!=''">
+                status = #{status},
+            </if>
+            <if test="usedSize!=null">
+                usedSize = #{usedSize},
+            </if>
+            <if test="deployEnv!=null">
+                deployEnv = #{deployEnv},
+            </if>
+        </trim>
+        where resId=#{resId}
+    </update>
+
+    <select id="getNFSRelationByFileIdAndName" parameterType="hashmap" resultType="string">
+        select id from t_file_store_relation
+        where fileId=#{fileId} and name=#{name}
+    </select>
+
+    <insert id="addNFSRelation" parameterType="hashmap">
+        insert into t_file_store_relation(id,fileId,name,accessVal) values(#{id},#{fileId},#{name},#{accessVal})
+    </insert>
+
+    <select id="getFileStoreResIdByNativeId" parameterType="string" resultType="string">
+        select resId from t_file_store where nativeId=#{nativeId}
+    </select>
+
+    <select id="getFileStoreRelationByResId" parameterType="string" resultType="hashmap">
+        select id,fileId,name,accessVal from t_file_store_relation where fileId=#{resId}
+    </select>
+
+    <select id="getIpbyFileId" parameterType="string" resultType="string">
+        select name from t_file_store_relation where fileId=#{resId}
+    </select>
+
+    <insert id="addSystemLink" parameterType="hashmap">
+        insert into t_thirdsys_link_info(systemType,linkUrl,userName,password,extraSpec) values(#{systemType},
+        #{linkUrl}, #{userName}, #{password},#{extraSpec})
+    </insert>
+
+    <select id="getSystemLinkByType" parameterType="list" resultType="hashmap">
+        select id,systemType,linkUrl,userName,password,extraSpec from t_thirdsys_link_info where systemType in
+        <foreach collection="types" item="type"
+                 open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+    </select>
+
+    <select id="getFileStoreResIdByNameAndPool" parameterType="hashmap" resultType="string">
+        select resId from t_file_store where sharePath like concat('%',#{sharePath}) and
+        resourcePoolName=#{resourcePoolName}
+    </select>
+
+    <delete id="deleteFileStoreByNativeId" parameterType="string">
+        delete from t_file_store where nativeId=#{nativeId}
+    </delete>
+
+    <select id="getFileStoreCount" resultType="int">
+        select count(0) from t_file_store
+    </select>
+
+    <select id="selectReserveStorageResIdByIp" resultType="hashmap" parameterType="string">
+        select resId,ip from t_reserve_storage where ip like concat('%',#{ip},'%') and totalStorageCapacity!=0
+    </select>
+
+    <update id="updateSystemLinkExtraSpec" parameterType="hashmap">
+        update t_thirdsys_link_info
+        set extraSpec=#{extraSpec}
+        where id=#{id}
+    </update>
+
+    <select id="getSystemLinkByExtraSpec" parameterType="string" resultType="string">
+        select extraSpec from t_thirdsys_link_info where extraSpec like concat('%',#{param},'%')
+    </select>
+
+    <select id="getReserveStorageById" parameterType="string" resultType="hashmap">
+        select clusterName,type2,name from t_reserve_storage where resId=#{storageId}
+    </select>
+</mapper>

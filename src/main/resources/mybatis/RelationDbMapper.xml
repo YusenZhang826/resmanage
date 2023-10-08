@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.RelationDbMapper" >
+  <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.RelationDb" >
+    <id column="resId" property="resid" jdbcType="VARCHAR" />
+    <result column="agentId" property="agentid" jdbcType="VARCHAR" />
+    <result column="hostname" property="hostname" jdbcType="VARCHAR" />
+    <result column="displayIp" property="displayip" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="VARCHAR" />
+    <result column="binPath" property="binpath" jdbcType="VARCHAR" />
+    <result column="configPath" property="configpath" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="udpateTime" property="udpatetime" jdbcType="TIMESTAMP" />
+    <result column="port" property="port" jdbcType="INTEGER" />
+    <result column="protoType" property="prototype" jdbcType="VARCHAR" />
+    <result column="bindIp" property="bindip" jdbcType="VARCHAR" />
+    <result column="confPath" property="confpath" jdbcType="VARCHAR" />
+    <result column="logPath" property="logpath" jdbcType="VARCHAR" />
+    <result column="dataDir" property="datadir" jdbcType="VARCHAR" />
+    <result column="user" property="user" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="dbName" property="dbName" jdbcType="VARCHAR" />
+    <result column="deployEnv" property="deployEnv" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    resId, agentId, hostname, displayIp, `name`, version, binPath, configPath, createTime,
+    udpateTime, port, protoType, bindIp, confPath, logPath, dataDir, `user`,dbName,status,deployEnv
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.RelationDbExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_relation_db
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_relation_db
+    where resId = #{resid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_relation_db
+    where resId = #{resid,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.RelationDbExample" >
+    delete from t_relation_db
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.clic.ccdbaas.entity.RelationDb" >
+    insert into t_relation_db (resId, agentId, hostname,
+      displayIp, `name`, version,
+      binPath, configPath, createTime,
+      udpateTime, port, protoType,
+      bindIp, confPath, logPath,
+      dataDir, `user`,dbName,deployEnv)
+    values (#{resid,jdbcType=VARCHAR}, #{agentid,jdbcType=VARCHAR}, #{hostname,jdbcType=VARCHAR},
+      #{displayip,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
+      #{binpath,jdbcType=VARCHAR}, #{configpath,jdbcType=VARCHAR}, now(),
+      #{udpatetime,jdbcType=TIMESTAMP}, #{port,jdbcType=INTEGER}, #{prototype,jdbcType=VARCHAR},
+      #{bindip,jdbcType=VARCHAR}, #{confpath,jdbcType=VARCHAR}, #{logpath,jdbcType=VARCHAR},
+      #{datadir,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR},concat(#{name},'_',#{displayip},'_',#{port}),#{deployEnv})
+  </insert>
+  <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.RelationDb" >
+    insert into t_relation_db
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resid != null" >
+        resId,
+      </if>
+      <if test="agentid != null" >
+        agentId,
+      </if>
+      <if test="hostname != null" >
+        hostname,
+      </if>
+      <if test="displayip != null" >
+        displayIp,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="binpath != null" >
+        binPath,
+      </if>
+      <if test="configpath != null" >
+        configPath,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="udpatetime != null" >
+        udpateTime,
+      </if>
+      <if test="port != null" >
+        port,
+      </if>
+      <if test="prototype != null" >
+        protoType,
+      </if>
+      <if test="bindip != null" >
+        bindIp,
+      </if>
+      <if test="confpath != null" >
+        confPath,
+      </if>
+      <if test="logpath != null" >
+        logPath,
+      </if>
+      <if test="datadir != null" >
+        dataDir,
+      </if>
+      <if test="user != null" >
+        `user`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resid != null" >
+        #{resid,jdbcType=VARCHAR},
+      </if>
+      <if test="agentid != null" >
+        #{agentid,jdbcType=VARCHAR},
+      </if>
+      <if test="hostname != null" >
+        #{hostname,jdbcType=VARCHAR},
+      </if>
+      <if test="displayip != null" >
+        #{displayip,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="binpath != null" >
+        #{binpath,jdbcType=VARCHAR},
+      </if>
+      <if test="configpath != null" >
+        #{configpath,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udpatetime != null" >
+        #{udpatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="prototype != null" >
+        #{prototype,jdbcType=VARCHAR},
+      </if>
+      <if test="bindip != null" >
+        #{bindip,jdbcType=VARCHAR},
+      </if>
+      <if test="confpath != null" >
+        #{confpath,jdbcType=VARCHAR},
+      </if>
+      <if test="logpath != null" >
+        #{logpath,jdbcType=VARCHAR},
+      </if>
+      <if test="datadir != null" >
+        #{datadir,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null" >
+        #{user,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.clic.ccdbaas.entity.RelationDbExample" resultType="java.lang.Integer" >
+    select count(*) from t_relation_db
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_relation_db
+    <set >
+      <if test="record.resid != null" >
+        resId = #{record.resid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agentid != null" >
+        agentId = #{record.agentid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostname != null" >
+        hostname = #{record.hostname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayip != null" >
+        displayIp = #{record.displayip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=VARCHAR},
+      </if>
+      <if test="record.binpath != null" >
+        binPath = #{record.binpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.configpath != null" >
+        configPath = #{record.configpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.udpatetime != null" >
+        udpateTime = #{record.udpatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.port != null" >
+        port = #{record.port,jdbcType=INTEGER},
+      </if>
+      <if test="record.prototype != null" >
+        protoType = #{record.prototype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bindip != null" >
+        bindIp = #{record.bindip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.confpath != null" >
+        confPath = #{record.confpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logpath != null" >
+        logPath = #{record.logpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datadir != null" >
+        dataDir = #{record.datadir,jdbcType=VARCHAR},
+      </if>
+      <if test="record.user != null" >
+        `user` = #{record.user,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_relation_db
+    set resId = #{record.resid,jdbcType=VARCHAR},
+    agentId = #{record.agentid,jdbcType=VARCHAR},
+    hostname = #{record.hostname,jdbcType=VARCHAR},
+    displayIp = #{record.displayip,jdbcType=VARCHAR},
+    `name` = #{record.name,jdbcType=VARCHAR},
+    version = #{record.version,jdbcType=VARCHAR},
+    binPath = #{record.binpath,jdbcType=VARCHAR},
+    configPath = #{record.configpath,jdbcType=VARCHAR},
+    createTime = #{record.createtime,jdbcType=TIMESTAMP},
+    udpateTime = #{record.udpatetime,jdbcType=TIMESTAMP},
+    port = #{record.port,jdbcType=INTEGER},
+    protoType = #{record.prototype,jdbcType=VARCHAR},
+    bindIp = #{record.bindip,jdbcType=VARCHAR},
+    confPath = #{record.confpath,jdbcType=VARCHAR},
+    logPath = #{record.logpath,jdbcType=VARCHAR},
+    dataDir = #{record.datadir,jdbcType=VARCHAR},
+    `user` = #{record.user,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+
+  <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.RelationDbExample" >
+    select
+    <include refid="Base_Column_List" />
+    from t_relation_db
+    <where>
+      <if test="paramValue !=null and paramValue !=''">
+        and  CONCAT(IFNULL(name,''))   like CONCAT ('%',#{paramValue},'%')
+      </if>
+    </where>
+  </select>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.RelationDb" >
+    update t_relation_db
+    <set >
+      <if test="agentid != null" >
+        agentId = #{agentid,jdbcType=VARCHAR},
+      </if>
+      <if test="hostname != null" >
+        hostname = #{hostname,jdbcType=VARCHAR},
+      </if>
+      <if test="displayip != null" >
+        displayIp = #{displayip,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="binpath != null" >
+        binPath = #{binpath,jdbcType=VARCHAR},
+      </if>
+      <if test="configpath != null" >
+        configPath = #{configpath,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="udpatetime != null" >
+        udpateTime = #{udpatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="port != null" >
+        port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="prototype != null" >
+        protoType = #{prototype,jdbcType=VARCHAR},
+      </if>
+      <if test="bindip != null" >
+        bindIp = #{bindip,jdbcType=VARCHAR},
+      </if>
+      <if test="confpath != null" >
+        confPath = #{confpath,jdbcType=VARCHAR},
+      </if>
+      <if test="logpath != null" >
+        logPath = #{logpath,jdbcType=VARCHAR},
+      </if>
+      <if test="datadir != null" >
+        dataDir = #{datadir,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null" >
+        `user` = #{user,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where resId = #{resid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.RelationDb" >
+    update t_relation_db
+    set agentId = #{agentid,jdbcType=VARCHAR},
+      hostname = #{hostname,jdbcType=VARCHAR},
+      displayIp = #{displayip,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      version = #{version,jdbcType=VARCHAR},
+      binPath = #{binpath,jdbcType=VARCHAR},
+      configPath = #{configpath,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      udpateTime = #{udpatetime,jdbcType=TIMESTAMP},
+      port = #{port,jdbcType=INTEGER},
+      protoType = #{prototype,jdbcType=VARCHAR},
+      bindIp = #{bindip,jdbcType=VARCHAR},
+      confPath = #{confpath,jdbcType=VARCHAR},
+      logPath = #{logpath,jdbcType=VARCHAR},
+      dataDir = #{datadir,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      `user` = #{user,jdbcType=VARCHAR},
+      deployEnv = #{deployEnv,jdbcType=INTEGER},
+      dbName = concat(#{name},'_',#{displayip},'_',#{port})
+    where resId = #{resid,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clic.ccdbaas.dao.McPhysicalHostMapper">
+    <delete id="deletePhysicalHostByIp" parameterType="string">
+        delete from t_physicalhost where mainIp=#{mainIp}
+    </delete>
+
+    <select id="getPhysicalHostByIp" parameterType="string" resultType="mcphysicalhost">
+        select * from t_physicalhost where mainIp=#{mainIp}
+    </select>
+
+    <insert id="addMcPhysicalHost" parameterType="mcphysicalhost">
+        insert into t_mc_physicalhost
+        (resId,mainIp,networkArea,name,deployEnv,usageDes,class_Name,deployOs,resourceCode,
+        totalVcpuCores,totalMemory,totalDiskSizeMB,status,belongProduct,belongCompany,sysAdministrator,sysAdminBackup,
+        stakeholder,pingStatus,hidsStatus,zabbixStatus,osAdminUser,osNormalUser,cpuArch,nativeId,sysAdminTeam,last_Modified,
+        productToken,locationCode,bmcIp,sn,ipAddress,appModToken,appModName,serialNumber,hostId,vcdbId,relatedIp,virtualIp,
+        regionId,azoneId,azoneName,bizregionName,clusterId,clusterName,allocatedVcpuCores,freeVcpuCores,allocatedVmemoryMB,
+        freeVmemoryMB,allocatedDiskSizeMB,freeDiskSizeMB)
+        values
+        (#{resId},#{mainIp},#{networkArea},#{name},#{deployEnv},#{usageDes},#{class_Name},#{deployOs},#{resourceCode},
+        #{totalVcpuCores},#{totalMemory},#{totalDiskSizeMB},#{status},#{belongProduct},#{belongCompany},#{sysAdministrator},
+        #{sysAdminBackup},#{stakeholder},#{pingStatus},#{hidsStatus},#{zabbixStatus},#{osAdminUser},#{osNormalUser},#{cpuArch},
+        #{nativeId},#{sysAdminTeam},#{last_Modified},#{productToken},#{locationCode},#{bmcIp},#{sn},#{ipAddress},#{appModToken},
+        #{appModName},#{serialNumber},#{hostId},#{vcdbId},#{relatedIp},#{virtualIp},#{bizRegionId},#{azoneId},#{azoneName},
+        #{bizregionName},#{clusterId},#{clusterName},#{allocatedVcpuCores},#{freeVcpuCores},#{allocatedVmemoryMB},
+        #{freeVmemoryMB},#{allocatedDiskSizeMB},#{freeDiskSizeMB})
+    </insert>
+</mapper>

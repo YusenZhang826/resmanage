@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.ObClusterMapper">
+    <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.ObCluster">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="obClusterId" property="obClusterId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="architecture" property="architecture" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="obVersion" property="obVersion" jdbcType="VARCHAR"/>
+        <result column="serverCount" property="serverCount" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="tenantCount" property="tenantCount" jdbcType="INTEGER"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="ocpId" property="ocpId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, obClusterId, `name`, architecture, `type`, obVersion, serverCount, `status`,
+    tenantCount, updateTime, createTime, creator,resId,ocpId
+  </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.ObClusterExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from t_ob_cluster
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+
+    <select id="getAllInstance" resultMap="BaseResultMap" parameterType="com.clic.ccdbaas.entity.ObCluster">
+        select
+        cluster.id, cluster.obClusterId, cluster.name, cluster.architecture, cluster.type, cluster.obVersion,
+        cluster.serverCount, cluster.status,
+        cluster.updateTime, cluster.createTime, cluster.creator,cluster.resId,cluster.ocpId,
+        ocp.extraSpec as ocpName,
+        tmp.tenantCount
+        from t_ob_cluster  cluster
+        inner join
+        t_thirdsys_link_info ocp
+        on cluster.ocpId = ocp.id
+        left JOIN
+        (select count(0) as tenantCount,ocpId,clusterId  from t_ob_tenant GROUP BY  ocpId,clusterId) tmp
+        on
+        cluster.ocpId = tmp.ocpId and cluster.id = tmp.clusterId
+        <where>
+            <if test="paramValue !=null and paramValue !=''">
+                and CONCAT(IFNULL(name,'')) like CONCAT ('%',#{paramValue},'%')
+            </if>
+            <if test="ocpId !=null and ocpId !=''">
+                and cluster.ocpId = #{ocpId}
+            </if>
+            <if test="statusArr !=null and statusArr.size() > 0 ">
+                and status in
+                <foreach collection="statusArr" index="index" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_ob_cluster
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="selectAllOcpInfo" resultType="java.util.HashMap" parameterType="java.lang.String">
+    select
+    *
+    from t_thirdsys_link_info
+    where systemType = #{systemType}
+  </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_ob_cluster
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.ObClusterExample">
+        delete from t_ob_cluster
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.clic.ccdbaas.entity.ObCluster">
+    insert into t_ob_cluster (id,obClusterId, `name`, architecture,
+      `type`, obVersion, serverCount,
+      `status`, tenantCount, updateTime,
+      createTime, creator,resId,ocpId)
+    values (#{id,jdbcType=INTEGER},#{obClusterId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{architecture,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{obVersion,jdbcType=VARCHAR}, #{serverCount,jdbcType=INTEGER},
+      #{status,jdbcType=VARCHAR}, #{tenantCount,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+      #{createTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR},#{resId},#{ocpId})
+  </insert>
+    <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.ObCluster" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into t_ob_cluster
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="obClusterId != null">
+                obClusterId,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="architecture != null">
+                architecture,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="obVersion != null">
+                obVersion,
+            </if>
+            <if test="serverCount != null">
+                serverCount,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="tenantCount != null">
+                tenantCount,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="obClusterId != null">
+                #{obClusterId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="architecture != null">
+                #{architecture,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="obVersion != null">
+                #{obVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="serverCount != null">
+                #{serverCount,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantCount != null">
+                #{tenantCount,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.clic.ccdbaas.entity.ObClusterExample" resultType="java.lang.Integer">
+        select count(*) from t_ob_cluster
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_ob_cluster
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.obClusterId != null">
+                obClusterId = #{record.obClusterId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null">
+                `name` = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.architecture != null">
+                architecture = #{record.architecture,jdbcType=VARCHAR},
+            </if>
+            <if test="record.type != null">
+                `type` = #{record.type,jdbcType=VARCHAR},
+            </if>
+            <if test="record.obVersion != null">
+                obVersion = #{record.obVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="record.serverCount != null">
+                serverCount = #{record.serverCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.status != null">
+                `status` = #{record.status,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tenantCount != null">
+                tenantCount = #{record.tenantCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.updateTime != null">
+                updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.creator != null">
+                creator = #{record.creator,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_ob_cluster
+        set id = #{record.id,jdbcType=VARCHAR},
+        obClusterId = #{record.obClusterId,jdbcType=VARCHAR},
+        `name` = #{record.name,jdbcType=VARCHAR},
+        architecture = #{record.architecture,jdbcType=VARCHAR},
+        `type` = #{record.type,jdbcType=VARCHAR},
+        obVersion = #{record.obVersion,jdbcType=VARCHAR},
+        serverCount = #{record.serverCount,jdbcType=INTEGER},
+        `status` = #{record.status,jdbcType=VARCHAR},
+        tenantCount = #{record.tenantCount,jdbcType=INTEGER},
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+        creator = #{record.creator,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.ObCluster">
+        update t_ob_cluster
+        <set>
+            <if test="obClusterId != null">
+                obClusterId = #{obClusterId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="architecture != null">
+                architecture = #{architecture,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="obVersion != null">
+                obVersion = #{obVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="serverCount != null">
+                serverCount = #{serverCount,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantCount != null">
+                tenantCount = #{tenantCount,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.ObCluster">
+    update t_ob_cluster
+    set obClusterId = #{obClusterId,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      architecture = #{architecture,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      obVersion = #{obVersion,jdbcType=VARCHAR},
+      serverCount = #{serverCount,jdbcType=INTEGER},
+      `status` = #{status,jdbcType=VARCHAR},
+      tenantCount = #{tenantCount,jdbcType=INTEGER},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      creator = #{creator,jdbcType=VARCHAR},
+      ocpId = #{ocpId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

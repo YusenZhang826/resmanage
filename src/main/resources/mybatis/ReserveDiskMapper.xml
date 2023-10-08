@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clic.ccdbaas.dao.ReserveDiskMapper">
+    <resultMap id="BaseResultMap" type="com.clic.ccdbaas.entity.ReserveDisk">
+        <id column="resId" property="resId" jdbcType="VARCHAR"/>
+        <result column="diskSize" property="diskSize" jdbcType="INTEGER"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="uses" property="uses" jdbcType="VARCHAR"/>
+        <result column="interfaceClass" property="interfaceClass" jdbcType="VARCHAR"/>
+        <result column="mediaClass" property="mediaClass" jdbcType="VARCHAR"/>
+        <result column="serverId" property="serverId" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="createBy" property="createBy" jdbcType="VARCHAR"/>
+        <result column="updateBy" property="updateBy" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        resId, diskSize, remarks, uses, interfaceClass, mediaClass, serverId, createTime,
+        updateTime, createBy, updateBy, remark
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.clic.ccdbaas.entity.example.ReserveDiskExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from t_reserve_disk
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_reserve_disk
+        where resId = #{resId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from t_reserve_disk
+        where resId = #{resId,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.clic.ccdbaas.entity.example.ReserveDiskExample">
+        delete from t_reserve_disk
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.clic.ccdbaas.entity.ReserveDisk">
+        insert into t_reserve_disk (resId, diskSize, remarks,
+        uses, interfaceClass, mediaClass,
+        serverId, createTime, updateTime,
+        createBy, updateBy, remark
+        )
+        values (#{resId,jdbcType=VARCHAR}, #{diskSize,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR},
+        #{uses,jdbcType=VARCHAR}, #{interfaceClass,jdbcType=VARCHAR}, #{mediaClass,jdbcType=VARCHAR},
+        #{serverId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+        #{createBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.clic.ccdbaas.entity.ReserveDisk">
+        insert into t_reserve_disk
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                resId,
+            </if>
+            <if test="diskSize != null">
+                diskSize,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="uses != null">
+                uses,
+            </if>
+            <if test="interfaceClass != null">
+                interfaceClass,
+            </if>
+            <if test="mediaClass != null">
+                mediaClass,
+            </if>
+            <if test="serverId != null">
+                serverId,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+            <if test="createBy != null">
+                createBy,
+            </if>
+            <if test="updateBy != null">
+                updateBy,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                #{resId,jdbcType=VARCHAR},
+            </if>
+            <if test="diskSize != null">
+                #{diskSize,jdbcType=INTEGER},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="uses != null">
+                #{uses,jdbcType=VARCHAR},
+            </if>
+            <if test="interfaceClass != null">
+                #{interfaceClass,jdbcType=VARCHAR},
+            </if>
+            <if test="mediaClass != null">
+                #{mediaClass,jdbcType=VARCHAR},
+            </if>
+            <if test="serverId != null">
+                #{serverId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.clic.ccdbaas.entity.example.ReserveDiskExample"
+            resultType="java.lang.Integer">
+        select count(*) from t_reserve_disk
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_reserve_disk
+        <set>
+            <if test="record.resId != null">
+                resId = #{record.resId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.diskSize != null">
+                diskSize = #{record.diskSize,jdbcType=INTEGER},
+            </if>
+            <if test="record.remarks != null">
+                remarks = #{record.remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="record.uses != null">
+                uses = #{record.uses,jdbcType=VARCHAR},
+            </if>
+            <if test="record.interfaceClass != null">
+                interfaceClass = #{record.interfaceClass,jdbcType=VARCHAR},
+            </if>
+            <if test="record.mediaClass != null">
+                mediaClass = #{record.mediaClass,jdbcType=VARCHAR},
+            </if>
+            <if test="record.serverId != null">
+                serverId = #{record.serverId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createBy != null">
+                createBy = #{record.createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="record.updateBy != null">
+                updateBy = #{record.updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_reserve_disk
+        set resId = #{record.resId,jdbcType=VARCHAR},
+        diskSize = #{record.diskSize,jdbcType=INTEGER},
+        remarks = #{record.remarks,jdbcType=VARCHAR},
+        uses = #{record.uses,jdbcType=VARCHAR},
+        interfaceClass = #{record.interfaceClass,jdbcType=VARCHAR},
+        mediaClass = #{record.mediaClass,jdbcType=VARCHAR},
+        serverId = #{record.serverId,jdbcType=VARCHAR},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+        createBy = #{record.createBy,jdbcType=VARCHAR},
+        updateBy = #{record.updateBy,jdbcType=VARCHAR},
+        remark = #{record.remark,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clic.ccdbaas.entity.ReserveDisk">
+        update t_reserve_disk
+        <set>
+            <if test="diskSize != null">
+                diskSize = #{diskSize,jdbcType=INTEGER},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="uses != null">
+                uses = #{uses,jdbcType=VARCHAR},
+            </if>
+            <if test="interfaceClass != null">
+                interfaceClass = #{interfaceClass,jdbcType=VARCHAR},
+            </if>
+            <if test="mediaClass != null">
+                mediaClass = #{mediaClass,jdbcType=VARCHAR},
+            </if>
+            <if test="serverId != null">
+                serverId = #{serverId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                createBy = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                updateBy = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clic.ccdbaas.entity.ReserveDisk">
+        update t_reserve_disk
+        set diskSize = #{diskSize,jdbcType=INTEGER},
+        remarks = #{remarks,jdbcType=VARCHAR},
+        uses = #{uses,jdbcType=VARCHAR},
+        interfaceClass = #{interfaceClass,jdbcType=VARCHAR},
+        mediaClass = #{mediaClass,jdbcType=VARCHAR},
+        serverId = #{serverId,jdbcType=VARCHAR},
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+        createBy = #{createBy,jdbcType=VARCHAR},
+        updateBy = #{updateBy,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR}
+        where resId = #{resId,jdbcType=VARCHAR}
+    </update>
+    <select id="selectDiskSizeByServerId" parameterType="string" resultType="Integer">
+        select diskSize from t_reserve_disk where serverId = #{serverId}
+    </select>
+</mapper>
